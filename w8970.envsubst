@@ -233,7 +233,8 @@ uci set      network.dsl.line_mode='vdsl'
 
 # since the DSL line doesn't reset we need to restart the DSL modem 
 # when the ppp connection dies. The line retraining *should* terminate 
-# any zombie sessions for the circuit on the dslam. 
+# any zombie sessions for the circuit on the dslam.
+# (this is a horrible hack)
 
 if [ ! -d "/etc/ppp/ip-down.d/" ]; then
   mkdir /etc/ppp/ip-down.d
@@ -242,6 +243,7 @@ fi
 cat <<'EOF' > /etc/ppp/ip-down.d/reset-dsl.sh
 #!/bin/sh
 logger "running /etc/ppp/ip-down.d/reset-dsl.sh script"
+sleep 1 # let the packet exit the box before all hell breaks loose
 /etc/init.d/dsl_control stop
 rmmod drv_dsl_cpe_api
 rmmod ltq_ptm_vr9 
@@ -255,10 +257,8 @@ insmod ltq_ptm_vr9
 insmod drv_dsl_cpe_api
 /etc/init.d/dsl_control start
 EOF
-
 chmod 755 /etc/ppp/ip-down.d/reset-dsl.sh
 
-# MTU settings are from: https://docs.google.com/spreadsheets/d/165SPdyrMdLNM4j8axJNOcrCFVoj2zOpV0aWcdOYwCck/edit?usp=sharing
 uci set      network.dsl_dev=device
 uci set      network.dsl_dev.name='ptm0'
 uci set      network.dsl_dev.mtu='1504'
@@ -583,7 +583,6 @@ uci commit ddns.@service[-1]
 
 /etc/init.d/ddns enable || true
 
-
 uci import prometheus-node-exporter-lua<<EOF
 EOF
 
@@ -638,42 +637,27 @@ uci import openvpn <<EOF
 EOF
 
 uci set      openvpn.ffvpn=openvpn
-uci set      openvpn.ffvpn.enabled=1
-uci set      openvpn.ffvpn.client=1
-uci set      openvpn.ffvpn.nobind=1
-uci set      openvpn.ffvpn.proto=udp
-uci set      openvpn.ffvpn.dev=ffvpn
-uci set      openvpn.ffvpn.dev_type=tun
-uci set      openvpn.ffvpn.persist_key=1
+uci set      openvpn.ffvpn.enabled='1'
+uci set      openvpn.ffvpn.client='1'
+uci set      openvpn.ffvpn.nobind='1'
+uci set      openvpn.ffvpn.proto='udp'
+uci set      openvpn.ffvpn.dev='ffvpn'
+uci set      openvpn.ffvpn.dev_type='tun'
+uci set      openvpn.ffvpn.persist_key='1'
 uci set      openvpn.ffvpn.keepalive='10 60'
-uci set      openvpn.ffvpn.comp_lzo=no
-uci set      openvpn.ffvpn.script_security=2
+uci set      openvpn.ffvpn.comp_lzo='no'
+uci set      openvpn.ffvpn.script_security='2'
 uci set      openvpn.ffvpn.cipher='none'
-uci set      openvpn.ffvpn.mute_replay_warnings="1"
+uci set      openvpn.ffvpn.mute_replay_warnings='1'
 uci add_list openvpn.ffvpn.remote='vpn03.berlin.freifunk.net 1194 udp'
 uci add_list openvpn.ffvpn.remote='vpn03-backup.berlin.freifunk.net 1194 udp'
-uci set      openvpn.ffvpn.ns_cert_type=server
-uci set      openvpn.ffvpn.ca=/etc/openvpn/freifunk-ca.crt
-uci set      openvpn.ffvpn.cert=/etc/openvpn/freifunk_client.crt
-uci set      openvpn.ffvpn.key=/etc/openvpn/freifunk_client.key
+uci set      openvpn.ffvpn.ns_cert_type='server'
+uci set      openvpn.ffvpn.ca='/etc/openvpn/freifunk-ca.crt'
+uci set      openvpn.ffvpn.cert='/etc/openvpn/freifunk_client.crt'
+uci set      openvpn.ffvpn.key='/etc/openvpn/freifunk_client.key'
 uci set      openvpn.ffvpn.up='/etc/openvpn/up.sh'
 uci set      openvpn.ffvpn.route_nopull='1'
-#uci set      openvpn.ffvpn.fragment='1'
-#uci set      openvpn.ffvpn.mssfix='1432' # 1500 - 8 (pppoe) - 20 (IP) - 40 (runs over ipv6)
 uci commit   openvpn.ffvpn
-
-uci set      openvpn.imagivpn=openvpn
-uci set      openvpn.imagivpn.enabled=0
-uci set      openvpn.imagivpn.server=1
-uci set      openvpn.imagivpn.comp_lzo=no
-uci set      openvpn.imagivpn.dev=tun
-uci set      openvpn.imagivpn.server='10.7.11.128 255.255.255.128'  # host range 10.7.11.129 - 10.7.11.254
-uci set      openvpn.imagivpn.keepalive='10 60'
-uci set      openvpn.imagivpn.key='/etc/openvpn/imagivpn.key'
-uci set      openvpn.imagivpn.dh='/etc/openvpn/dh2048.pem'
-uci set      openvpn.imagivpn.mssfix=1420
-uci set      openvpn.imagivpn.verb=11
-uci commit   openvpn.imagivpn
 
 if [ ! -d "/etc/openvpn" ]; then
   mkdir /etc/openvpn
@@ -699,7 +683,6 @@ if [ `ip rule | grep "10.7.12.0/24 lookup 100" | wc -l` -lt 1 ]; then
   ip rule add from 10.7.12.0/24 table 100
 fi
 EOF
-
 chmod u+x /etc/openvpn/up.sh
 
 cat <<'EOF' > /etc/openvpn/freifunk-ca.crt
@@ -717,6 +700,8 @@ EOF
 cat <<'EOF' > /etc/openvpn/dh2048.pem
 ${dh2048_pem}
 EOF
+
+/etc/init.d/openvpn enable || true
 
 uci import firewall <<EOF
 EOF
