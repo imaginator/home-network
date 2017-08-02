@@ -1,0 +1,31 @@
+#!/bin/bash -x
+
+set -e
+
+# options include nanostationm2 and w8970
+MODEL=$1
+TAG=master
+
+if [ -d lede-src-$MODEL ]; then
+    cd lede-src-$MODEL
+    git pull
+else
+  git clone https://git.lede-project.org/source.git lede-src-$MODEL
+  cd lede-src-$MODEL
+fi
+
+git checkout ${TAG}
+
+./scripts/feeds update -a 
+./scripts/feeds install -a
+
+# copy in the config things we care about
+cp ../$MODEL.diffconfig .config
+
+# expand to full config
+make defconfig
+
+# Build
+make -j$(nproc)
+
+cp .config .config.$MODEL.$(date --iso)
