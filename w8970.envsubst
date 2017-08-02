@@ -360,7 +360,8 @@ uci set      dhcp.trusted.ra_default='1'
 uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
 uci set      dhcp.trusted.leasetime=60m
-uci set      dhcp.trusted.dns=10.7.11.5
+uci add_list dhcp.trusted.dns='10.7.11.5'
+uci add_list dhcp.trusted.dns='2001:470:5252:2::5'
 uci set      dhcp.trusted.domain=imagilan
 uci commit   dhcp.trusted
 
@@ -459,6 +460,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.18'
+uci set      dhcp.@host[-1].hostid='18'
 uci set      dhcp.@host[-1].name='crack'
 uci set      dhcp.@host[-1].mac='f4:5c:89:8a:64:33'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -468,6 +470,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.19'    # need ip otherwise no DNS
+uci set      dhcp.@host[-1].hostid='19'
 uci set      dhcp.@host[-1].name='cc-lounge'
 uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
 uci set      dhcp.@host[-1].dns='1'
@@ -548,6 +551,8 @@ uci set    sqm.vdsl.upload='8000'
 uci set    sqm.vdsl.verbosity='10'
 uci set    sqm.vdsl.linklayer='none'
 uci commit sqm.vdsl
+
+/etc/init.d/sqm enable || true
 
 uci import ddns <<EOF
 EOF
