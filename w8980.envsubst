@@ -97,7 +97,6 @@ uci set      wireless.radio0=wifi-device
 uci set      wireless.radio0.disabled='0'
 uci set      wireless.radio0.type='mac80211'
 uci set      wireless.radio0.phy='phy0'
-#uci set      wireless.radio0.path='pci0000:00/0000:00:00.0/0000:01:00.0'
 uci set      wireless.radio0.log_level='0' # 0=verbose
 uci set      wireless.radio0.country='DE'
 uci set      wireless.radio0.txpower='16'
@@ -130,6 +129,7 @@ uci commit   wireless.@wifi-iface[-1]
 
 uci add      wireless wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
+uci set      wireless.@wifi-iface[-1].disabled='0'
 uci set      wireless.@wifi-iface[-1].ifname='freifunk'
 uci set      wireless.@wifi-iface[-1].device='radio0'
 uci set      wireless.@wifi-iface[-1].network='notrust'
@@ -141,7 +141,6 @@ uci set      wireless.@wifi-iface[-1].hidden='0'
 uci set      wireless.@wifi-iface[-1].wpa_group_rekey='0'
 uci set      wireless.@wifi-iface[-1].disassoc_low_ack='1'
 uci set      wireless.@wifi-iface[-1].wmm='1'
-uci set      wireless.@wifi-iface[-1].require_mode='n'
 uci commit   wireless.@wifi-iface[-1]
 
 uci import   network <<EOF
