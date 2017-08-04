@@ -1,13 +1,13 @@
-Building firmware
+# Home Network
 
-```
-scp -v -P23 lede/bin/targets/lantiq/xrx200/lede-lantiq-xrx200-TDW8970-squashfs-sysupgrade.bin root@10.7.11.5:/tmp
-ssh -p 23 root@10.7.11.5
-echo 3 > /proc/sys/vm/drop_caches
-sysupgrade -v /tmp/lede-lantiq-xrx200-TDW8970-squashfs-sysupgrade.bin
-```
+This is the code that configures my home network. The network consists of the following gear:
+- TP-Link W8970 DSL router
+- TP-Link W8980B DSL router as a backup
+- 3x Ubiquiti NanostationM2 Locos
 
-Making changes to the build
+The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/wifi using the (Prometheus Node Exporter)[https://github.com/openwrt/packages/tree/master/utils/prometheus-node-exporter-lua].
+
+Building the W8970 and W8980 firmware
 
 ```
 # Upgrade build configs
@@ -24,16 +24,16 @@ echo 3 > /proc/sys/vm/drop_caches
 sysupgrade -v /tmp/lede-lantiq-xrx200-TDW8970-squashfs-sysupgrade.bin
 ```
 
-Running
+Configuring the routers
 
 ```
 cp network-secrets.env.example network-secrets.env
 # edit as appropriate
 
-source network-secrets.env && envsubst < w8970.envsubst | ssh  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@<switch>
+source network-secrets.env && envsubst < w8970.settings | ssh  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@<device>
 ```
 
-Debugging
+Debugging Wireless
 
 ```
 iw phy0 info
@@ -49,7 +49,8 @@ iw dev mesh2 get mesh_param
 iw list |grep -i antenna
 ```
 
-Debugging management frames
+Debugging wifi management frames
+
 ```
 opkg update
 opkg install horst
