@@ -148,7 +148,6 @@ uci set      network.loopback.ipaddr='127.0.0.1'
 uci set      network.loopback.netmask='255.0.0.0'
 
 uci set      network.trusted=interface
-uci set      network.trusted.mtu='1500'
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
 uci add_list network.trusted.ifname='dual2'
@@ -156,7 +155,6 @@ uci set      network.trusted.proto='dhcp'
 uci set      network.trusted.igmp_snooping='0'
 
 uci set      network.trusted6=interface
-uci set      network.trusted6.mtu='1500'
 uci set      network.trusted6.type='bridge'
 uci add_list network.trusted6.ifname='eth0.2'
 uci add_list network.trusted6.ifname='dual2'
@@ -164,7 +162,6 @@ uci set      network.trusted6.proto='dhcpv6'
 uci set      network.trusted6.igmp_snooping='0'
 
 uci set      network.notrust=interface
-uci set      network.notrust.mtu='1500'
 uci set      network.notrust.type='bridge'
 uci add_list network.notrust.ifname='eth0.3'
 uci add_list network.notrust.ifname='freifunk'
