@@ -85,7 +85,7 @@ EOF
 
 uci add    dropbear  dropbear
 uci set    dropbear.@dropbear[-1]=dropbear
-uci set    dropbear.@dropbear[-1].Port='23'
+uci set    dropbear.@dropbear[-1].Port='22'
 uci set    dropbear.@dropbear[-1].PasswordAuth='0'
 uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
 uci commit dropbear
@@ -849,7 +849,7 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].name='ssh from wan to bunker'
 uci set    firewall.@redirect[-1].src='wan_trusted'
-uci set    firewall.@redirect[-1].src_dport='22'
+uci set    firewall.@redirect[-1].src_dport='23'
 uci set    firewall.@redirect[-1].dest='trusted'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='22'
@@ -1014,7 +1014,7 @@ uci add    firewall rule
 uci set    firewall.@rule[-1]=rule
 uci set    firewall.@rule[-1].name='ssh to router'
 uci set    firewall.@rule[-1].src='*'
-uci set    firewall.@rule[-1].dest_port='23'
+uci set    firewall.@rule[-1].dest_port='22'
 uci set    firewall.@rule[-1].proto='tcp'
 uci set    firewall.@rule[-1].family='any'
 uci set    firewall.@rule[-1].target='ACCEPT'
