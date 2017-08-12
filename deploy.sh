@@ -4,6 +4,7 @@ set -xe
 envsubst \ '
   $trusted_wifikey \
   $dual2_roaming_key \
+  $freifunk_roaming_key \
   $henet_tunnelid \
   $henet_username \
   $henet_password \

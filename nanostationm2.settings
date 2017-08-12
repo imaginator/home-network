@@ -11,8 +11,10 @@ set -xe
 # cat <device>.settings| ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@192.168.1.1
 
 # for roaming support we need to know the MAC address
-nasid="000000000000"         && [[ -e /sys/class/net/dual2/address ]]  &&         nasid=$(cat /sys/class/net/dual2/address | tr -d \:)
-r1_key_holder="000000000000" && [[ -e /sys/class/net/dual2/address ]]  && r1_key_holder=$(cat /sys/class/net/dual2/address | tr -d \:)
+dual2_nasid="000000000000"            && [[ -e /sys/class/net/dual2/address    ]] &&            dual2_nasid=$(cat /sys/class/net/dual2/address    | tr -d \:)
+dual2_r1_key_holder="000000000000"    && [[ -e /sys/class/net/dual2/address    ]] &&    dual2_r1_key_holder=$(cat /sys/class/net/dual2/address    | tr -d \:)
+freifunk_nasid="000000000000"         && [[ -e /sys/class/net/freifunk/address ]] &&         freifunk_nasid=$(cat /sys/class/net/freifunk/address | tr -d \:)
+freifunk_r1_key_holder="000000000000" && [[ -e /sys/class/net/freifunk/address ]] && freifunk_r1_key_holder=$(cat /sys/class/net/freifunk/address | tr -d \:)
 
 uci import system <<EOF
 EOF
@@ -127,8 +129,8 @@ uci set      wireless.@wifi-iface[-1].require_mode='n'
 uci set      wireless.@wifi-iface[-1].ieee80211r=1
 uci set      wireless.@wifi-iface[-1].mobility_domain='cafe'
 uci set      wireless.@wifi-iface[-1].pmk_r1_push=1
-uci set      wireless.@wifi-iface[-1].nasid=$nasid
-uci set      wireless.@wifi-iface[-1].r1_key_holder=$r1_key_holder
+uci set      wireless.@wifi-iface[-1].nasid=$dual2_nasid
+uci set      wireless.@wifi-iface[-1].r1_key_holder=$dual2_r1_key_holder
 uci add_list wireless.@wifi-iface[-1].r0kh='68:72:51:1B:74:89,6872511B7489,${dual2_roaming_key}'
 uci add_list wireless.@wifi-iface[-1].r0kh='00:27:22:ca:ff:20,002722caff20,${dual2_roaming_key}'
 uci add_list wireless.@wifi-iface[-1].r0kh='dc:9f:db:58:ca:a2,dc9fdb58caa2,${dual2_roaming_key}'
@@ -153,6 +155,19 @@ uci set      wireless.@wifi-iface[-1].wpa_group_rekey='0'
 uci set      wireless.@wifi-iface[-1].disassoc_low_ack='1'
 uci set      wireless.@wifi-iface[-1].wmm='1'
 uci set      wireless.@wifi-iface[-1].require_mode='n'
+uci set      wireless.@wifi-iface[-1].ieee80211r=1
+uci set      wireless.@wifi-iface[-1].mobility_domain='d0d0'
+uci set      wireless.@wifi-iface[-1].pmk_r1_push=1
+uci set      wireless.@wifi-iface[-1].nasid=$freifunk_nasid
+uci set      wireless.@wifi-iface[-1].r1_key_holder=$freifunk_r1_key_holder
+uci add_list wireless.@wifi-iface[-1].r0kh='68:72:51:1B:74:89,6872511B7489,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r0kh='00:27:22:ca:ff:20,002722caff20,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r0kh='dc:9f:db:58:ca:a2,dc9fdb58caa2,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r0kh='e8:94:f6:e5:70:00,e894f6e57000,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r1kh='68:72:51:1B:74:89,68:72:51:1B:74:89,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r1kh='00:27:22:ca:ff:20,00:27:22:ca:ff:20,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r1kh='dc:9f:db:58:ca:a2,dc:9f:db:58:ca:a2,${freifunk_roaming_key}'
+uci add_list wireless.@wifi-iface[-1].r1kh='e8:94:f6:e5:70:00,e8:94:f6:e5:70:00,${freifunk_roaming_key}'
 uci commit   wireless.@wifi-iface[-1]
 
 uci import   network <<EOF
