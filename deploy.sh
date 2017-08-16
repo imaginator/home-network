@@ -18,4 +18,4 @@ envsubst \ '
   $freifunk_client_key \
   $imagivpn_key \
   $dh2048_pem \
-  ' < w8970_w8980.settings  | ssh -p23 root@10.7.11.5
+  ' < w8970_w8980.settings  | ssh root@10.7.11.5
