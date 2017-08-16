@@ -187,11 +187,9 @@ uci set      network.trusted.proto='dhcp'
 uci set      network.trusted.igmp_snooping='0'
 
 uci set      network.trusted6=interface
-uci set      network.trusted6.type='bridge'
-uci add_list network.trusted6.ifname='eth0.2'
-uci add_list network.trusted6.ifname='dual2'
+uci set      network.trusted6.ifname='@trusted'
 uci set      network.trusted6.proto='dhcpv6'
-uci set      network.trusted6.igmp_snooping='0'
+uci set      network.trusted6.reqprefix='no'
 
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
