@@ -54,10 +54,10 @@ set -xe
 # ping6 -s 1425 -M do google.com
 
 # for roaming support we need to know the MAC address
-dual2_nasid="000000000000"         && [[ -e /sys/class/net/dual2/address ]]  &&         dual2_nasid=$(cat /sys/class/net/dual2/address | tr -d \:)
-dual2_r1_key_holder="000000000000" && [[ -e /sys/class/net/dual2/address ]]  && dual2_r1_key_holder=$(cat /sys/class/net/dual2/address | tr -d \:)
-freifunk_nasid="000000000000"         && [[ -e /sys/class/net/freifunk/address ]]  &&         freifunk_nasid=$(cat /sys/class/net/freifunk/address | tr -d \:)
-freifunk_r1_key_holder="000000000000" && [[ -e /sys/class/net/freifunk/address ]]  && freifunk_r1_key_holder=$(cat /sys/class/net/freifunk/address | tr -d \:)
+dual2_nasid="000000000000"            && [[ -e /sys/class/net/dual2/address ]]    &&            dual2_nasid=$(cat /sys/class/net/dual2/address    | tr -d \:)
+dual2_r1_key_holder="000000000000"    && [[ -e /sys/class/net/dual2/address ]]    &&    dual2_r1_key_holder=$(cat /sys/class/net/dual2/address    | tr -d \:)
+freifunk_nasid="000000000000"         && [[ -e /sys/class/net/freifunk/address ]] &&         freifunk_nasid=$(cat /sys/class/net/freifunk/address | tr -d \:)
+freifunk_r1_key_holder="000000000000" && [[ -e /sys/class/net/freifunk/address ]] && freifunk_r1_key_holder=$(cat /sys/class/net/freifunk/address | tr -d \:)
 
 uci import system <<EOF
 EOF
@@ -384,11 +384,11 @@ uci set      dhcp.trusted.authoritative='1'
 uci set      dhcp.trusted.ignore='1'
 uci set      dhcp.trusted.dhcpv4='server'
 uci set      dhcp.trusted.ra='server'
-uci set      dhcp.trusted.dhcpv6='disabled'
+uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.ra_mtu='1432'
 uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
-uci set      dhcp.trusted.leasetime=60m
+uci set      dhcp.trusted.leasetime=5m
 uci add_list dhcp.trusted.dns='10.7.11.5'
 uci add_list dhcp.trusted.dns='2001:470:5252:2::5'
 uci set      dhcp.trusted.domain=imagilan
@@ -401,7 +401,7 @@ uci set      dhcp.notrust.ignore='1'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start=100
 uci set      dhcp.notrust.limit=100
-uci set      dhcp.notrust.leasetime=60m
+uci set      dhcp.notrust.leasetime=5m
 uci set      dhcp.notrust.dns=10.7.12.5
 uci set      dhcp.notrust.domain=notrust
 uci commit   dhcp.notrust
