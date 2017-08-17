@@ -639,7 +639,8 @@ uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za
 uci set    adblock.global.adb_backup='0'
 uci set    adblock.global.adb_backupdir='/mnt'
 uci set    adblock.global.adb_debug='1'
-uci set    adblock.global.adb_nullipv4='192.168.1.1'
+uci set    adblock.global.adb_iface='henet'
+uci set    adblock.global.adb_triggerdelay='120' # gives us the chance to log in and change this if using too much memory.
 uci commit adblock.global
 
 uci add    adblock  source
