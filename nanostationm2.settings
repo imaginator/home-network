@@ -114,11 +114,13 @@ uci commit   wireless
 uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
 uci set      wireless.@wifi-iface[-1].ifname='dual2'
+uci set      wireless.@wifi-iface[-1].disabled='0'
 uci set      wireless.@wifi-iface[-1].device='radio0'
 uci set      wireless.@wifi-iface[-1].network='trusted'
 uci set      wireless.@wifi-iface[-1].mode='ap'
 uci set      wireless.@wifi-iface[-1].isolate='0'
-uci set      wireless.@wifi-iface[-1].mcast_to_ucast='1'
+uci set      wireless.@wifi-iface[-1].mcast_to_ucast='0'
+uci set      wireless.@wifi-iface[-1].hairpin='1'
 uci set      wireless.@wifi-iface[-1].ssid='imaginator.com dual'
 uci set      wireless.@wifi-iface[-1].hidden='0'
 uci set      wireless.@wifi-iface[-1].encryption='psk2'
