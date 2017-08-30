@@ -657,6 +657,14 @@ uci commit adblock.global
 uci add    adblock  source
 uci set    adblock.@source[-1]=source
 uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='/etc/adblock/adblock.blacklist'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='static local domain blacklist (always deny these domains)'
+uci commit adblock.@source[-1]
+
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci set    adblock.@source[-1].enabled='1'
 uci set    adblock.@source[-1].adb_src='https://adaway.org/hosts.txt'
 uci set    adblock.@source[-1].adb_src_rset='\$0 ~/^127\.0\.0\.1[ \t]+([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$2)}'
 uci set    adblock.@source[-1].adb_src_desc='focus on mobile ads, infrequent updates, approx. 400 entries'
@@ -679,6 +687,10 @@ uci set    adblock.@source[-1].adb_src_desc='mozilla driven blocklist, numerous 
 uci commit adblock.@source[-1]
 
 /etc/init.d/adblock enable || true
+
+cat <<'EOF' > /etc/adblock/adblock.blacklist
+zattoo.com
+EOF
 
 uci import openvpn <<EOF
 EOF
