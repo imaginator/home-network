@@ -40,7 +40,7 @@ The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/
 ```
 
 
-
+## Firmware
 
 Building the W8970 and W8980 firmware
 
@@ -59,16 +59,18 @@ echo 3 > /proc/sys/vm/drop_caches
 sysupgrade -v /tmp/lede-lantiq-xrx200-TDW8970-squashfs-sysupgrade.bin
 ```
 
+## Configure
 Configuring the routers
 
 ```
 cp network-secrets.env.example network-secrets.env
 # edit as appropriate
 
-source network-secrets.env && envsubst < w8970.settings | ssh  -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@<device>
+./deploy <w8970|repeaterNN>
 ```
 
-Debugging Wireless
+## Debugging Notes
+Wireless
 
 ```
 iw phy0 info
@@ -96,4 +98,4 @@ grep -q mon0 /proc/net/dev || /usr/sbin/iw phy phy0 interface add mon0 type moni
 grep -q mon0 /proc/net/dev || /usr/sbin/iw phy phy0 interface add mon0 type monitor;  /sbin/ifconfig mon0 up; /usr/sbin/iwcap -i mon0 -s
 ```
 
-For stats we want to read from ` /sys/kernel/debug/ieee80211/phy1/netdev\:dual5/stations/`
+Read wifi stats from ` /sys/kernel/debug/ieee80211/phy1/netdev\:dual2/stations/`
