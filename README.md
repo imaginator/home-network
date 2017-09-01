@@ -7,12 +7,13 @@ This is the code that configures my home network. The network consists of the fo
 
 The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/wifi using the (Prometheus Node Exporter)[https://github.com/openwrt/packages/tree/master/utils/prometheus-node-exporter-lua].
 
-# Layout
+## Diagram
 ```
-  ^                       
-  |  easybell (vdsl-pppoe)
-  |  ffvpn    (freifunk vpn)
-  |  henet    (ipv6)
+  ^                
+  |  uplink VDSL  (easybell, ptm0.7 etc)
+  |  ipv6 tunnel  (henet)
+  |  freifunk vpn (ffvpn)
+  |
 +-+-----------------------------------------------------------------+
 | imagiswitch.imagilan                                              |
 |===================================================================|
@@ -31,7 +32,7 @@ The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/
   |    +---------------------------------+
   |
   |    +---------------------------------+
-  |    |  repeater(nn).imagilan          |
+  |    |  repeater<nn>.imagilan          |
   |    |=================================|
   +----+  br-trusted (eth0.2, dual2)     |------>wifi: dual2
        |  br-notrust (eth0.3, freifunk)  +------>wifi: freifunk
