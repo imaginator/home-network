@@ -7,6 +7,40 @@ This is the code that configures my home network. The network consists of the fo
 
 The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/wifi using the (Prometheus Node Exporter)[https://github.com/openwrt/packages/tree/master/utils/prometheus-node-exporter-lua].
 
+# Layout
+```
+  ^                       
+  |  easybell (vdsl-pppoe)
+  |  ffvpn    (freifunk vpn)
+  |  henet    (ipv6)
++-+-----------------------------------------------------------------+
+| imagiswitch.imagilan                                              |
+|===================================================================|
+| br-trusted (eth0.2, dual2)    <---> wan-trusted (easybell, henet) +------>wifi: dual2
+| br-notrust (eth0.3, freifunk) <---> wan|notrust (ff-vpn)          +------>wifi: freifunk
++-+-----------------------------------------------------------------+
+  |
+  |  vlan2 (eth0.2)
+  |  vlan3 (eth0.3)
+  |
+  |    +---------------------------------+
+  |    |  repeater01.imagilan            |
+  |    |=================================|
+  +----+  br-trusted (eth0.2, dual2)     +------>wifi: dual2
+  |    |  br-notrust (eth0.3, freifunk)  +------>wifi: freifunk
+  |    +---------------------------------+
+  |
+  |    +---------------------------------+
+  |    |  repeater(nn).imagilan          |
+  |    |=================================|
+  +----+  br-trusted (eth0.2, dual2)     |------>wifi: dual2
+       |  br-notrust (eth0.3, freifunk)  +------>wifi: freifunk
+       +---------------------------------+
+```
+
+
+
+
 Building the W8970 and W8980 firmware
 
 ```
