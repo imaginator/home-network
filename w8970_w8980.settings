@@ -281,26 +281,8 @@ fi
 cat <<'EOF' > /etc/ppp/ip-down.d/reset-dsl.sh
 #!/bin/sh
 logger "running /etc/ppp/ip-down.d/reset-dsl.sh script"
-sleep 1 # let the packet exit the box before all hell breaks loose
-/etc/init.d/dsl_control stop
-rmmod drv_dsl_cpe_api
-rmmod ltq_ptm_vr9
-rmmod drv_mei_cpe
-rmmod drv_ifxos
-rmmod pppoe
-rmmod pppox
-rmmod ppp_generic
-rmmod slhc
-
-insmod slhc
-insmod ppp_generic
-insmod pppox
-insmod pppoe
-insmod drv_ifxos
-insmod drv_mei_cpe
-insmod ltq_ptm_vr9
-insmod drv_dsl_cpe_api
-/etc/init.d/dsl_control start
+sleep 60 # don't be too bouncy!
+reboot   # it seems like the only way to reset the DSL modem is with a reboot :(
 EOF
 chmod 755 /etc/ppp/ip-down.d/reset-dsl.sh
 
