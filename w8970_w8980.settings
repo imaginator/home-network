@@ -112,6 +112,7 @@ uci set      wireless.radio0.htmode='HT20'
 uci set      wireless.radio0.short_gi_20='1'
 uci set      wireless.radio0.greenfield='0'
 uci set      wireless.radio0.distance='25'
+uci set      wireless.radio0.beacon_int='200'
 uci set      wireless.radio0.channel='auto'
 uci commit   wireless
 
