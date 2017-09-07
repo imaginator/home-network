@@ -6,7 +6,6 @@ CONFIG_PROCD_SHOW_BOOT=y
 #disable defaults
 # CONFIG_KERNEL_SWAP is not set
 # CONFIG_PACKAGE_br2684ctl is not set
-# CONFIG_PACKAGE_dsl-vrx200-firmware-xdsl-b-patch is not set
 # CONFIG_PACKAGE_kmod-gpio-button-hotplug is not set
 # CONFIG_PACKAGE_kmod-leds-gpio is not set
 # CONFIG_PACKAGE_kmod-ltq-atm-vr9 is not set
@@ -41,8 +40,11 @@ CONFIG_PACKAGE_kmod-tun=y
 # Bridges and VLANs
 CONFIG_PACKAGE_kmod-8021q=y
 CONFIG_PACKAGE_kmod-bridge=y
+CONFIG_PACKAGE_bridge-utils=y
 
 # VDSL
+# CONFIG_PACKAGE_dsl-vrx200-firmware-xdsl-a is not set
+# CONFIG_PACKAGE_dsl-vrx200-firmware-xdsl-b-patch is not set
 CONFIG_PACKAGE_dsl-vrx200-firmware-xdsl-b=y
 CONFIG_PACKAGE_ppp-mod-pppoe=y
 CONFIG_PACKAGE_kmod-ltq-ptm-vr9=y
@@ -71,6 +73,7 @@ CONFIG_PACKAGE_tcpdump-mini=y
 CONFIG_PACKAGE_curl=y
 CONFIG_PACKAGE_dnsmasq=y
 CONFIG_PACKAGE_ip-tiny=y
+CONFIG_PACKAGE_mwan3=y
 
 # extroot
 CONFIG_PACKAGE_block-mount=y
