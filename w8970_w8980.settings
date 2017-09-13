@@ -425,7 +425,7 @@ uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.ra_mtu='1432'
 uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
-uci set      dhcp.trusted.leasetime=5m
+uci set      dhcp.trusted.leasetime=60m
 uci add_list dhcp.trusted.dns='10.7.11.5'
 uci add_list dhcp.trusted.dns='2001:470:5252:2::5'
 uci set      dhcp.trusted.domain=imagilan
@@ -438,7 +438,7 @@ uci set      dhcp.notrust.ignore='1'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start=100
 uci set      dhcp.notrust.limit=100
-uci set      dhcp.notrust.leasetime=5m
+uci set      dhcp.notrust.leasetime=60m
 uci set      dhcp.notrust.dns=10.7.12.5
 uci set      dhcp.notrust.domain=notrust
 uci commit   dhcp.notrust
