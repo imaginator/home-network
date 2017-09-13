@@ -6,12 +6,12 @@ set -e
 MODEL=$1
 TAG=master
 
-if [ -d lede-src-$MODEL ]; then
-    cd lede-src-$MODEL
+if [ -d $MODEL.src ]; then
+    cd $MODEL.src
     git pull
 else
-  git clone https://git.lede-project.org/source.git lede-src-$MODEL
-  cd lede-src-$MODEL
+  git clone https://git.lede-project.org/source.git $MODEL.src
+  cd $MODEL.src
 fi
 
 git checkout ${TAG}
