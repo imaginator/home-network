@@ -59,6 +59,43 @@ dual2_r1_key_holder="000000000000"    && [[ -e /sys/class/net/dual2/address ]]  
 freifunk_nasid="000000000000"         && [[ -e /sys/class/net/freifunk/address ]] &&         freifunk_nasid=$(cat /sys/class/net/freifunk/address | tr -d \:)
 freifunk_r1_key_holder="000000000000" && [[ -e /sys/class/net/freifunk/address ]] && freifunk_r1_key_holder=$(cat /sys/class/net/freifunk/address | tr -d \:)
 
+uci import fstab <<EOF
+EOF
+
+uci add      fstab  global
+uci set      fstab.@global[-1]=global
+uci set      fstab.@global[-1]=global
+uci set      fstab.@global[-1].anon_swap='0'
+uci set      fstab.@global[-1].anon_mount='0'
+uci set      fstab.@global[-1].auto_swap='1'
+uci set      fstab.@global[-1].auto_mount='1'
+uci set      fstab.@global[-1].delay_root='15'
+uci set      fstab.@global[-1].check_fs='0'
+uci commit   fstab.@global[-1]
+
+uci add      fstab  mount
+uci set      fstab.@mount[-1]=mount
+uci set      fstab.@mount[-1].target='/'
+uci set      fstab.@mount[-1].device='/dev/sda1'
+uci set      fstab.@mount[-1].fstype='f2fs'
+uci set      fstab.@mount[-1].enabled='1'
+uci commit   fstab.@mount[-1]
+
+if [ ! -d "/overlay-boot" ]; then
+  mkdir /overlay-boot
+fi
+
+uci add      fstab  mount
+uci set      fstab.@mount[-1]=mount
+uci set      fstab.@mount[-1].target='/overlay-boot'
+uci set      fstab.@mount[-1].device='/dev/mtdblock4'
+uci set      fstab.@mount[-1].fstype='jffs2'
+uci set      fstab.@mount[-1].options='rw,sync'
+uci set      fstab.@mount[-1].enabled='1'
+uci set      fstab.@mount[-1].enabled_fsck='0'
+uci commit   fstab.@mount[-1]
+
+
 uci import system <<EOF
 EOF
 
@@ -370,7 +407,7 @@ uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/odhcpd.leases'
 uci set      dhcp.@dnsmasq[-1].expandhosts='1'
 uci set      dhcp.@dnsmasq[-1].nonegcache='0'
 uci set      dhcp.@dnsmasq[-1].localservice='1'
-uci set      dhcp.@dnsmasq[-1].logqueries='1'
+uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
 uci add_list dhcp.@dnsmasq[-1].server='195.185.185.195'
 uci add_list dhcp.@dnsmasq[-1].server='62.26.26.62'
@@ -515,7 +552,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='60:e3:ac:e7:a5:60'
+uci set      dhcp.@host[-1].mac='00:a0:c6:eb:5c:6f'
 uci set      dhcp.@host[-1].name='simon-nexus5x'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
