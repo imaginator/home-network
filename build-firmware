@@ -26,6 +26,6 @@ cp ../$MODEL.diffconfig .config
 make defconfig
 
 # Build
-ionice --class 3 make -j 2 V=s
+ionice --class 3 make -j4  # V=s
 
 cp .config .config.$MODEL.$(date --iso)

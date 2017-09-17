@@ -64,7 +64,6 @@ EOF
 
 uci add      fstab  global
 uci set      fstab.@global[-1]=global
-uci set      fstab.@global[-1]=global
 uci set      fstab.@global[-1].anon_swap='0'
 uci set      fstab.@global[-1].anon_mount='0'
 uci set      fstab.@global[-1].auto_swap='1'
@@ -73,12 +72,18 @@ uci set      fstab.@global[-1].delay_root='15'
 uci set      fstab.@global[-1].check_fs='0'
 uci commit   fstab.@global[-1]
 
+uci add      fstab  swap
+uci set      fstab.@swap[-1]=swap
+uci set      fstab.@swap[-1].device='/dev/sda2'
+uci set      fstab.@swap[-1].enabled='1'
+uci commit   fstab.@swap[-1]
+
 uci add      fstab  mount
 uci set      fstab.@mount[-1]=mount
 uci set      fstab.@mount[-1].target='/'
 uci set      fstab.@mount[-1].device='/dev/sda1'
 uci set      fstab.@mount[-1].fstype='f2fs'
-uci set      fstab.@mount[-1].enabled='1'
+uci set      fstab.@mount[-1].enabled='0'
 uci commit   fstab.@mount[-1]
 
 if [ ! -d "/overlay-boot" ]; then
@@ -91,10 +96,11 @@ uci set      fstab.@mount[-1].target='/overlay-boot'
 uci set      fstab.@mount[-1].device='/dev/mtdblock4'
 uci set      fstab.@mount[-1].fstype='jffs2'
 uci set      fstab.@mount[-1].options='rw,sync'
-uci set      fstab.@mount[-1].enabled='1'
+uci set      fstab.@mount[-1].enabled='0'
 uci set      fstab.@mount[-1].enabled_fsck='0'
 uci commit   fstab.@mount[-1]
 
+/etc/init.d/fstab enable || true
 
 uci import system <<EOF
 EOF
@@ -155,7 +161,7 @@ uci commit   wireless
 
 uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
-uci set      wireless.@wifi-iface[-1].disabled='0'
+uci set      wireless.@wifi-iface[-1].disabled='1'
 uci set      wireless.@wifi-iface[-1].ifname='dual2'
 uci set      wireless.@wifi-iface[-1].device='radio0'
 uci set      wireless.@wifi-iface[-1].network='trusted'
@@ -519,6 +525,16 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.15'
 uci set      dhcp.@host[-1].name='repeater05'
 uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#AP Pro
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.16'
+uci set      dhcp.@host[-1].name='repeater06'
+uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]

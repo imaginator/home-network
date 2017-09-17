@@ -1,11 +1,11 @@
 CONFIG_TARGET_lantiq=y
 CONFIG_TARGET_lantiq_xrx200=y
-CONFIG_TARGET_lantiq_xrx200_DEVICE_TDW8970=y
-CONFIG_TARGET_lantiq_xrx200_DEVICE_TDW8980=y
+#CONFIG_TARGET_lantiq_xrx200_DEVICE_TDW8970=y
+#CONFIG_TARGET_lantiq_xrx200_DEVICE_TDW8980=y
 CONFIG_PROCD_SHOW_BOOT=y
+CONFIG_KERNEL_SWAP=y
 
 #disable defaults
-# CONFIG_KERNEL_SWAP is not set
 # CONFIG_PACKAGE_br2684ctl is not set
 # CONFIG_PACKAGE_kmod-gpio-button-hotplug is not set
 # CONFIG_PACKAGE_kmod-leds-gpio is not set
@@ -59,14 +59,16 @@ CONFIG_PACKAGE_prometheus-node-exporter-lua=y
 
 # Adblocking / DNS blocklists
 CONFIG_PACKAGE_adblock=y
-#CONFIG_PACKAGE_luci-app-adblock=y
+CONFIG_PACKAGE_luci-app-adblock=y
 
 # QOS
 CONFIG_PACKAGE_sqm-scripts=y
 CONFIG_PACKAGE_sqm-scripts-extra=y
 
+# wireless
+#CONFIG_PACKAGE_hostapd=y
+
 # utilities
-CONFIG_PACKAGE_hostapd=y
 CONFIG_PACKAGE_tcpdump-mini=y
 CONFIG_PACKAGE_curl=y
 CONFIG_PACKAGE_dnsmasq=y
@@ -74,7 +76,9 @@ CONFIG_PACKAGE_ip-tiny=y
 CONFIG_PACKAGE_mwan3=y
 
 # extroot
-CONFIG_PACKAGE_kmod-usb2
+CONFIG_PACKAGE_kmod-usb2=y
+CONFIG_PACKAGE_kmod-usb-dwc2=y
+CONFIG_PACKAGE_kmod-usb-ledtrig-usbport=y
 CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_kmod-fs-f2fs=y
 CONFIG_PACKAGE_kmod-usb-storage=y

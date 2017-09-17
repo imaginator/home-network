@@ -1,0 +1,51 @@
+# Kernel
+CONFIG_TARGET_ar71xx=y
+CONFIG_TARGET_ar71xx_generic=y
+CONFIG_TARGET_ar71xx_generic_DEVICE_ubnt-uap-pro=y
+CONFIG_PROCD_SHOW_BOOT=y
+
+# ipv6
+CONFIG_PACKAGE_odhcp6c=y
+
+#disable defaults
+# CONFIG_KERNEL_SWAP is not set
+# CONFIG_PACKAGE_br2684ctl is not set
+# CONFIG_PACKAGE_dsl-vrx200-firmware-xdsl-b-patch is not set
+# CONFIG_PACKAGE_kmod-gpio-button-hotplug is not set
+# CONFIG_PACKAGE_kmod-leds-gpio is not set
+# CONFIG_PACKAGE_kmod-ltq-atm-vr9 is not set
+# CONFIG_PACKAGE_kmod-usb-core is not set
+# CONFIG_PACKAGE_kmod-usb-dwc2 is not set
+# CONFIG_PACKAGE_kmod-usb-ledtrig-usbport is not set
+# CONFIG_PACKAGE_ppp-mod-pppoa is not set
+# CONFIG_PACKAGE_wpad-mini is not set
+# CONFIG_PACKAGE_kmod-atmtcp is not set
+# CONFIG_PACKAGE_kmod-ipoa is not set
+# CONFIG_PACKAGE_linux-atm is not set
+# CONFIG_PACKAGE_ltq-at is not set
+# CONFIG_PACKAGE_prism54-firmware is not set
+# CONFIG_WPA_SUPPLICANT_INTERNAL is not set
+# CONFIG_WPA_SUPPLICANT_OPENSSL is not set
+
+# image builder
+CONFIG_IB=y
+CONFIG_IB_STANDALONE=y
+
+# Bridges and VLANs
+CONFIG_PACKAGE_kmod-8021q=y
+CONFIG_PACKAGE_kmod-bridge=y
+
+# For monitoring (needs luci.model.network library)
+CONFIG_PACKAGE_luci-base=y
+CONFIG_PACKAGE_prometheus-node-exporter-lua=y
+
+# utilities
+# CONFIG_PACKAGE_wpad-mini is not set
+CONFIG_PACKAGE_hostapd=y
+CONFIG_PACKAGE_tcpdump-mini=y
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_ip-tiny=y
+
+# luci
+CONFIG_PACKAGE_luci=y
+CONFIG_PACKAGE_luci-theme-bootstrap=y
