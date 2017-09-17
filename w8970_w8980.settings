@@ -231,8 +231,8 @@ EOF
 # CPU        6 (all vlans are tagged to CPU)
 # LAN 1      5 (to bunker - all vlans)
 # LAN 2      0 (          - vlan 2) 10.7.11.7 (iLO)
-# LAN 3      2 (          - vlan 2) homematic 
-# LAN 4      4 (          - vlan 3 and 2) (bedroom switch)
+# LAN 3      2 (          - vlan 2 and 3) (unifi AP pro)
+# LAN 4      4 (          - vlan 2 and 3) (lounge switch)
 
 uci add      network  switch
 uci set      network.@switch[-1]=switch
@@ -245,14 +245,14 @@ uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
 uci set      network.@switch_vlan[-1].vlan='2'
-uci set      network.@switch_vlan[-1].ports='6t 5t 4t 0 2'
+uci set      network.@switch_vlan[-1].ports='6t 5t 4t 0 2t'
 uci commit   network.@switch_vlan[-1]
            
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
 uci set      network.@switch_vlan[-1].vlan='3'
-uci set      network.@switch_vlan[-1].ports='6t 5t 4t'
+uci set      network.@switch_vlan[-1].ports='6t 5t 4t 2t'
 uci commit   network.@switch_vlan[-1]
 
 uci set      network.loopback=interface
