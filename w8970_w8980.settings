@@ -694,15 +694,20 @@ uci commit prometheus-node-exporter-lua
 uci import adblock <<EOF
 EOF
 
+uci add    adblock global
 uci set    adblock.global=adblock
 uci set    adblock.global.adb_enabled='1'
+uci set    adblock.global.adb_backupdir='/tmp'
+uci set    adblock.global.adb_forcedns='0'
+uci set    adblock.global.adb_dns='dnsmasq'
 uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
 uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
+uci set    adblock.global.adb_forcesrt='0'
 uci set    adblock.global.adb_backup='0'
-uci set    adblock.global.adb_backupdir='/mnt'
 uci set    adblock.global.adb_debug='1'
-uci set    adblock.global.adb_iface='henet'
-uci set    adblock.global.adb_triggerdelay='120' # gives us the chance to log in and change this if using too much memory.
+uci set    adblock.global.adb_manmode='0'
+uci set    adblock.global.adb_trigger='easybell'
+uci set    adblock.global.adb_triggerdelay='15' # gives us the chance to log in and change this if using too much memory.
 uci commit adblock.global
 
 uci add    adblock  source
