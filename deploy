@@ -25,7 +25,7 @@ case $1 in
     ' < w8970_w8980.settings  | ssh root@10.7.11.5
     ;;
 
-  repeater0[1-5])
+  repeater0[1-6])
     envsubst \ '
     $trusted_wifikey \
     $dual2_roaming_key \
