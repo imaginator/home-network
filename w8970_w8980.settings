@@ -690,28 +690,35 @@ uci commit prometheus-node-exporter-lua
 
 /etc/init.d/prometheus-node-exporter-lua enable || true
 
+cat <<'EOF' > /etc/adblock/adblock.blacklist
+# domains to block
+# the neighbour streams an inordinate amount of TV from here.
+zattoo.de
+zattoo.com
+EOF
 
 uci import adblock <<EOF
 EOF
 
-uci add    adblock global
 uci set    adblock.global=adblock
-uci set    adblock.global.adb_enabled='1'
-uci set    adblock.global.adb_backupdir='/tmp'
-uci set    adblock.global.adb_forcedns='0'
+uci set    adblock.global.adb_backup='0'
+uci set    adblock.global.adb_backupdir='/mnt'
+uci set    adblock.global.adb_debug='1'
 uci set    adblock.global.adb_dns='dnsmasq'
+uci set    adblock.global.adb_enabled='1'
+uci set    adblock.global.adb_forcedns='0'
+uci set    adblock.global.adb_forcesrt='0'
+uci set    adblock.global.adb_manmode='0'
+uci set    adblock.global.adb_rtfile='/tmp/adb_runtime.json'
+uci set    adblock.global.adb_trigger='easybell'
+uci set    adblock.global.adb_triggerdelay='5' # gives us the chance to log in and change this if using too much memory.
 uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
 uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
-uci set    adblock.global.adb_forcesrt='0'
-uci set    adblock.global.adb_backup='0'
-uci set    adblock.global.adb_debug='1'
-uci set    adblock.global.adb_manmode='0'
-uci set    adblock.global.adb_trigger='easybell'
-uci set    adblock.global.adb_triggerdelay='15' # gives us the chance to log in and change this if using too much memory.
 uci commit adblock.global
 
-uci add    adblock  source
+uci add    adblock source
 uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=blacklist
 uci set    adblock.@source[-1].enabled='1'
 uci set    adblock.@source[-1].adb_src='/etc/adblock/adblock.blacklist'
 uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
@@ -720,6 +727,7 @@ uci commit adblock.@source[-1]
 
 uci add    adblock  source
 uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=adway
 uci set    adblock.@source[-1].enabled='1'
 uci set    adblock.@source[-1].adb_src='https://adaway.org/hosts.txt'
 uci set    adblock.@source[-1].adb_src_rset='\$0 ~/^127\.0\.0\.1[ \t]+([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$2)}'
@@ -728,6 +736,7 @@ uci commit adblock.@source[-1]
 
 uci add    adblock  source
 uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=yoyo
 uci set    adblock.@source[-1].enabled='1'
 uci set    adblock.@source[-1].adb_src='https://pgl.yoyo.org/adservers/serverlist.php?hostformat=nohtml&showintro=0&mimetype=plaintext'
 uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
@@ -736,6 +745,7 @@ uci commit adblock.@source[-1]
 
 uci add    adblock  source
 uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=malvertising
 uci set    adblock.@source[-1].enabled='1'
 uci set    adblock.@source[-1].adb_src='https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt'
 uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
@@ -743,10 +753,6 @@ uci set    adblock.@source[-1].adb_src_desc='mozilla driven blocklist, numerous 
 uci commit adblock.@source[-1]
 
 /etc/init.d/adblock enable || true
-
-cat <<'EOF' > /etc/adblock/adblock.blacklist
-zattoo.com
-EOF
 
 uci import openvpn <<EOF
 EOF
