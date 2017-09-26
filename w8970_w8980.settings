@@ -332,15 +332,11 @@ chmod 755 /etc/ppp/ip-down.d/reset-dsl.sh
 uci set      network.dsl_dev=device
 uci set      network.dsl_dev.name='ptm0'
 uci set      network.dsl_dev.mtu='1504'
-# testing to see if manually setting this avoids the lockup when the circuit is down
-uci set      network.dsl_dev.macaddr='c4:60:f6:2b:98:aa' 
 
 uci set      network.dsl_vlan=device
 uci set      network.dsl_vlan.name='ptm0.7'
 uci set      network.dsl_vlan.proto=none
 uci set      network.dsl_vlan.mtu='1500'
-# testing to see if manually setting this avoids the lockup when the circuit is down
-uci set      network.dsl_vlan.macaddr='c4:60:f6:2b:98:bb' 
 
 uci set      network.easybell=interface
 uci set      network.easybell.proto=pppoe
@@ -568,7 +564,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='00:a0:c6:eb:5c:6f'
+uci set      dhcp.@host[-1].mac='60:e3:ac:e7:a5:60'
 uci set      dhcp.@host[-1].name='simon-nexus5x'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
