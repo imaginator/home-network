@@ -1,0 +1,50 @@
+#!Current Configuration:
+#!
+#!System Description "EdgeSwitch 24-Port 250W, 1.7.1.4993748, Linux 3.6.5-f4a26ed5, 0.0.0.0000000"
+#!System Software Version "1.7.1.4993748"
+#!System Up Time          "0 days 1 hrs 15 mins 48 secs"
+#!Additional Packages     QOS,IPv6 Management,Routing
+#!Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
+#!
+
+enable
+
+network protocol none
+network parms 10.7.11.2 255.255.255.0 10.7.11.5
+network ipv6 address dhcp
+network ipv6 address autoconfig
+vlan database
+vlan 2-3
+vlan name 2 "trusted"
+vlan name 3 "notrust"
+exit
+ip ssh server enable
+ip ssh protocol 2
+sshcon timeout 120
+no ip telnet server enable
+configure
+ip domain name "imagilan"
+ip domain list "imagilan"
+ip name server 10.7.11.5
+logging console 7
+logging persistent 7
+logging host "10.7.11.1" ipv4 514 debug
+logging syslog
+logging cli-command
+aaa authentication enable "enableList" enable none
+line console
+exit
+line telnet
+exit
+line ssh
+exit
+snmp-server location "closet"
+snmp-server contact "simon@imaginator.com"
+write memory
+!
+
+
+
+
+exit
+
