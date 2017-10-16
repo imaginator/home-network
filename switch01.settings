@@ -20,6 +20,7 @@ vlan 2-3
 vlan name 2 "trusted"
 vlan name 3 "notrust"
 exit
+network mgmt_vlan 2
 ip ssh server enable
 ip ssh protocol 2
 sshcon timeout 120
@@ -43,8 +44,6 @@ exit
 snmp-server location "closet"
 snmp-server contact "simon@imaginator.com"
 !
-
-
 
 interface 0/1
   description 'default input - nothing special'
