@@ -1,11 +1,11 @@
-#!Current Configuration:
-#!
-#!System Description "EdgeSwitch 24-Port 250W, 1.7.1.4993748, Linux 3.6.5-f4a26ed5, 0.0.0.0000000"
-#!System Software Version "1.7.1.4993748"
-#!System Up Time          "0 days 1 hrs 15 mins 48 secs"
-#!Additional Packages     QOS,IPv6 Management,Routing
-#!Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
-#!
+!#Current Configuration:
+!#
+!#System Description "EdgeSwitch 24-Port 250W, 1.7.1.4993748, Linux 3.6.5-f4a26ed5, 0.0.0.0000000"
+!#System Software Version "1.7.1.4993748"
+!#System Up Time          "0 days 1 hrs 15 mins 48 secs"
+!#Additional Packages     QOS,IPv6 Management,Routing
+!#Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
+!#
 
 enable
 
@@ -81,10 +81,11 @@ exit
 
 exit
 
-write memory
-y
-!
-reload
-y
-exit
+!# we don't automatically write memory
+!# write memory
+!# y
+!# or reload
+!# reload
+!# y
 
+exit
