@@ -245,14 +245,21 @@ uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
 uci set      network.@switch_vlan[-1].vlan='2'
-uci set      network.@switch_vlan[-1].ports='6t 5t 4t 0 2t'
+uci set      network.@switch_vlan[-1].ports='6t 5t'
 uci commit   network.@switch_vlan[-1]
            
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
 uci set      network.@switch_vlan[-1].vlan='3'
-uci set      network.@switch_vlan[-1].ports='6t 5t 4t 2t'
+uci set      network.@switch_vlan[-1].ports='6t 5t'
+uci commit   network.@switch_vlan[-1]
+
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vlan='4'
+uci set      network.@switch_vlan[-1].ports='6t 5t'
 uci commit   network.@switch_vlan[-1]
 
 uci set      network.loopback=interface
@@ -629,6 +636,15 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.33'
 uci set      dhcp.@host[-1].name='imagisuck'
 uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.34'
+uci set      dhcp.@host[-1].name='google-home'
+uci set      dhcp.@host[-1].mac='48:d6:d5:74:e1:00'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
