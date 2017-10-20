@@ -229,10 +229,10 @@ EOF
 # Port   Switch port
 # ----   -----------
 # CPU        6 (all vlans are tagged to CPU)
-# LAN 1      5 (to bunker - all vlans)
-# LAN 2      0 (          - vlan 2) 10.7.11.7 (iLO)
-# LAN 3      2 (          - vlan 2 and 3) (unifi AP pro)
-# LAN 4      4 (          - vlan 2 and 3) (lounge switch)
+# LAN 1      5 (vlan trunk to switch01.imagilan)
+# LAN 2      0 ( ) 
+# LAN 3      2 ( ) 
+# LAN 4      4 ( )       
 
 uci add      network  switch
 uci set      network.@switch[-1]=switch
@@ -283,7 +283,7 @@ uci set      network.trusted.broadcast='10.7.11.255'
 uci set      network.trusted.netmask='255.255.255.0'
 uci set      network.trusted.dns='10.7.11.5'
 uci set      network.trusted.ip6assign='64'
-uci add_list network.trusted.ip6class='henet'
+uci add_list network.trusted.ip6class='pyur6'
 uci set      network.trusted.ip6ifaceid='::5'
 uci set      network.trusted.ip6hint='2'
            
@@ -301,19 +301,6 @@ uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.7.12.5'
 uci set      network.notrust.broadcast='10.7.12.255'
           
-uci set      network.henet=interface
-uci set      network.henet.proto=6in4
-uci set      network.henet.peeraddr='216.66.86.114'
-uci set      network.henet.ip6addr='2001:470:6c:b2b::2/64'
-uci set      network.henet.ip6gw='2001:470:6c:b2b::1'
-uci set      network.henet.ip6prefix='2001:470:5252::/48'
-uci set      network.henet.tunnelid='${henet_tunnelid}'
-uci set      network.henet.username='${henet_username}'
-uci set      network.henet.password='${henet_password}'
-uci set      network.henet.force_link='1'
-uci set      network.henet.defaultroute='1'
-uci set      network.henet.mtu='1472'
-
 uci set      network.dsl=dsl
 uci set      network.dsl.xfer_mode='ptm'
 uci set      network.dsl.annex='b'
@@ -366,6 +353,16 @@ uci set      network.ffvpn.proto=none
 uci set      network.ffvpn.ifname=ffvpn
 uci set      network.ffvpn.delegate='0'
 uci set      network.ffvpn.auto='1'
+
+uci set      network.pyur=interface
+uci set      network.pyur.ifname=eth0.4
+uci set      network.pyur.proto=dhcp
+
+uci set      network.pyur6=interface
+uci set      network.pyur6.ifname=eth0.4
+uci set      network.pyur6.proto=dhcpv6
+uci set      network.pyur6.reqaddress=try
+uci set      network.pyur6.reqprefix=auto
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
 uci add      network  rule
@@ -891,7 +888,8 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_trusted'
 uci add_list firewall.@zone[-1].network='easybell'
-uci add_list firewall.@zone[-1].network='henet'
+uci add_list firewall.@zone[-1].network='pyur'
+uci add_list firewall.@zone[-1].network='pyur6'
 uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
 uci set      firewall.@zone[-1].input='DROP'
