@@ -19,6 +19,7 @@ vlan database
 vlan 2-3
 vlan name 2 "trusted"
 vlan name 3 "notrust"
+vlan name 4 "upstream"
 exit
 network mgmt_vlan 2
 ip ssh server enable
@@ -47,6 +48,23 @@ snmp-server contact "simon@imaginator.com"
 
 interface 0/1
   description 'default input - nothing special'
+exit
+
+interface 0/2
+  description 'cable modem'
+  switchport mode access
+  switchport access vlan 4
+  vlan pvid 4
+  vlan acceptframe admituntaggedonly
+  vlan ingressfilter
+exit
+
+interface 0/3
+  description 'router uplink'
+  switchport mode trunk
+  vlan acceptframe vlanonly
+  vlan participation include 2-4
+  vlan tagging 2-4
 exit
 
 interface 0/7-0/12
