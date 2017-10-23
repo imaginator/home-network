@@ -385,7 +385,6 @@ uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
 uci set      dhcp.trusted.leasetime=60m
 uci add_list dhcp.trusted.dns='10.7.11.5'
-uci add_list dhcp.trusted.dns='2001:470:5252:2::5'
 uci set      dhcp.trusted.domain=imagilan
 uci commit   dhcp.trusted
 
@@ -409,7 +408,7 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='2001:470:5252:2:b25a:daff:fe87:ff3c'
+uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
 
@@ -425,12 +424,6 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.5'
-uci set      dhcp.@domain[-1].name='imagiswitch'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='2001:470:5252:2::5'
 uci set      dhcp.@domain[-1].name='imagiswitch'
 uci commit   dhcp.@domain[-1]
 
