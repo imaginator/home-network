@@ -8,7 +8,7 @@ set -xe
 # depends on build settings in w8970.diffconfig
 
 # Personal traffic
-# trusted   <-> wan_trusted (easybell henet)
+# trusted   <-> wan_trusted (pyur henet)
 # 10.7.11.0/24
 
 # Freifunk traffic
@@ -301,52 +301,6 @@ uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.7.12.5'
 uci set      network.notrust.broadcast='10.7.12.255'
           
-uci set      network.dsl=dsl
-uci set      network.dsl.xfer_mode='ptm'
-uci set      network.dsl.annex='b'
-uci set      network.dsl.line_mode='vdsl'
-
-# since the DSL line doesn't reset we need to restart the DSL modem 
-# when the ppp connection dies. The line retraining *should* terminate 
-# any zombie sessions for the circuit on the dslam.
-# (this is a horrible hack)
-
-if [ ! -d "/etc/ppp/ip-down.d/" ]; then
-  mkdir /etc/ppp/ip-down.d
-fi
-
-cat <<'EOF' > /etc/ppp/ip-down.d/reset-dsl.sh
-#!/bin/sh
-logger "running /etc/ppp/ip-down.d/reset-dsl.sh script"
-sleep 60 # don't be too bouncy!
-reboot   # it seems like the only way to reset the DSL modem is with a reboot :(
-EOF
-chmod 755 /etc/ppp/ip-down.d/reset-dsl.sh
-
-uci set      network.dsl_dev=device
-uci set      network.dsl_dev.name='ptm0'
-uci set      network.dsl_dev.mtu='1504'
-
-uci set      network.dsl_vlan=device
-uci set      network.dsl_vlan.name='ptm0.7'
-uci set      network.dsl_vlan.proto=none
-uci set      network.dsl_vlan.mtu='1500'
-
-uci set      network.easybell=interface
-uci set      network.easybell.proto=pppoe
-uci set      network.easybell.ifname='ptm0.7'
-uci set      network.easybell.username='${easybell_username}'
-uci set      network.easybell.password='${easybell_password}'
-uci set      network.easybell.mtu='1492'
-uci set      network.easybell.peerdns='0'
-uci set      network.easybell.ipv6='0'
-uci set      network.easybell.demand='0'
-uci set      network.easybell.persist='true'
-uci set      network.easybell.maxfail='0'
-uci set      network.easybell.holdoff='5'
-uci set      network.easybell.keepalive='5 5'
-uci set      network.easybell.pppd_options='lcp-echo-adaptive debug' 
-
 uci set      network.ffvpn=interface
 uci set      network.ffvpn.force_link='1'
 uci set      network.ffvpn.proto=none
@@ -415,10 +369,8 @@ uci set      dhcp.@dnsmasq[-1].nonegcache='0'
 uci set      dhcp.@dnsmasq[-1].localservice='1'
 uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
-uci add_list dhcp.@dnsmasq[-1].server='195.185.185.195'
-uci add_list dhcp.@dnsmasq[-1].server='62.26.26.62'
-uci add_list dhcp.@dnsmasq[-1].server='2a02:200:1:11::100'
-uci add_list dhcp.@dnsmasq[-1].server='2001:470:20::2'
+uci add_list dhcp.@dnsmasq[-1].server='62.117.1.25'  # pyur
+uci add_list dhcp.@dnsmasq[-1].server='89.16.129.25' # pyur
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
@@ -646,24 +598,6 @@ uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci import sqm <<EOF
-EOF
-
-uci set    sqm.vdsl=queue
-uci set    sqm.vdsl.qdisc='fq_codel'
-uci set    sqm.vdsl.script='simple.qos'
-uci set    sqm.vdsl.qdisc_advanced='0'
-uci set    sqm.vdsl.enabled='1'
-uci set    sqm.vdsl.interface='pppoe-easybell'
-uci set    sqm.vdsl.debug_logging='1'
-uci set    sqm.vdsl.download='35000'
-uci set    sqm.vdsl.upload='8000'
-uci set    sqm.vdsl.verbosity='10'
-uci set    sqm.vdsl.linklayer='none'
-uci commit sqm.vdsl
-
-/etc/init.d/sqm enable || true
-
 uci import ddns <<EOF
 EOF
 
@@ -678,14 +612,14 @@ uci add    ddns  service
 uci set    ddns.@service[-1]=service
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].use_ipv6='0'
-uci set    ddns.@service[-1].interface='easybell' # for hotplug events
-uci set    ddns.@service[-1].ip_source='network'
-uci set    ddns.@service[-1].ip_network='easybell'
+uci set    ddns.@service[-1].interface='pyur' # for hotplug events
+uci set    ddns.@service[-1].ip_source='web'
+uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
 uci set    ddns.@service[-1].domain='${ddns_domain}'
 uci set    ddns.@service[-1].username='${ddns_username}'
 uci set    ddns.@service[-1].password='${ddns_password}'
 uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].use_logfile='1'
+uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
 uci set    ddns.@service[-1].force_interval='5'
@@ -728,7 +662,7 @@ uci set    adblock.global.adb_forcedns='0'
 uci set    adblock.global.adb_forcesrt='0'
 uci set    adblock.global.adb_manmode='0'
 uci set    adblock.global.adb_rtfile='/tmp/adb_runtime.json'
-uci set    adblock.global.adb_trigger='easybell'
+uci set    adblock.global.adb_trigger='pyur'
 uci set    adblock.global.adb_triggerdelay='5' # gives us the chance to log in and change this if using too much memory.
 uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
 uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
@@ -887,7 +821,6 @@ uci commit   firewall.@zone[-1]
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_trusted'
-uci add_list firewall.@zone[-1].network='easybell'
 uci add_list firewall.@zone[-1].network='pyur'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci set      firewall.@zone[-1].masq='1'
@@ -1230,6 +1163,33 @@ uci set    firewall.@rule[-1].src='trusted'
 uci set    firewall.@rule[-1].proto='udp'
 uci set    firewall.@rule[-1].family='ipv4'
 uci set    firewall.@rule[-1].dest_ip='224.0.0.0/4'
+uci set    firewall.@rule[-1].target='ACCEPT'
+uci commit firewall.@rule[-1]
+
+uci add    firewall rule
+uci set    firewall.@rule[-1]=rule
+uci set    firewall.@rule[-1].name='pyur6 dhcp request'
+uci set    firewall.@rule[-1].src='wan_trusted'
+uci set    firewall.@rule[-1].src_ip='fe80::/64'
+uci set    firewall.@rule[-1].src_port='546'
+uci set    firewall.@rule[-1].dest='wan_trusted'
+uci set    firewall.@rule[-1].dest_ip='ff02::1:2'
+uci set    firewall.@rule[-1].dest_port='547'
+uci set    firewall.@rule[-1].family='ipv6'
+uci set    firewall.@rule[-1].proto='udp'
+uci set    firewall.@rule[-1].target='ACCEPT'
+uci commit firewall.@rule[-1]
+
+uci add    firewall rule
+uci set    firewall.@rule[-1]=rule
+uci set    firewall.@rule[-1].name='pyur6 dhcp reply'
+uci set    firewall.@rule[-1].src='wan_trusted'
+uci set    firewall.@rule[-1].src_ip='fc00::/6'
+uci set    firewall.@rule[-1].src_port='547'
+uci set    firewall.@rule[-1].dest_ip='fe80::/64'
+uci set    firewall.@rule[-1].dest_port='546'
+uci set    firewall.@rule[-1].family='ipv6'
+uci set    firewall.@rule[-1].proto='udp'
 uci set    firewall.@rule[-1].target='ACCEPT'
 uci commit firewall.@rule[-1]
 
