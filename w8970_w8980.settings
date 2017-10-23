@@ -817,12 +817,10 @@ uci set      firewall.@zone[-1].name='wan_trusted'
 uci add_list firewall.@zone[-1].network='pyur'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].mtu_fix='1'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
-#uci set      firewall.@zone[-1].log_limit='10/minute'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
@@ -830,17 +828,11 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_notrust'
 uci add_list firewall.@zone[-1].network='ffvpn'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].mtu_fix='1'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
-#uci set      firewall.@zone[-1].log_limit='10/minute'
 uci commit   firewall.@zone[-1]
-
-# The forwarding sections control the traffic flow between zones and may enable MSS clamping for specific directions. 
-# Only one direction is covered by a forwarding rule. 
-# To allow bidirectional traffic flows between two zones, two forwardings are required, with src and dest reversed in each.
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
@@ -986,8 +978,29 @@ uci commit firewall.@redirect[-1]
         
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='DHCPv6 ICMP'
+uci set      firewall.@rule[-1].name='IPv6 input from LAN'
 uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
+uci set      firewall.@rule[-1].limit='1000/sec'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+        
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IPv6 input from WAN'
+uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
 uci add_list firewall.@rule[-1].icmp_type='echo-reply'
@@ -1007,9 +1020,9 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-ICMPv6-wan-Input'
+uci set      firewall.@rule[-1].name='Forward ICMPv6 from wan to lan'
 uci set      firewall.@rule[-1].src='wan_trusted'
-uci set      firewall.@rule[-1].dest='*'
+uci set      firewall.@rule[-1].dest='trusted'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
 uci add_list firewall.@rule[-1].icmp_type='echo-reply'
@@ -1189,4 +1202,6 @@ uci commit firewall.@rule[-1]
 /etc/init.d/firewall enable || true
 
 echo -e "All done with writing.\nRebooting..."
-reboot
+# reboot
+
+/etc/init.d/firewall restart
