@@ -272,11 +272,6 @@ uci set      network.loopback.netmask='255.0.0.0'
 uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
-uci add_list network.trusted.ifname='dual2'
-uci set      network.trusted.hairpin='1'
-uci set      network.trusted.hairpin_mode='1'
-uci set      network.trusted.mcast_to_ucast='1'
-uci set      network.trusted.igmp_snooping='0'
 uci set      network.trusted.proto='static'
 uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.broadcast='10.7.11.255'
@@ -285,29 +280,18 @@ uci set      network.trusted.dns='10.7.11.5'
 uci set      network.trusted.ip6assign='64'
 uci add_list network.trusted.ip6class='pyur6'
 uci set      network.trusted.ip6ifaceid='::5'
-uci set      network.trusted.ip6hint='2'
            
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
 uci add_list network.notrust.ifname='eth0.3'
 uci add_list network.notrust.ifname='freifunk'
-uci set      network.notrust.force_link='1'
-uci set      network.notrust.hairpin='0'
-uci set      network.notrust.mcast_to_ucast='1'
-uci set      network.notrust.igmp_snooping='0'
-uci set      network.notrust.bridge_empty='1'
 uci set      network.notrust.proto='static'
 uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.7.12.5'
 uci set      network.notrust.broadcast='10.7.12.255'
+uci set      network.notrust.delegate='0'
           
-uci set      network.ffvpn=interface
-uci set      network.ffvpn.force_link='1'
-uci set      network.ffvpn.proto=none
-uci set      network.ffvpn.ifname=ffvpn
-uci set      network.ffvpn.delegate='0'
-uci set      network.ffvpn.auto='1'
-
+# wan interface
 uci set      network.pyur=interface
 uci set      network.pyur.ifname=eth0.4
 uci set      network.pyur.proto=dhcp
@@ -315,8 +299,22 @@ uci set      network.pyur.proto=dhcp
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname=eth0.4
 uci set      network.pyur6.proto=dhcpv6
-uci set      network.pyur6.reqaddress=try
-uci set      network.pyur6.reqprefix=auto
+uci set      network.pyur6.default=1
+
+uci add      network  route6
+uci set      network.@route6[-1]=route6
+uci set      network.@route6[-1].interface='pyur6'
+uci set      network.@route6[-1].gateway='fe80::201:5cff:fea4:5046'
+uci set      network.@route6[-1].target='::/0'
+
+uci set      network.ffvpn=interface
+uci set      network.ffvpn.proto=none
+uci set      network.ffvpn.ifname=ffvpn
+uci set      network.ffvpn.force_link='1'
+uci set      network.ffvpn.delegate='0'
+uci set      network.ffvpn.auto='1'
+
+uci commit   network
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
 uci add      network  rule
@@ -341,6 +339,13 @@ uci set      network.@route[-1].interface=ffvpn
 uci set      network.@route[-1].target=0.0.0.0
 uci set      network.@route[-1].netmask=0.0.0.0
 uci commit   network.@route[-1]
+
+uci add      network  route6
+uci set      network.@route6[-1]=route6
+uci set      network.@route6[-1].interface='pyur6'
+uci set      network.@route6[-1].gateway='fe80::201:5cff:fea4:5046'
+uci set      network.@route6[-1].target='::/0'
+uci commit   network.@route6[-1]
 
 uci import dhcp <<EOF
 EOF
@@ -380,7 +385,6 @@ uci set      dhcp.trusted.ignore='1'
 uci set      dhcp.trusted.dhcpv4='server'
 uci set      dhcp.trusted.ra='server'
 uci set      dhcp.trusted.dhcpv6='server'
-uci set      dhcp.trusted.ra_mtu='1432'
 uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
 uci set      dhcp.trusted.leasetime=60m
@@ -1202,6 +1206,4 @@ uci commit firewall.@rule[-1]
 /etc/init.d/firewall enable || true
 
 echo -e "All done with writing.\nRebooting..."
-# reboot
-
-/etc/init.d/firewall restart
+reboot
