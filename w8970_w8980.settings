@@ -292,20 +292,17 @@ uci set      network.notrust.broadcast='10.7.12.255'
 uci set      network.notrust.delegate='0'
           
 # wan interface
-uci set      network.pyur=interface
-uci set      network.pyur.ifname=eth0.4
-uci set      network.pyur.proto=dhcp
+uci set      network.pyur4=interface
+uci set      network.pyur4.ifname=eth0.4
+uci set      network.pyur4.proto=dhcp
+uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.delegate=0
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname=eth0.4
 uci set      network.pyur6.proto=dhcpv6
-uci set      network.pyur6.default=1
-
-uci add      network  route6
-uci set      network.@route6[-1]=route6
-uci set      network.@route6[-1].interface='pyur6'
-uci set      network.@route6[-1].gateway='fe80::201:5cff:fea4:5046'
-uci set      network.@route6[-1].target='::/0'
+uci set      network.pyur6.peerdns=0
+uci set      network.pyur6.delegate=0
 
 uci set      network.ffvpn=interface
 uci set      network.ffvpn.proto=none
@@ -340,13 +337,6 @@ uci set      network.@route[-1].target=0.0.0.0
 uci set      network.@route[-1].netmask=0.0.0.0
 uci commit   network.@route[-1]
 
-uci add      network  route6
-uci set      network.@route6[-1]=route6
-uci set      network.@route6[-1].interface='pyur6'
-uci set      network.@route6[-1].gateway='fe80::201:5cff:fea4:5046'
-uci set      network.@route6[-1].target='::/0'
-uci commit   network.@route6[-1]
-
 uci import dhcp <<EOF
 EOF
 
@@ -360,6 +350,7 @@ uci commit   dhcp.@odhcpd[-1]
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
+uci set      dhcp.@dnsmasq[-1].authoritative='1'
 uci set      dhcp.@dnsmasq[-1].domainneeded='1'
 uci set      dhcp.@dnsmasq[-1].boguspriv='1'
 uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
@@ -376,11 +367,12 @@ uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
 uci add_list dhcp.@dnsmasq[-1].server='62.117.1.25'  # pyur
 uci add_list dhcp.@dnsmasq[-1].server='89.16.129.25' # pyur
+uci add_list dhcp.@dnsmasq[-1].server='2001:4860:4860::8888'
+uci add_list dhcp.@dnsmasq[-1].server='2001:4860:4860::8844'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
 uci set      dhcp.trusted.interface='trusted'
-uci set      dhcp.trusted.authoritative='1'
 uci set      dhcp.trusted.ignore='1'
 uci set      dhcp.trusted.dhcpv4='server'
 uci set      dhcp.trusted.ra='server'
@@ -394,7 +386,6 @@ uci commit   dhcp.trusted
 
 uci set      dhcp.notrust=dhcp
 uci set      dhcp.notrust.interface=notrust
-uci set      dhcp.notrust.authoritative='1'
 uci set      dhcp.notrust.ignore='1'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start=100
@@ -416,15 +407,6 @@ uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.2'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.5'
@@ -436,6 +418,15 @@ uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.7'
 uci set      dhcp.@domain[-1].name='ilo'
 uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.2'
+uci set      dhcp.@host[-1].name='switch01'
+uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 #nanostation
 uci add      dhcp  host
@@ -609,12 +600,35 @@ uci add    ddns  service
 uci set    ddns.@service[-1]=service
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].use_ipv6='0'
-uci set    ddns.@service[-1].interface='pyur' # for hotplug events
+uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
+uci set    ddns.@service[-1].bind_network='pyur4'
 uci set    ddns.@service[-1].ip_source='web'
 uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
-uci set    ddns.@service[-1].domain='${ddns_domain}'
-uci set    ddns.@service[-1].username='${ddns_username}'
-uci set    ddns.@service[-1].password='${ddns_password}'
+uci set    ddns.@service[-1].domain='${ddns4_domain}'
+uci set    ddns.@service[-1].username='${ddns4_username}'
+uci set    ddns.@service[-1].password='${ddns4_password}'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].check_interval='5'
+uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].force_interval='5'
+uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].retry_interval='1'
+uci set    ddns.@service[-1].retry_unit='minutes'
+uci set    ddns.@service[-1].service_name='google.com'
+uci set    ddns.@service[-1].use_https='1'
+uci commit ddns.@service[-1]
+
+uci add    ddns  service
+uci set    ddns.@service[-1]=service
+uci set    ddns.@service[-1].enabled='1'
+uci set    ddns.@service[-1].use_ipv6='1'
+uci set    ddns.@service[-1].interface='pyur6' # for hotplug events
+uci set    ddns.@service[-1].ip_source='network'
+uci set    ddns.@service[-1].ip_network='pyur6'
+uci set    ddns.@service[-1].domain='${ddns6_domain}'
+uci set    ddns.@service[-1].username='${ddns6_username}'
+uci set    ddns.@service[-1].password='${ddns6_password}'
 uci set    ddns.@service[-1].use_syslog='1'
 uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
@@ -659,7 +673,7 @@ uci set    adblock.global.adb_forcedns='0'
 uci set    adblock.global.adb_forcesrt='0'
 uci set    adblock.global.adb_manmode='0'
 uci set    adblock.global.adb_rtfile='/tmp/adb_runtime.json'
-uci set    adblock.global.adb_trigger='pyur'
+uci set    adblock.global.adb_trigger='pyur4'
 uci set    adblock.global.adb_triggerdelay='5' # gives us the chance to log in and change this if using too much memory.
 uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
 uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
@@ -818,7 +832,7 @@ uci commit   firewall.@zone[-1]
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_trusted'
-uci add_list firewall.@zone[-1].network='pyur'
+uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].input='DROP'
