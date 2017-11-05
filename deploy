@@ -4,7 +4,7 @@ set -e # fail if we can't source the file
 set -x
 
 case $1 in
-  w8970|w8980)
+  n750)
     envsubst \ '
     $trusted_wifikey \
     $dual2_roaming_key \
@@ -14,15 +14,18 @@ case $1 in
     $henet_password \
     $easybell_username \
     $easybell_password \
-    $ddns_domain \
-    $ddns_username \
-    $ddns_password \
+    $ddns4_domain \
+    $ddns4_username \
+    $ddns4_password \
+    $ddns6_domain \
+    $ddns6_username \
+    $ddns6_password \
     $freifunk_ca_crt \
     $freifunk_client_crt \
     $freifunk_client_key \
     $imagivpn_key \
     $dh2048_pem \
-    ' < w8970_w8980.settings  | ssh root@10.7.11.5
+    ' < n750.settings  | ssh root@10.7.11.5
     ;;
 
   repeater0[1-6])
