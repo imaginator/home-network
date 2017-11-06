@@ -648,7 +648,7 @@ uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_address='::'
+uci set    prometheus-node-exporter-lua.main.listen_address='0'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
