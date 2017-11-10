@@ -1,0 +1,78 @@
+CONFIG_TARGET_ramips=y
+CONFIG_TARGET_ramips_mt7621=y
+CONFIG_TARGET_MULTI_PROFILE=y
+CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt-erx=y
+CONFIG_TARGET_DEVICE_PACKAGES_ramips_mt7621_DEVICE_ubnt-erx="kmod-i2c-gpio-custom kmod-gpio-pca953x"
+CONFIG_TARGET_PER_DEVICE_ROOTFS=y
+CONFIG_IMAGEOPT=y
+CONFIG_KERNEL_DIRECT_IO=y
+CONFIG_PACKAGE_ekooneplstat=y
+CONFIG_PACKAGE_fast-classifier-example=m
+CONFIG_PACKAGE_libatomic=m
+CONFIG_PACKAGE_libnl=m
+CONFIG_PACKAGE_libnl-core=m
+CONFIG_PACKAGE_libnl-genl=m
+CONFIG_PACKAGE_libnl-nf=m
+CONFIG_PACKAGE_libnl-route=m
+CONFIG_PACKAGE_libstdcpp=m
+CONFIG_PACKAGE_sysinfo=y
+CONFIG_PACKAGE_uboot-envtools=m
+
+# image builder
+CONFIG_IB=y
+CONFIG_IB_STANDALONE=y
+
+# DDNS
+CONFIG_PACKAGE_libustream-openssl=y
+CONFIG_PACKAGE_bind-host=y
+CONFIG_PACKAGE_ca-bundle=y
+CONFIG_PACKAGE_ca-certificates=y
+CONFIG_PACKAGE_ddns-scripts=y
+CONFIG_PACKAGE_luci-app-ddns=y
+
+# VPN
+CONFIG_PACKAGE_openvpn-openssl=y
+CONFIG_PACKAGE_kmod-tun=y
+
+# Bridges and Switching
+CONFIG_PACKAGE_kmod-bridge=y
+CONFIG_PACKAGE_bridge-utils=y
+CONFIG_PACKAGE_lldpd=y
+
+# ipv6
+CONFIG_PACKAGE_odhcp=y
+CONFIG_PACKAGE_odhcp6c=y
+CONFIG_PACKAGE_luci-proto-ipv6=y
+
+# For monitoring (needs luci.model.network library)
+CONFIG_PACKAGE_luci-base=y
+CONFIG_PACKAGE_prometheus-node-exporter-lua=y
+
+# Adblocking / DNS blocklists
+CONFIG_PACKAGE_adblock=y
+CONFIG_PACKAGE_luci-app-adblock=y
+
+# QOS
+CONFIG_PACKAGE_sqm-scripts=y
+CONFIG_PACKAGE_sqm-scripts-extra=y
+
+# utilities
+CONFIG_PACKAGE_tcpdump-mini=y
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_dnsmasq=y
+CONFIG_PACKAGE_ip-full=y
+CONFIG_PACKAGE_ip-bridge=y
+
+# hnet
+CONFIG_PACKAGE_hnet-full=y
+CONFIG_PACKAGE_luci-app-hnet=y
+
+# LUCI
+CONFIG_PACKAGE_luci=y
+CONFIG_PACKAGE_luci-theme-bootstrap=y
+CONFIG_PACKAGE_luci-proto-core=y
+CONFIG_PACKAGE_luci-proto-ppp=y
+CONFIG_PACKAGE_luci-app-firewall=y
+CONFIG_PACKAGE_luci-app-watchcat=y
+CONFIG_PACKAGE_luci-mod-admin-full=y
+CONFIG_PACKAGE_luci-app-firewall=y
