@@ -116,8 +116,6 @@ uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.broadcast='10.7.11.255'
 uci set      network.trusted.netmask='255.255.255.0'
 uci set      network.trusted.ip6assign='64'
-uci add_list network.trusted.ip6class='pyur6'
-uci set      network.trusted.ip6ifaceid='::5'
            
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
@@ -131,12 +129,12 @@ uci set      network.notrust.delegate='0'
           
 # wan interface
 uci set      network.pyur4=interface
-uci set      network.pyur4.ifname=eth0.4
+uci set      network.pyur4.ifname='eth0.4'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.peerdns=0
 
 uci set      network.pyur6=interface
-uci set      network.pyur6.ifname="eth0.4"
+uci set      network.pyur6.ifname='@pyur4'
 uci set      network.pyur6.proto=dhcpv6
 uci set      network.pyur6.peerdns=0
 uci set      network.pyur6.reqaddress='try'
@@ -227,7 +225,7 @@ uci set      dhcp.trusted.domain=imagilan
 uci commit   dhcp.trusted
 
 uci set      dhcp.notrust=dhcp
-uci set      dhcp.notrust.interface=notrust
+uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start=100
 uci set      dhcp.notrust.limit=100
