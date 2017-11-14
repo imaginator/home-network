@@ -39,6 +39,10 @@ CONFIG_PACKAGE_kmod-bridge=y
 CONFIG_PACKAGE_bridge-utils=y
 CONFIG_PACKAGE_lldpd=y
 
+#Hnet
+CONFIG_PACKAGE_hnet-full=y
+CONFIG_PACKAGE_luci-app-hnet=y
+
 # ipv6
 CONFIG_PACKAGE_6in4=y
 CONFIG_PACKAGE_odhcp=y
