@@ -60,11 +60,12 @@ interface 0/2
 exit
 
 interface 0/3
-  description 'router uplink'
+  description 'edgerouter x (all vlans)'
   switchport mode trunk
   vlan acceptframe vlanonly
   vlan participation include 2-4
   vlan tagging 2-4
+  poe opmode passive24v
 exit
 
 interface 0/7-0/12
