@@ -64,8 +64,8 @@ CONFIG_PACKAGE_ip-full=y
 CONFIG_PACKAGE_ip-bridge=y
 
 # hnet
-CONFIG_PACKAGE_hnet-full=y
-CONFIG_PACKAGE_luci-app-hnet=y
+# CONFIG_PACKAGE_hnet-full=y
+# CONFIG_PACKAGE_luci-app-hnet=y
 
 # LUCI
 CONFIG_PACKAGE_luci=y
