@@ -120,7 +120,6 @@ uci set      network.trusted.ip6assign='64'
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
 uci add_list network.notrust.ifname='eth0.3'
-uci add_list network.notrust.ifname='freifunk'
 uci set      network.notrust.proto='static'
 uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.7.12.5'
