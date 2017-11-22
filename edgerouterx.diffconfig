@@ -40,7 +40,6 @@ CONFIG_PACKAGE_bridge-utils=y
 CONFIG_PACKAGE_lldpd=y
 
 # ipv6
-CONFIG_PACKAGE_odhcp=y
 CONFIG_PACKAGE_odhcp6c=y
 CONFIG_PACKAGE_luci-proto-ipv6=y
 
@@ -59,7 +58,6 @@ CONFIG_PACKAGE_sqm-scripts-extra=y
 # utilities
 CONFIG_PACKAGE_tcpdump-mini=y
 CONFIG_PACKAGE_curl=y
-CONFIG_PACKAGE_dnsmasq=y
 CONFIG_PACKAGE_ip-full=y
 CONFIG_PACKAGE_ip-bridge=y
 
@@ -75,4 +73,8 @@ CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-watchcat=y
 CONFIG_PACKAGE_luci-mod-admin-full=y
-CONFIG_PACKAGE_luci-app-firewall=y
+
+# names
+CONFIG_PACKAGE_dnsmasq-full=y
+CONFIG_PACKAGE_odhcp=y
+CONFIG_PACKAGE_luci-app-dnsmasq-full=y
