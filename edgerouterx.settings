@@ -116,7 +116,6 @@ uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.broadcast='10.7.11.255'
 uci set      network.trusted.netmask='255.255.255.0'
 uci set      network.trusted.ip6assign='64'
-uci set      network.trusted.ip6ifaceid='::5'
            
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
@@ -207,21 +206,16 @@ uci add_list dhcp.@dnsmasq[-1].server='2001:4860:4860::8888'
 uci add_list dhcp.@dnsmasq[-1].server='2001:4860:4860::8844'
 uci commit   dhcp.@dnsmasq[-1]
 
-uci set      dhcp.pyur6=dhcp
-uci set      dhcp.pyur6.interface='pyur6'
-uci set      dhcp.pyur6.master='1'
-uci commit   dhcp.pyur6
-
 uci set      dhcp.trusted=dhcp
 uci set      dhcp.trusted.interface='trusted'
+uci set      dhcp.trusted.ra='server'
 uci set      dhcp.trusted.dhcpv4='server'
-uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
 uci set      dhcp.trusted.leasetime=60m
 uci add_list dhcp.trusted.dns='10.7.11.5'
 uci add_list dhcp.trusted.dns='2001:4860:4860::8888'
-uci set      dhcp.trusted.domain=imagilan
+uci set      dhcp.trusted.domain='imagilan'
 uci commit   dhcp.trusted
 
 uci set      dhcp.notrust=dhcp
@@ -230,8 +224,8 @@ uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start=100
 uci set      dhcp.notrust.limit=100
 uci set      dhcp.notrust.leasetime=60m
-uci set      dhcp.notrust.dns=10.7.12.5
-uci set      dhcp.notrust.domain=notrust
+uci set      dhcp.notrust.dns='10.7.12.5'
+uci set      dhcp.notrust.domain='notrust'
 uci commit   dhcp.notrust
 
 uci add      dhcp  domain 
@@ -632,11 +626,11 @@ EOF
 
 uci add    firewall defaults 
 uci set    firewall.@defaults[-1]=defaults
-uci set    firewall.@defaults[-1].input=DROP
-uci set    firewall.@defaults[-1].output=DROP
-uci set    firewall.@defaults[-1].forward=DROP
+uci set    firewall.@defaults[-1].input=ACCEPT
+uci set    firewall.@defaults[-1].output=ACCEPT
+uci set    firewall.@defaults[-1].forward=ACCEPT
 uci set    firewall.@defaults[-1].syn_flood='1'
-uci set    firewall.@defaults[-1].drop_invalid='1'
+uci set    firewall.@defaults[-1].drop_invalid='0'
 uci commit firewall.@defaults[-1]
 
 # A zone section groups one or more interfaces and serves as a source or destination for forwardings, 

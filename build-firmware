@@ -10,7 +10,7 @@ if [ -d $MODEL.src ]; then
     cd $MODEL.src
     git pull
 else
-  git clone --depth 1 https://git.lede-project.org/source.git $MODEL.src
+  git clone https://git.lede-project.org/source.git $MODEL.src
   cd $MODEL.src
 fi
 
@@ -26,6 +26,6 @@ cp ../$MODEL.diffconfig .config
 make defconfig
 
 # Build
-ionice --class 3 make -j4  # V=s
+ionice --class 3 make -j1  V=s
 
 cp .config .config.$MODEL.$(date --iso)
