@@ -125,12 +125,13 @@ uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.7.12.5'
 uci set      network.notrust.broadcast='10.7.12.255'
 uci set      network.notrust.delegate='0'
-          
+
 # wan interface
 uci set      network.pyur4=interface
 uci set      network.pyur4.ifname='eth0.4'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.macaddr='CA:FE:BA:BE:EE:EE'
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname='@pyur4'
@@ -227,6 +228,13 @@ uci set      dhcp.notrust.leasetime=60m
 uci set      dhcp.notrust.dns='10.7.12.5'
 uci set      dhcp.notrust.domain='notrust'
 uci commit   dhcp.notrust
+
+uci set      dhcp.pyur4=dhcp
+uci set      dhcp.pyur4.interface='pyur4'
+uci set      dhcp.pyur4.ra='server'
+uci set      dhcp.pyur4.master='1'
+uci set      dhcp.pyur4.ignore='1'
+uci commit   dhcp.pyur4
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
@@ -626,11 +634,9 @@ EOF
 
 uci add    firewall defaults 
 uci set    firewall.@defaults[-1]=defaults
-uci set    firewall.@defaults[-1].input=ACCEPT
-uci set    firewall.@defaults[-1].output=ACCEPT
-uci set    firewall.@defaults[-1].forward=ACCEPT
-uci set    firewall.@defaults[-1].syn_flood='1'
-uci set    firewall.@defaults[-1].drop_invalid='0'
+uci set    firewall.@defaults[-1].input='ACCEPT'
+uci set    firewall.@defaults[-1].output='ACCEPT'
+uci set    firewall.@defaults[-1].forward='REJECT'
 uci commit firewall.@defaults[-1]
 
 # A zone section groups one or more interfaces and serves as a source or destination for forwardings, 
@@ -660,7 +666,6 @@ uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
-#uci set      firewall.@zone[-1].log_limit='10/minute'
 uci commit   firewall.@zone[-1]
    
 uci add      firewall  zone
@@ -669,9 +674,9 @@ uci set      firewall.@zone[-1].name='wan_trusted'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].input='REJECT'
 uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].forward='REJECT'
 uci set      firewall.@zone[-1].log='1'
 uci commit   firewall.@zone[-1]
 
@@ -937,119 +942,120 @@ uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='prometheus'
-uci set    firewall.@rule[-1].src='trusted'
-uci set    firewall.@rule[-1].dest_port='9100'
-uci set    firewall.@rule[-1].proto='tcp'
-uci set    firewall.@rule[-1].family='any'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='prometheus'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].dest_port='9100'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='trust dns'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].dest_port='53'
+uci set      firewall.@rule[-1].proto='tcpudp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='notrust dns'
+uci set      firewall.@rule[-1].src='notrust'
+uci set      firewall.@rule[-1].dest_port='53'
+uci set      firewall.@rule[-1].proto='tcpudp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='trust dhcp'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].dest_port='67-68'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv4'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='notrust dhcp'
+uci set      firewall.@rule[-1].src='notrust'
+uci set      firewall.@rule[-1].dest_port='67-68'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv4'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Allow DHCPv6'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].src_ip='fe80::/10'
+uci set      firewall.@rule[-1].src_port='547'
+uci set      firewall.@rule[-1].dest_ip='fe80::/10'
+uci set      firewall.@rule[-1].dest_port='546'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
 
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='trust dns'
-uci set    firewall.@rule[-1].src='trusted'
-uci set    firewall.@rule[-1].dest_port='53'
-uci set    firewall.@rule[-1].proto='tcpudp'
-uci set    firewall.@rule[-1].family='any'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Allow ICMP Input'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
 
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='notrust dns'
-uci set    firewall.@rule[-1].src='notrust'
-uci set    firewall.@rule[-1].dest_port='53'
-uci set    firewall.@rule[-1].proto='tcpudp'
-uci set    firewall.@rule[-1].family='any'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Allow ICMP Forward'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
 
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='trust dhcp'
-uci set    firewall.@rule[-1].src='trusted'
-uci set    firewall.@rule[-1].dest_port='67-68'
-uci set    firewall.@rule[-1].proto='udp'
-uci set    firewall.@rule[-1].family='ipv4'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='notrust dhcp'
-uci set    firewall.@rule[-1].src='notrust'
-uci set    firewall.@rule[-1].dest_port='67-68'
-uci set    firewall.@rule[-1].proto='udp'
-uci set    firewall.@rule[-1].family='ipv4'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='trusted dhcpv6'
-uci set    firewall.@rule[-1].src='trusted'
-uci set    firewall.@rule[-1].family='ipv6'
-uci set    firewall.@rule[-1].src_ip='fe80::/64'
-uci set    firewall.@rule[-1].src_port='546'
-uci set    firewall.@rule[-1].proto='udp'
-uci set    firewall.@rule[-1].dest_ip='fc00::/6'
-uci set    firewall.@rule[-1].dest_port='547'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1].name='hurricane electric tunnel'
-uci set    firewall.@rule[-1].src='wan_trusted'
-uci set    firewall.@rule[-1].proto='41'
-uci set    firewall.@rule[-1].family='ipv4'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1].name='IGMP from trusted'
-uci set    firewall.@rule[-1].src='trusted'
-uci set    firewall.@rule[-1].proto='igmp'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1].name='Multicast to LAN'
-uci set    firewall.@rule[-1].src='trusted'
-uci set    firewall.@rule[-1].proto='udp'
-uci set    firewall.@rule[-1].family='ipv4'
-uci set    firewall.@rule[-1].dest_ip='224.0.0.0/4'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='pyur6 dhcp request'
-uci set    firewall.@rule[-1].src='wan_trusted'
-uci set    firewall.@rule[-1].src_ip='fe80::/64'
-uci set    firewall.@rule[-1].src_port='546'
-uci set    firewall.@rule[-1].dest='wan_trusted'
-uci set    firewall.@rule[-1].dest_ip='ff02::1:2'
-uci set    firewall.@rule[-1].dest_port='547'
-uci set    firewall.@rule[-1].family='ipv6'
-uci set    firewall.@rule[-1].proto='udp'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
-
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='pyur6 dhcp reply'
-uci set    firewall.@rule[-1].src='wan_trusted'
-uci set    firewall.@rule[-1].src_ip='fc00::/6'
-uci set    firewall.@rule[-1].src_port='547'
-uci set    firewall.@rule[-1].dest_ip='fe80::/64'
-uci set    firewall.@rule[-1].dest_port='546'
-uci set    firewall.@rule[-1].family='ipv6'
-uci set    firewall.@rule[-1].proto='udp'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
+uci add      firewall rule
+uci set      firewall.@rule[-1].name='IGMP from trusted'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='igmp'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1].name='Multicast to LAN'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv4'
+uci set      firewall.@rule[-1].dest_ip='224.0.0.0/4'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
 
 /etc/init.d/firewall enable || true
 
