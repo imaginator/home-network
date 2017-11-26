@@ -706,6 +706,12 @@ uci commit firewall.@forwarding[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='wan_trusted'
+uci set    firewall.@forwarding[-1].dest='wan_trusted'
+uci commit firewall.@forwarding[-1]
+
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
 uci set    firewall.@forwarding[-1].src='notrust'
 uci set    firewall.@forwarding[-1].dest='notrust'
 uci commit firewall.@forwarding[-1]
@@ -929,16 +935,6 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='tunnelbroker needs to ping router'
-uci set      firewall.@rule[-1].src='wan_trusted'
-uci set      firewall.@rule[-1].proto='icmp'
-uci add_list firewall.@rule[-1].icmp_type='echo-request'
-uci set      firewall.@rule[-1].family='ipv4'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='prometheus'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].dest_port='9100'
@@ -949,7 +945,7 @@ uci commit   firewall.@rule[-1]
             
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='trust dns'
+uci set      firewall.@rule[-1].name='trusted dns'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].dest_port='53'
 uci set      firewall.@rule[-1].proto='tcpudp'
@@ -990,7 +986,7 @@ uci commit   firewall.@rule[-1]
             
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow DHCPv6'
+uci set      firewall.@rule[-1].name='Allow DHCPv6 to upstream'
 uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='udp'
