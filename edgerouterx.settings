@@ -664,7 +664,7 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='notrust'
 uci add_list firewall.@zone[-1].network='notrust'
-uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].input='REJECT'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
@@ -687,9 +687,9 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_notrust'
 uci add_list firewall.@zone[-1].network='ffvpn'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].input='REJECT'
 uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].forward='REJECT'
 uci set      firewall.@zone[-1].log='1'
 uci commit   firewall.@zone[-1]
 
