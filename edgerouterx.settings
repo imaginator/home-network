@@ -131,14 +131,16 @@ uci set      network.pyur4=interface
 uci set      network.pyur4.ifname='eth0.4'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.macaddr='CA:FE:BA:BE:EE:EE'
 
 uci set      network.pyur6=interface
-uci set      network.pyur6.ifname='@pyur4'
+uci set      network.pyur6.ifname='eth0.4'
 uci set      network.pyur6.proto=dhcpv6
 uci set      network.pyur6.peerdns=0
 uci set      network.pyur6.reqaddress='try'
-uci set      network.pyur6.reqprefix='auto'
+uci set      network.pyur6.reqprefix='60'
+uci set      network.pyur6.metric='1'
 
 uci set      network.ffvpn=interface
 uci set      network.ffvpn.proto=none
@@ -178,7 +180,7 @@ EOF
 
 uci add      dhcp  odhcpd
 uci set      dhcp.@odhcpd[-1]=odhcpd
-uci set      dhcp.@odhcpd[-1].maindhcp='1'
+uci set      dhcp.@odhcpd[-1].maindhcp='0'
 uci set      dhcp.@odhcpd[-1].loglevel='7'
 uci set      dhcp.@odhcpd[-1].leasetrigger='/usr/sbin/odhcpd-update'
 uci set      dhcp.@odhcpd[-1].leasefile='/tmp/odhcpd.leases'
@@ -210,7 +212,9 @@ uci commit   dhcp.@dnsmasq[-1]
 uci set      dhcp.trusted=dhcp
 uci set      dhcp.trusted.interface='trusted'
 uci set      dhcp.trusted.ra='server'
-uci set      dhcp.trusted.dhcpv4='server'
+uci set      dhcp.trusted.dhcpv6='server'
+uci set      dhcp.trusted.ra_management='1'
+uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.start=100
 uci set      dhcp.trusted.limit=100
 uci set      dhcp.trusted.leasetime=60m
@@ -231,8 +235,6 @@ uci commit   dhcp.notrust
 
 uci set      dhcp.pyur4=dhcp
 uci set      dhcp.pyur4.interface='pyur4'
-uci set      dhcp.pyur4.ra='server'
-uci set      dhcp.pyur4.master='1'
 uci set      dhcp.pyur4.ignore='1'
 uci commit   dhcp.pyur4
 
@@ -972,6 +974,7 @@ uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
             
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='trust dhcp'
