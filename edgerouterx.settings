@@ -199,7 +199,8 @@ uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
 uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
 uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
 uci set      dhcp.@dnsmasq[-1].domain='imagilan'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/dhcpd.leases'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/dhcp.leases'
 uci set      dhcp.@dnsmasq[-1].expandhosts='1'
 uci set      dhcp.@dnsmasq[-1].nonegcache='0'
 uci set      dhcp.@dnsmasq[-1].localservice='1'
@@ -222,9 +223,9 @@ uci commit   dhcp.trusted
 uci set      dhcp.notrust=dhcp
 uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
-uci set      dhcp.notrust.start=100
-uci set      dhcp.notrust.limit=100
-uci set      dhcp.notrust.leasetime=60m
+uci set      dhcp.notrust.start='100'
+uci set      dhcp.notrust.limit='100'
+uci set      dhcp.notrust.leasetime='60m'
 uci set      dhcp.notrust.dns='10.7.12.5'
 uci set      dhcp.notrust.domain='notrust'
 uci commit   dhcp.notrust
@@ -660,7 +661,7 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='notrust'
 uci add_list firewall.@zone[-1].network='notrust'
-uci set      firewall.@zone[-1].input='REJECT'
+uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
