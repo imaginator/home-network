@@ -357,7 +357,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='60:e3:ac:e7:a5:60'
+uci set      dhcp.@host[-1].mac='d0:13:fd:5d:2f:fd'
 uci set      dhcp.@host[-1].name='simon-nexus5x'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
@@ -420,7 +420,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.34'
-uci set      dhcp.@host[-1].name='google-home'
+uci set      dhcp.@host[-1].name='imagilisten'
 uci set      dhcp.@host[-1].mac='48:d6:d5:74:e1:00'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
