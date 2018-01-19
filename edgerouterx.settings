@@ -213,7 +213,7 @@ uci set      dhcp.trusted.interface='trusted'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.start='100'
 uci set      dhcp.trusted.limit='150'
-uci set      dhcp.trusted.leasetime='60m'
+uci set      dhcp.trusted.leasetime='24h'
 uci set      dhcp.trusted.domain='imagilan'
 uci commit   dhcp.trusted
 
@@ -222,7 +222,7 @@ uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start='100'
 uci set      dhcp.notrust.limit='100'
-uci set      dhcp.notrust.leasetime='60m'
+uci set      dhcp.notrust.leasetime='24h'
 uci set      dhcp.notrust.dns='10.7.12.5'
 uci set      dhcp.notrust.domain='notrust'
 uci commit   dhcp.notrust
