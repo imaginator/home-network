@@ -16,7 +16,7 @@ fi
 
 git checkout ${TAG}
 
-./scripts/feeds update -a 
+./scripts/feeds update -a
 ./scripts/feeds install -a
 
 # copy in the config things we care about
@@ -26,6 +26,6 @@ cp ../$MODEL.diffconfig .config
 make defconfig
 
 # Build
-ionice --class 3 make -j1  V=s
+ionice --class 3 make -j1 # V=s
 
 cp .config .config.$MODEL.$(date --iso)
