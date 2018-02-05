@@ -76,3 +76,7 @@ CONFIG_PACKAGE_luci-proto-core=y
 CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-watchcat=y
+
+# TOR
+CONFIG_PACKAGE_tor=y
+CONFIG_PACKAGE_tor-geoip=y
