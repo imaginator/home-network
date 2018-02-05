@@ -371,7 +371,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.23'
-uci set      dhcp.@host[-1].name='philips-hue'
+uci set      dhcp.@host[-1].name='hue'
 uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
