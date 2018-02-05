@@ -1,3 +1,5 @@
+!# deploy with cat switch01.settings | ssh -vt ubnt@10.7.11.2
+
 !#Current Configuration:
 !#
 !#System Description "EdgeSwitch 24-Port 250W, 1.7.1.4993748, Linux 3.6.5-f4a26ed5, 0.0.0.0000000"
