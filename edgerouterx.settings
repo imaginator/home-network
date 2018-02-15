@@ -631,7 +631,7 @@ uci add    firewall defaults
 uci set    firewall.@defaults[-1]=defaults
 uci set    firewall.@defaults[-1].input='ACCEPT'
 uci set    firewall.@defaults[-1].output='ACCEPT'
-uci set    firewall.@defaults[-1].forward='REJECT'
+uci set    firewall.@defaults[-1].forward='DROP'
 uci commit firewall.@defaults[-1]
 
 # A zone section groups one or more interfaces and serves as a source or destination for forwardings, 
@@ -669,9 +669,9 @@ uci set      firewall.@zone[-1].name='wan_trusted'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='REJECT'
+uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='REJECT'
+uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
 uci commit   firewall.@zone[-1]
 
@@ -680,9 +680,9 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_notrust'
 uci add_list firewall.@zone[-1].network='ffvpn'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='REJECT'
+uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='REJECT'
+uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
 uci commit   firewall.@zone[-1]
 
