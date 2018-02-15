@@ -53,7 +53,7 @@ case $1 in
     ;;
 
   *)
-    echo "useage: $0 <repeater0X|w8970|w8980>"
+    echo "useage: $0 <repeater0X|edgerouterx>"
   ;;
 esac
 
