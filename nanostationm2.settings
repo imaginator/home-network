@@ -130,7 +130,7 @@ uci commit   wireless.radio1
 
 uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
-uci set      wireless.@wifi-iface[-1].disabled='0'
+uci set      wireless.@wifi-iface[-1].disabled='1'
 uci set      wireless.@wifi-iface[-1].ifname='imagifi2'
 uci set      wireless.@wifi-iface[-1].device='radio0'
 uci set      wireless.@wifi-iface[-1].network='trusted'
@@ -198,7 +198,7 @@ uci commit   wireless.@wifi-iface[-1]
 
 uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
-uci set      wireless.@wifi-iface[-1].disabled='0'
+uci set      wireless.@wifi-iface[-1].disabled='1'
 uci set      wireless.@wifi-iface[-1].ifname='dual2'
 uci set      wireless.@wifi-iface[-1].device='radio0'
 uci set      wireless.@wifi-iface[-1].network='trusted'
@@ -232,7 +232,7 @@ uci commit   wireless.@wifi-iface[-1]
 
 uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
-uci set      wireless.@wifi-iface[-1].disabled='0'
+uci set      wireless.@wifi-iface[-1].disabled='1'
 uci set      wireless.@wifi-iface[-1].ifname='dual5'
 uci set      wireless.@wifi-iface[-1].device='radio1'
 uci set      wireless.@wifi-iface[-1].network='trusted'
