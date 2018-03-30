@@ -138,8 +138,10 @@ uci set      network.pyur4.macaddr='CA:FE:BA:BE:EE:EE'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
-uci add_list network.pyur4.dns='62.117.1.25'  # pyur
-uci add_list network.pyur4.dns='89.16.129.25' # pyur
+uci add_list network.pyur4.dns='62.117.1.25'     # pyur
+uci add_list network.pyur4.dns='89.16.129.25'    # pyur
+uci add_list network.pyur4.dns='9.9.9.9'         # quad-9
+uci add_list network.pyur4.dns='149.112.112.112' # quad-9 secondary
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname='eth0.4'
