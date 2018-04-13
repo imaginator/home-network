@@ -336,32 +336,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.18'
-uci set      dhcp.@host[-1].hostid='18'
-uci set      dhcp.@host[-1].name='crack'
-uci set      dhcp.@host[-1].mac='f4:5c:89:8a:64:33'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.19'    # need ip otherwise no DNS
-uci set      dhcp.@host[-1].name='cc-lounge'
-uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.20'
-uci set      dhcp.@host[-1].name='cc-bedroom'
-uci set      dhcp.@host[-1].mac='54:60:09:fb:f1:28'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
 uci set      dhcp.@host[-1].mac='d0:13:fd:5d:2f:fd'
 uci set      dhcp.@host[-1].name='simon-nexus5x'
@@ -393,6 +367,32 @@ uci set      dhcp.@host[-1].ip='10.7.11.24'
 uci set      dhcp.@host[-1].name='homematic'
 uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
 uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.25'
+uci set      dhcp.@host[-1].hostid='25'
+uci set      dhcp.@host[-1].name='crack'
+uci set      dhcp.@host[-1].mac='f4:5c:89:8a:64:33'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.26'
+uci set      dhcp.@host[-1].name='cc-lounge'
+uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.27'
+uci set      dhcp.@host[-1].name='cc-bedroom'
+uci set      dhcp.@host[-1].mac='54:60:09:fb:f1:28'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
