@@ -44,7 +44,7 @@ case $1 in
     ' < n750.settings  | ssh root@10.7.11.5
     ;;
 
-  repeater0[1-6])
+  repeater0[1-9])
     envsubst \ '
     $trusted_wifikey \
     $dual2_roaming_key \
