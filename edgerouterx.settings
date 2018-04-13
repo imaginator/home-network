@@ -140,10 +140,6 @@ uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
 uci add_list network.pyur4.dns='1.1.1.1'         # Cloudflare
 uci add_list network.pyur4.dns='1.0.0.1'         # Cloudflare
-uci add_list network.pyur4.dns='62.117.1.25'     # pyur
-uci add_list network.pyur4.dns='89.16.129.25'    # pyur
-uci add_list network.pyur4.dns='9.9.9.9'         # quad-9
-uci add_list network.pyur4.dns='149.112.112.112' # quad-9 secondary
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname='eth0.4'
@@ -151,8 +147,8 @@ uci set      network.pyur6.proto=dhcpv6
 uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns=0
-uci add_list network.pyur6.dns='2001:4860:4860::8888'
-uci add_list network.pyur6.dns='2001:4860:4860::8844'
+uci add_list network.pyur6.dns='2606:4700:4700::1111'
+uci add_list network.pyur6.dns='2606:4700:4700::1001'
 uci set      network.pyur6.metric='1'
 
 uci set      network.ffvpn=interface
@@ -324,6 +320,16 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.16'
 uci set      dhcp.@host[-1].name='repeater06'
 uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#mr33
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.17'
+uci set      dhcp.@host[-1].name='repeater07'
+uci set      dhcp.@host[-1].mac='0c:8d:db:65:95:59'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
