@@ -115,7 +115,6 @@ uci set      network.globals.ula_prefix=fd4f:d5c6:8a00::/48
 uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
-uci set      network.trusted.macaddr='CA:FE:BA:BE:AA:AA'
 uci set      network.trusted.proto='static'
 uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.netmask='255.255.255.0'
@@ -134,7 +133,6 @@ uci set      network.notrust.delegate='0'
 # wan interface
 uci set      network.pyur4=interface
 uci set      network.pyur4.ifname='eth0.4'
-uci set      network.pyur4.macaddr='CA:FE:BA:BE:EE:EE'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
