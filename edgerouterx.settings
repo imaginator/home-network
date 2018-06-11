@@ -417,25 +417,30 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.33'
 uci set      dhcp.@host[-1].name='imagisuck'
 uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
-uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.34'
-uci set      dhcp.@host[-1].name='imagilisten'
-uci set      dhcp.@host[-1].mac='48:d6:d5:74:e1:00'
-uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].name='home-mini-lounge'
+uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.35'
+uci set      dhcp.@host[-1].name='home-mini-bedroom1'
+uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.39'
 uci set      dhcp.@host[-1].name='test-wall-tablet'
 uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
-uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1003,14 +1008,27 @@ uci commit   firewall.@rule[-1]
             
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow DHCPv6 to upstream'
-uci set      firewall.@rule[-1].src='wan_trusted'
-uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].name='DHCPv6 requests'
+uci set      firewall.@rule[-1].src_ip='fe80::/10'
+uci set      firewall.@rule[-1].src_port='546'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest_ip='ff02::1:2'
+uci set      firewall.@rule[-1].dest_port='547'
 uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='DHCPv6 replies'
+uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
 uci set      firewall.@rule[-1].src_port='547'
 uci set      firewall.@rule[-1].dest_ip='fe80::/10'
 uci set      firewall.@rule[-1].dest_port='546'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
