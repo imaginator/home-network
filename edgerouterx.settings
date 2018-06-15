@@ -431,8 +431,24 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.35'
-uci set      dhcp.@host[-1].name='home-mini-bedroom1'
+uci set      dhcp.@host[-1].name='home-mini-bedroom'
 uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.36'
+uci set      dhcp.@host[-1].name='home-mini-bathroom'
+uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.37'
+uci set      dhcp.@host[-1].name='home-mini-kitchen'
+uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
