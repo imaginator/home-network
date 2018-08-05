@@ -182,284 +182,6 @@ uci set      network.@route[-1].target=0.0.0.0
 uci set      network.@route[-1].netmask=0.0.0.0
 uci commit   network.@route[-1]
 
-uci import dhcp <<EOF
-EOF
-
-uci add      dhcp  dnsmasq
-uci set      dhcp.@dnsmasq[-1]=dnsmasq
-uci set      dhcp.@dnsmasq[-1].authoritative='1'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].boguspriv='1'
-uci set      dhcp.@dnsmasq[-1].loglevel='7'
-uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
-uci set      dhcp.@dnsmasq[-1].localise_queries='1'
-uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
-uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
-uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
-uci set      dhcp.@dnsmasq[-1].domain='imagilan'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].expandhosts='1'
-uci set      dhcp.@dnsmasq[-1].nonegcache='0'
-uci set      dhcp.@dnsmasq[-1].localservice='1'
-uci set      dhcp.@dnsmasq[-1].logqueries='0'
-uci set      dhcp.@dnsmasq[-1].cachesize='4096'
-uci commit   dhcp.@dnsmasq[-1]
-
-uci set      dhcp.trusted=dhcp
-uci set      dhcp.trusted.interface='trusted'
-uci set      dhcp.trusted.force='1'
-uci set      dhcp.trusted.start='100'
-uci set      dhcp.trusted.limit='150'
-uci set      dhcp.trusted.leasetime='24h'
-uci set      dhcp.trusted.domain='imagilan'
-uci commit   dhcp.trusted
-
-uci set      dhcp.notrust=dhcp
-uci set      dhcp.notrust.interface='notrust'
-uci set      dhcp.notrust.dhcpv4='server'
-uci set      dhcp.notrust.start='100'
-uci set      dhcp.notrust.limit='100'
-uci set      dhcp.notrust.leasetime='24h'
-uci set      dhcp.notrust.dns='10.7.12.5'
-uci set      dhcp.notrust.domain='notrust'
-uci commit   dhcp.notrust
-
-uci set      dhcp.pyur4=dhcp
-uci set      dhcp.pyur4.interface='pyur4'
-uci set      dhcp.pyur4.ignore='1'
-uci commit   dhcp.pyur4
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.1'
-uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
-uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.5'
-uci set      dhcp.@domain[-1].name='imagiswitch'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.7'
-uci set      dhcp.@domain[-1].name='ilo'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.2'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#nanostation
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.11'
-uci set      dhcp.@host[-1].name='repeater01'
-uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#picostationm2hp
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.12'
-uci set      dhcp.@host[-1].name='repeater02'
-uci set      dhcp.@host[-1].mac='00:15:6d:f4:1c:99'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#picostationm2hp
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.13'
-uci set      dhcp.@host[-1].name='repeater03'
-uci set      dhcp.@host[-1].mac='00:15:6d:f4:1d:5f'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#nanostation
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.14'
-uci set      dhcp.@host[-1].name='repeater04'
-uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#nanostation
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.15'
-uci set      dhcp.@host[-1].name='repeater05'
-uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#AP Pro
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.16'
-uci set      dhcp.@host[-1].name='repeater06'
-uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#mr33
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.17'
-uci set      dhcp.@host[-1].name='repeater07'
-uci set      dhcp.@host[-1].mac='0c:8d:db:65:95:59'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='d0:13:fd:5d:2f:fd'
-uci set      dhcp.@host[-1].name='simon-nexus5x'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.22'
-uci set      dhcp.@host[-1].mac='ac:22:0b:a9:58:b5'
-uci set      dhcp.@host[-1].name='simon-nexus7'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.23'
-uci set      dhcp.@host[-1].name='hue'
-uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.24'
-uci set      dhcp.@host[-1].name='homematic'
-uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.25'
-uci set      dhcp.@host[-1].hostid='25'
-uci set      dhcp.@host[-1].name='crack'
-uci set      dhcp.@host[-1].mac='f4:5c:89:8a:64:33'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.26'
-uci set      dhcp.@host[-1].name='cc-lounge'
-uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.27'
-uci set      dhcp.@host[-1].name='cc-bedroom'
-uci set      dhcp.@host[-1].mac='54:60:09:fb:f1:28'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.31'
-uci set      dhcp.@host[-1].name='pi01'
-uci set      dhcp.@host[-1].mac='e0:91:53:74:ba:d7' #wireless
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.32'
-uci set      dhcp.@host[-1].name='pi02'
-uci set      dhcp.@host[-1].mac='b8:27:eb:98:32:62' #wireless
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.33'
-uci set      dhcp.@host[-1].name='imagisuck'
-uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.34'
-uci set      dhcp.@host[-1].name='home-mini-lounge'
-uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.35'
-uci set      dhcp.@host[-1].name='home-mini-bedroom'
-uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.36'
-uci set      dhcp.@host[-1].name='home-mini-bathroom'
-uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.37'
-uci set      dhcp.@host[-1].name='home-mini-kitchen'
-uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.39'
-uci set      dhcp.@host[-1].name='test-wall-tablet'
-uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
 uci import ddns <<EOF
 EOF
 
@@ -1101,6 +823,374 @@ uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
 /etc/init.d/firewall enable || true
+
+uci import dhcp <<EOF
+EOF
+
+uci add      dhcp  dnsmasq
+uci set      dhcp.@dnsmasq[-1]=dnsmasq
+uci set      dhcp.@dnsmasq[-1].authoritative='1'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].boguspriv='1'
+uci set      dhcp.@dnsmasq[-1].loglevel='7'
+uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
+uci set      dhcp.@dnsmasq[-1].localise_queries='1'
+uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
+uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
+uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
+uci set      dhcp.@dnsmasq[-1].domain='imagilan'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
+uci set      dhcp.@dnsmasq[-1].expandhosts='1'
+uci set      dhcp.@dnsmasq[-1].nonegcache='0'
+uci set      dhcp.@dnsmasq[-1].localservice='1'
+uci set      dhcp.@dnsmasq[-1].logqueries='0'
+uci set      dhcp.@dnsmasq[-1].cachesize='4096'
+uci commit   dhcp.@dnsmasq[-1]
+
+uci set      dhcp.trusted=dhcp
+uci set      dhcp.trusted.interface='trusted'
+uci set      dhcp.trusted.force='1'
+uci set      dhcp.trusted.start='100'
+uci set      dhcp.trusted.limit='150'
+uci set      dhcp.trusted.leasetime='24h'
+uci set      dhcp.trusted.domain='imagilan'
+uci commit   dhcp.trusted
+
+uci set      dhcp.notrust=dhcp
+uci set      dhcp.notrust.interface='notrust'
+uci set      dhcp.notrust.dhcpv4='server'
+uci set      dhcp.notrust.start='100'
+uci set      dhcp.notrust.limit='150'
+uci set      dhcp.notrust.leasetime='3h'
+uci set      dhcp.notrust.dns='10.7.12.5'
+uci set      dhcp.notrust.domain='notrust'
+uci commit   dhcp.notrust
+
+uci set      dhcp.pyur4=dhcp
+uci set      dhcp.pyur4.interface='pyur4'
+uci set      dhcp.pyur4.ignore='1'
+uci commit   dhcp.pyur4
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.1'
+uci set      dhcp.@domain[-1].name='bunker'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
+uci set      dhcp.@domain[-1].name='bunker'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.5'
+uci set      dhcp.@domain[-1].name='imagiswitch'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.7'
+uci set      dhcp.@domain[-1].name='ilo'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.2'
+uci set      dhcp.@host[-1].name='switch01'
+uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.3'
+uci set      dhcp.@host[-1].name='knx-gw'
+uci set      dhcp.@host[-1].mac='00:0c:de:61:50:0b'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.4'
+uci set      dhcp.@host[-1].name='win10'
+uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#nanostation
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.11'
+uci set      dhcp.@host[-1].name='repeater01'
+uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#picostationm2hp
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.12'
+uci set      dhcp.@host[-1].name='repeater02'
+uci set      dhcp.@host[-1].mac='00:15:6d:f4:1c:99'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#picostationm2hp
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.13'
+uci set      dhcp.@host[-1].name='repeater03'
+uci set      dhcp.@host[-1].mac='00:15:6d:f4:1d:5f'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#nanostation
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.14'
+uci set      dhcp.@host[-1].name='repeater04'
+uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#nanostation
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.15'
+uci set      dhcp.@host[-1].name='repeater05'
+uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#AP Pro
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.16'
+uci set      dhcp.@host[-1].name='repeater06'
+uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#mr33
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.17'
+uci set      dhcp.@host[-1].name='repeater07'
+uci set      dhcp.@host[-1].mac='0c:8d:db:65:95:59'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.21'
+uci set      dhcp.@host[-1].mac='40:4e:36:93:4c:f7'
+uci set      dhcp.@host[-1].name='simon-phone' # same hostname irregardless of upgrades (for @home presense)
+uci set      dhcp.@host[-1].leasetime='9m'     # for 10 minute presense accuracy
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.22'
+uci set      dhcp.@host[-1].mac='ac:22:0b:a9:58:b5'
+uci set      dhcp.@host[-1].name='simon-nexus7'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.23'
+uci set      dhcp.@host[-1].name='hue'
+uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.24'
+uci set      dhcp.@host[-1].name='homematic'
+uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.25'
+uci set      dhcp.@host[-1].hostid='25'
+uci set      dhcp.@host[-1].name='crack'
+uci set      dhcp.@host[-1].mac='f4:5c:89:8a:64:33'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.26'
+uci set      dhcp.@host[-1].name='chromecast-audio-lounge'
+uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.31'
+uci set      dhcp.@host[-1].name='pi01'
+uci set      dhcp.@host[-1].mac='e0:91:53:74:ba:d7' #wireless
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.32'
+uci set      dhcp.@host[-1].name='pi02'
+uci set      dhcp.@host[-1].mac='b8:27:eb:98:32:62' #wireless
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.33'
+uci set      dhcp.@host[-1].name='imagisuck'
+uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.34'
+uci set      dhcp.@host[-1].name='home-mini-lounge'
+uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.35'
+uci set      dhcp.@host[-1].name='home-mini-bedroom'
+uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.36'
+uci set      dhcp.@host[-1].name='home-mini-bathroom'
+uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.37'
+uci set      dhcp.@host[-1].name='home-mini-kitchen'
+uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.39'
+uci set      dhcp.@host[-1].name='test-wall-tablet'
+uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.40'
+uci set      dhcp.@host[-1].name='bathroom-scale'
+uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.51'
+uci set      dhcp.@host[-1].name='plugswitch01'
+uci set      dhcp.@host[-1].mac='50:C7:BF:01:F8:2C'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.52'
+uci set      dhcp.@host[-1].name='plugswitch02'
+uci set      dhcp.@host[-1].mac='50:C7:BF:01:7C:90'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.53'
+uci set      dhcp.@host[-1].name='plugswitch03'
+uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c6:3b'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.54'
+uci set      dhcp.@host[-1].name='plugswitch04'
+uci set      dhcp.@host[-1].mac='50:c7:bf:7c:b2:c5'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.55'
+uci set      dhcp.@host[-1].name='plugswitch05'
+uci set      dhcp.@host[-1].mac='b0:4e:26:2b:bd:b7'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.56'
+uci set      dhcp.@host[-1].name='plugswitch06'
+uci set      dhcp.@host[-1].mac='50:c7:bf:7c:b6:ac'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.57'
+uci set      dhcp.@host[-1].name='plugswitch07'
+uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c0:2f'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.61'
+uci set      dhcp.@host[-1].name='camera01'
+uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
+uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 echo -e "All done with writing.\nRebooting..."
 reboot
