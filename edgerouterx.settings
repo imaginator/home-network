@@ -173,8 +173,8 @@ uci set      network.wg_simonphone=wireguard_wg0
 uci set      network.wg_simonphone.description='Simon Mobile'
 uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
 uci set      network.wg_simonphone.persistent_keepalive='25'
-uci add_list network.wg_simonphone.allowed_ips='0.0.0.0/0'
-uci add_list network.wg_simonphone.allowed_ips='::/0'
+uci add_list network.wg_simonphone.allowed_ips='10.7.11.202/32'
+uci set      network.wg_simonphone.route_allowed_ips='1'
 
 uci commit   network
 
