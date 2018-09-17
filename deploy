@@ -16,6 +16,12 @@ case $1 in
     $freifunk_client_crt \
     $freifunk_client_key \
     $imagivpn_key \
+    $wg_vpn_public_key \
+    $wg_vpn_private_key \
+    $wg_furrow_public_key \
+    $wg_furrow_private_key \
+    $wg_simonphone_public_key \
+    $wg_simonphone_private_key \
     $dh2048_pem \
     ' < edgerouterx.settings  | ssh root@10.7.11.5
     ;;
@@ -44,12 +50,20 @@ case $1 in
     ' < n750.settings  | ssh root@10.7.11.5
     ;;
 
-  repeater0[1-9])
+  repeater0[1-6])
     envsubst \ '
     $trusted_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
     ' < nanostationm2.settings  | ssh root@$1
+    ;;
+
+  repeater07)
+    envsubst \ '
+    $trusted_wifikey \
+    $dual2_roaming_key \
+    $freifunk_roaming_key \
+    ' < mr33.settings  | ssh root@10.7.11.111
     ;;
 
   *)

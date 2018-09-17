@@ -17,9 +17,18 @@ CONFIG_PACKAGE_libstdcpp=m
 CONFIG_PACKAGE_sysinfo=y
 CONFIG_PACKAGE_uboot-envtools=m
 
+# vpn
+CONFIG_PACKAGE_kmod-wireguard=y
+CONFIG_PACKAGE_wireguard-tools=y
+CONFIG_PACKAGE_wireguard=y
+CONFIG_PACKAGE_luci-app-wireguard=y
+CONFIG_PACKAGE_luci-proto-wireguard=y
+
+
 # image builder
 CONFIG_IB=y
 CONFIG_IB_STANDALONE=y
+CONFIG_CCACHE=y
 
 # DDNS
 CONFIG_PACKAGE_libustream-openssl=y
@@ -37,6 +46,9 @@ CONFIG_PACKAGE_kmod-tun=y
 CONFIG_PACKAGE_kmod-bridge=y
 CONFIG_PACKAGE_bridge-utils=y
 CONFIG_PACKAGE_lldpd=y
+
+# DHCP request mirroring
+CONFIG_PACKAGE_iptables-mod-tee=y
 
 # ipv6
 CONFIG_PACKAGE_odhcp6c=y
@@ -76,6 +88,8 @@ CONFIG_PACKAGE_luci-proto-core=y
 CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-watchcat=y
+CONFIG_PACKAGE_uci-proto-wireguard=y
+
 
 # TOR
 CONFIG_PACKAGE_tor=y

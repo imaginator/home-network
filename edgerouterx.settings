@@ -156,6 +156,26 @@ uci set      network.ffvpn.force_link='1'
 uci set      network.ffvpn.delegate='0'
 uci set      network.ffvpn.auto='1'
 
+uci set      network.wg0="interface"
+uci set      network.wg0.proto="wireguard"
+uci set      network.wg0.private_key='${wg_vpn_private_key}'
+uci set      network.wg0.listen_port="12321"
+uci add_list network.wg0.addresses='10.7.11.200/24'
+
+uci set      network.wg_furrow=wireguard_wg0
+uci set      network.wg_furrow.description='furrow'
+uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
+uci set      network.wg_furrow.persistent_keepalive='25'
+uci add_list network.wg_furrow.allowed_ips='10.7.11.201/32'
+uci set      network.wg_furrow.route_allowed_ips='1'
+
+uci set      network.wg_simonphone=wireguard_wg0
+uci set      network.wg_simonphone.description='Simon Mobile'
+uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
+uci set      network.wg_simonphone.persistent_keepalive='25'
+uci add_list network.wg_simonphone.allowed_ips='0.0.0.0/0'
+uci add_list network.wg_simonphone.allowed_ips='::/0'
+
 uci commit   network
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
@@ -326,7 +346,7 @@ uci set      openvpn.ffvpn.dev='ffvpn'
 uci set      openvpn.ffvpn.dev_type='tun'
 uci set      openvpn.ffvpn.persist_key='1'
 uci set      openvpn.ffvpn.keepalive='10 60'
-uci set      openvpn.ffvpn.comp_lzo='no'
+uci set      openvpn.ffvpn.compress='lzo'
 uci set      openvpn.ffvpn.script_security='2'
 uci set      openvpn.ffvpn.cipher='none'
 uci set      openvpn.ffvpn.mute_replay_warnings='1'
@@ -406,6 +426,7 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='trusted'
 uci add_list firewall.@zone[-1].network='trusted'
+uci add_list firewall.@zone[-1].network='wg0'
 uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'  # FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
@@ -673,15 +694,24 @@ uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
 # ssh into any interface
-uci add    firewall rule
-uci set    firewall.@rule[-1]=rule
-uci set    firewall.@rule[-1].name='ssh to router'
-uci set    firewall.@rule[-1].src='*'
-uci set    firewall.@rule[-1].dest_port='22'
-uci set    firewall.@rule[-1].proto='tcp'
-uci set    firewall.@rule[-1].family='any'
-uci set    firewall.@rule[-1].target='ACCEPT'
-uci commit firewall.@rule[-1]
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='ssh to router'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].dest_port='22'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+            
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name="Allow-Wireguard-Inbound"
+uci set      firewall.@rule[-1].src="*"
+uci set      firewall.@rule[-1].dest_port="12321"
+uci set      firewall.@rule[-1].proto="udp"
+uci set      firewall.@rule[-1].target="ACCEPT"
+uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
@@ -852,7 +882,7 @@ uci set      dhcp.trusted=dhcp
 uci set      dhcp.trusted.interface='trusted'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.start='100'
-uci set      dhcp.trusted.limit='150'
+uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.leasetime='24h'
 uci set      dhcp.trusted.domain='imagilan'
 uci commit   dhcp.trusted
@@ -860,9 +890,9 @@ uci commit   dhcp.trusted
 uci set      dhcp.notrust=dhcp
 uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
-uci set      dhcp.notrust.start='100'
-uci set      dhcp.notrust.limit='150'
-uci set      dhcp.notrust.leasetime='3h'
+uci set      dhcp.notrust.start='50'
+uci set      dhcp.notrust.limit='200'
+uci set      dhcp.notrust.leasetime='1h'
 uci set      dhcp.notrust.dns='10.7.12.5'
 uci set      dhcp.notrust.domain='notrust'
 uci commit   dhcp.notrust
@@ -1032,8 +1062,8 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.25'
 uci set      dhcp.@host[-1].hostid='25'
-uci set      dhcp.@host[-1].name='crack'
-uci set      dhcp.@host[-1].mac='f4:5c:89:8a:64:33'
+uci set      dhcp.@host[-1].name='furrow'
+uci set      dhcp.@host[-1].mac='34:E1:2D:78:F5:D7'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1043,6 +1073,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.26'
 uci set      dhcp.@host[-1].name='chromecast-audio-lounge'
 uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.27'
+uci set      dhcp.@host[-1].name='chromecast-ultra-lounge'
+uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1140,7 +1178,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.53'
 uci set      dhcp.@host[-1].name='plugswitch03'
 uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c6:3b'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1149,7 +1186,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.54'
 uci set      dhcp.@host[-1].name='plugswitch04'
 uci set      dhcp.@host[-1].mac='50:c7:bf:7c:b2:c5'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1158,7 +1194,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.55'
 uci set      dhcp.@host[-1].name='plugswitch05'
 uci set      dhcp.@host[-1].mac='b0:4e:26:2b:bd:b7'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1167,7 +1202,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.56'
 uci set      dhcp.@host[-1].name='plugswitch06'
 uci set      dhcp.@host[-1].mac='50:c7:bf:7c:b6:ac'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1176,7 +1210,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.57'
 uci set      dhcp.@host[-1].name='plugswitch07'
 uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c0:2f'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1188,7 +1221,6 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.61'
 uci set      dhcp.@host[-1].name='camera01'
 uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
-uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
