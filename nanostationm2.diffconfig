@@ -30,6 +30,7 @@ CONFIG_PACKAGE_odhcp6c=y
 # image builder
 CONFIG_IB=y
 CONFIG_IB_STANDALONE=y
+CONFIG_CCACHE=y
 
 # Bridges and VLANs
 CONFIG_PACKAGE_kmod-8021q=y
