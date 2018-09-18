@@ -1,0 +1,445 @@
+#!/bin/sh
+
+# running on a TP-Link 4300
+
+# stop after any errors
+set -xe
+
+uci import system <<EOF
+EOF
+
+uci batch <<-EOF >/dev/null
+add      system  system
+set      system.@system[-1]=system
+set      system.@system[-1].hostname='f17gw'
+set      system.@system[-1].zonename='UTC'
+set      system.@system[-1].timezone='UTC'
+set      system.@system[-1].conloglevel='8'
+set      system.@system[-1].klogconloglevel='8'
+set      system.@system[-1].cronloglevel='0'
+set      system.@system[-1].log_ip='10.7.11.1'
+set      system.@system[-1].log_buffer_size='64'
+set      system.@system[-1].log_size='64'
+set      system.@system[-1].log_proto=udp
+set      system.@system[-1].log_remote='1'
+
+add      system led
+set      system.@led[-1]=led
+set      system.@led[-1].default=0
+set      system.@led[-1].dev=wg0
+set      system.@led[-1].mode='link tx rx'
+set      system.@led[-1].name='vpn traffic'
+set      system.@led[-1].sysfs="tp-link:blue:qss"
+set      system.@led[-1].trigger=netdev
+
+add      system watchcat
+set      system.@watchcat[-1]=watchcat
+set      system.@watchcat[-1].mode='ping'
+set      system.@watchcat[-1].forcedelay='300'
+set      system.@watchcat[-1].period='30m'
+set      system.@watchcat[-1].pingperiod='5m'
+set      system.@watchcat[-1].pinghosts='1.1.1.1'
+
+add      system ntp
+set      system.ntp=timeserver
+set      system.ntp.enabled=1
+add_list system.ntp.server='0.de.pool.ntp.org'
+add_list system.ntp.server='1.de.pool.ntp.org'
+add_list system.ntp.server='2.de.pool.ntp.org'
+
+commit system
+EOF
+
+uci import dropbear <<EOF
+EOF
+
+uci add    dropbear  dropbear
+uci set    dropbear.@dropbear[-1]=dropbear
+uci set    dropbear.@dropbear[-1].Port='22'
+uci set    dropbear.@dropbear[-1].PasswordAuth='0'
+uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
+uci commit dropbear
+
+cat <<'EOF' > /etc/dropbear/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCnAqd49QrBxYj73kAw+YKChDgc8KEOKhUqYtoP1pI9FPYV5tegMVtwhvPfovc6NoquzsViRzvFXsdw3Sp/aUCzOLknbthohBG+HtqxTICxVE76DtplwvoHnfF94wHC1Fl6OlvDkQRaCySgGhk7JWaVJAytaBMSZpPaAg+wlisCXpHAn36glpJv5Z9yHpK2XZ6NduYO7SqB0kYwKkLjBAjRjvQDhLdKtutVp00hHnefnTJlY8Q44UMqMomW/WL4XtjerttD59UCsPlnvtbKCWpOGAHLQlfpeqVnCpZp4eVpIRE7j/3E2CaNFc0qTK0mqnaH1Yk/6fQXQl1sgdYvq9Y8I8462irZrPuRrkgNAV6YKaUqven19nNLuybhq0cRG4K9lOZwTvvTyiMlRwo8uXawOwYoBAK+UiuCtoVvOo/+HkwCOFAU78LO8DyFGi3dLyZ6yy1jYSSuKOiSO2CuqHTszc0XE5E1bYWlua6hZoWa+agK4/zcvn6H+hy13xVOgcAMtjD4bVzYj2Wxqa4jSL0ye2m2FDE5LaEOyJLIYQ23hobrE2KvqRB/ALWLhvqJe5qUKDSWGkZvCyVArreaaLfUabcVZfdzmajt86suJJbfFQp9Dg5VHwIW6SssPL5NUNtHbfgoW7JCBXc64+nxmQqzHkcvBjahgEE+84/9zPKOqQ== router-keys@imaginator.com
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAADxTYX0f/RBMsEyObhp9xYFQ7cpMTaR+aEgXN+lGlbxEw/2wSTPWQ+NrO9SHUnPgRlQh8kwJKOJxvqjBclb48j/IDWPZNptfGsxtxU8jYsc0aTz3e4caLEaMsQM2L+TJJIkiH70Z77uDq1r/60PMKxk7oT8IOGtkIPr/yYn6X3amRBQM++WrMAkcxsbxCsOXr6wAUuxgVFSRSYU+RbnwYFvNmTEDANjNe53nhUZ5E3cRcrElVr9G4h2UjkgZVONDVxSfnGjTJkRs1e6cWILI/yvYJBolwuc+ddqfQbTZGc183YqiJAKAgKnpHsxeFfZGiwCPnzedewAbf0gOmZKanfF0Mzl00vcJJwsEGX/OM1e79MmfgXFqtbn0SCCEq7T1J03L2Ms5R+26aAh8rPb7QWRzZlg1v+W08hdmQqg/VIt8nMcyVey9zWpnKyJI9Q0Aq6xVSmFu9YKYyYw9/+2gJIAavOgd6eXP9UTOznvTHJYbtKzyYpOqbXmMp6+SSAtnyHJakPokRyIssa5AQOAB3ouQgyl7N1WebecAtStbs9qVS8A8kHjBmuLr7BN6lK/zgZQc2KAp4jL3txNChVeUxuzCPvkoCLiwJrtgWoy0Go/OWRserGXbxGwHmZ59FA4RG8HtbW4D1mkUbX5oPp3JPkNGhcuzYg+a1OZRvW3HINMhDkFCthyQqWp4AZXYDADHOjyTlVeZZ63NkuX7GX0UYZfn6H2x+sDKbGPCSWxndJkkclYJC+1xoXodcEdSn7CCjPDou33YeTa0hWesO07vh0kqGLW/NNTvzZ7YBMQdt/Snvf6p9Aw0dLHW754jsMXGczGt4LyEgy27i0r4MbqX4ahCvRjtefDA/HZx5dmd6lPiHcTMZZn3mXov05QFhofACqNjpse+rC8Xt/vRvTiBYotP3s2iX7Bqax3qv67Q16bLiy2Hg/xm26D3v5gXR1123oZSmZbv6KfCf5cqtTpMbtHWuFGaqnadbB9wzwki8P6PFOACsWGPEtReMNP9p17dO3j248jhptI7PHW65LsiRl3yuvM/8oP3sJvlJvDLpdzNcdGLdWYaQDx+YKKcu3lLVMwPthkHJmc8W1wbs9BxHiAQsibavRC7iggglNkflkZgQ4qLFY7JJpLAZ1+m6l0SdlikwuPIV9tc6i70MMw2AnVY7ubGMz27Y28lMY1OCM1Pze58abGIJ4EhC7JyUoxdhYc0yQYXFz3/YUHwZMvQve0Xos1xQrXqdhqtHAPfu82NeGM+rDR0iTiB/pQUxxIbs7q5Bkk36r
+EOF
+chmod 0600 /etc/dropbear/authorized_keys
+
+uci import network <<EOF
+EOF
+
+uci batch << EOF
+set network.loopback=interface
+set network.loopback.ifname='lo'
+set network.loopback.proto='static'
+set network.loopback.ipaddr='127.0.0.1'
+set network.loopback.netmask='255.0.0.0'
+
+set network.globals=globals
+set network.globals.ula_prefix='fd83:a462:53eb::/48'
+
+set network.lan=interface
+set network.lan.type='bridge'
+set network.lan.ifname='eth0.1'
+set network.lan.proto='static'
+set network.lan.netmask='255.255.255.0'
+set network.lan.ipaddr='10.7.10.1'
+set network.lan.dns='1.1.1.1 8.8.8.8 10.7.11.5'
+set network.lan.ip6assign='64'
+
+set network.wan=interface
+set network.wan.ifname='eth0.2'
+set network.wan.proto='dhcp'
+set network.wan.type='bridge'
+set network.wan6=interface
+set network.wan6.ifname='eth0.2'
+set network.wan6.proto='dhcpv6'
+set network.wan6.type='bridge'
+
+add network switch
+set network.@switch[-1]=switch
+set network.@switch[-1].name='switch0'
+set network.@switch[-1].reset='1'
+set network.@switch[-1].enable_vlan='1'
+
+add network switch_vlan
+set network.@switch_vlan[-1]=switch_vlan
+set network.@switch_vlan[-1].device='switch0'
+set network.@switch_vlan[-1].vlan='1'
+set network.@switch_vlan[-1].ports='2 3 4 5 0t'
+
+add network switch_vlan
+set network.@switch_vlan[-1]=switch_vlan
+set network.@switch_vlan[-1].device='switch0'
+set network.@switch_vlan[-1].vlan='2'
+set network.@switch_vlan[-1].ports='1 0t'
+
+set network.wg0=interface
+set network.wg0.proto='wireguard'
+set network.wg0.listen_port='12321'
+set network.wg0.addresses='10.7.10.1/24'
+set network.wg0.private_key='${wg_f17gw_private_key}'
+
+set network.wireguard_wg0=wireguard_wg0
+set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
+set network.wireguard_wg0.route_allowed_ips='1'
+set network.wireguard_wg0.endpoint_host='bunker.imaginator.com'
+set network.wireguard_wg0.endpoint_port='12321'
+set network.wireguard_wg0.persistent_keepalive='25'
+set network.wireguard_wg0.description='wolliner gateway'
+set network.wireguard_wg0.allowed_ips='10.7.11.0/24'
+
+set network.wwan=interface
+set network.wwan.proto='dhcp'
+
+set network.wwan5=interface
+set network.wwan5.proto='dhcp'
+
+commit network
+EOF
+
+uci import   wireless<<EOF
+EOF
+
+uci batch <<-EOF
+set wireless.radio0=wifi-device
+set wireless.radio0.type='mac80211'
+set wireless.radio0.hwmode='11g'
+set wireless.radio0.path='platform/ar934x_wmac'
+set wireless.radio0.htmode='HT20'
+set wireless.radio0.country='DE'
+set wireless.radio0.legacy_rates='0'
+set wireless.radio0.log_level='0'
+
+set wireless.radio1=wifi-device
+set wireless.radio1.type='mac80211'
+set wireless.radio1.hwmode='11a'
+set wireless.radio1.path='pci0000:00/0000:00:00.0'
+set wireless.radio1.htmode='HT40'
+set wireless.radio1.country='DE'
+set wireless.radio1.legacy_rates='0'
+set wireless.radio1.disabled='0'
+set wireless.radio1.log_level='0'
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
+set wireless.@wifi-iface[-1].encryption='none'
+set wireless.@wifi-iface[-1].device='radio0'
+set wireless.@wifi-iface[-1].mode='sta'
+set wireless.@wifi-iface[-1].network='wwan'
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].network='wwan5'
+set wireless.@wifi-iface[-1].ssid='PYUR Community'
+set wireless.@wifi-iface[-1].device='radio1'
+set wireless.@wifi-iface[-1].mode='sta'
+set wireless.@wifi-iface[-1].eap_type='peap'
+set wireless.@wifi-iface[-1].password='${pyur_community_password}'
+set wireless.@wifi-iface[-1].auth='EAP-MSCHAPV2'
+set wireless.@wifi-iface[-1].encryption='wpa2'
+set wireless.@wifi-iface[-1].ca_cert='login.telecolumbus.net'
+set wireless.@wifi-iface[-1].identity='${pyur_community_username}'
+set wireless.@wifi-iface[-1].anonymous_identity='${pyur_community_username}'
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].device='radio1'
+set wireless.@wifi-iface[-1].mode='ap'
+set wireless.@wifi-iface[-1].ssid='OpenWrt'
+set wireless.@wifi-iface[-1].network='lan'
+set wireless.@wifi-iface[-1].encryption='psk2'
+set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].device='radio0'
+set wireless.@wifi-iface[-1].mode='ap'
+set wireless.@wifi-iface[-1].ssid='OpenWrt'
+set wireless.@wifi-iface[-1].network='lan'
+set wireless.@wifi-iface[-1].encryption='psk2'
+set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
+
+commit wireless
+EOF
+
+
+uci import ddns <<EOF
+EOF
+
+uci add    ddns global
+uci set    ddns.global=ddns
+uci set    ddns.global.date_format='%F %R'
+uci set    ddns.global.log_lines='250'
+uci set    ddns.global.allow_local_ip='0'
+uci commit ddns.global
+
+uci add    ddns  service
+uci set    ddns.@service[-1]=service
+uci set    ddns.@service[-1].enabled='1'
+uci set    ddns.@service[-1].use_ipv6='0'
+uci set    ddns.@service[-1].force_ipversion=1
+uci set    ddns.@service[-1].ip_source='web'
+uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
+uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
+uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
+uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].check_interval='5'
+uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].force_interval='5'
+uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].retry_interval='1'
+uci set    ddns.@service[-1].retry_unit='minutes'
+uci set    ddns.@service[-1].service_name='google.com'
+uci set    ddns.@service[-1].use_https='1'
+uci commit ddns.@service[-1]
+
+uci add    ddns  service
+uci set    ddns.@service[-1]=service
+uci set    ddns.@service[-1].enabled='1'
+uci set    ddns.@service[-1].use_ipv6='1'
+uci set    ddns.@service[-1].interface='wan' # for hotplug events
+uci set    ddns.@service[-1].ip_source='network'
+uci set    ddns.@service[-1].ip_network='wan'
+uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
+uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
+uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].check_interval='5'
+uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].force_interval='5'
+uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].retry_interval='1'
+uci set    ddns.@service[-1].retry_unit='minutes'
+uci set    ddns.@service[-1].service_name='google.com'
+uci set    ddns.@service[-1].use_https='1'
+uci commit ddns.@service[-1]
+
+/etc/init.d/ddns enable || true
+
+uci import prometheus-node-exporter-lua<<EOF
+EOF
+
+uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
+uci set    prometheus-node-exporter-lua.main.listen_address='0'
+uci set    prometheus-node-exporter-lua.main.listen_port='9100'
+uci commit prometheus-node-exporter-lua
+
+/etc/init.d/prometheus-node-exporter-lua enable || true
+
+uci import firewall<<EOF
+EOF
+
+uci batch <<-EOF                  
+add firewall  defaults                                                         
+set firewall.@defaults[0]=defaults
+set firewall.@defaults[0].syn_flood='1'
+set firewall.@defaults[0].input='ACCEPT'
+set firewall.@defaults[0].output='ACCEPT'
+set firewall.@defaults[0].forward='REJECT'
+
+add firewall  zone
+set firewall.@zone[0]=zone
+set firewall.@zone[0].name='lan'
+set firewall.@zone[0].input='ACCEPT'
+set firewall.@zone[0].output='ACCEPT'
+set firewall.@zone[0].forward='ACCEPT'
+set firewall.@zone[0].network='lan'
+
+add firewall  zone
+set firewall.@zone[1]=zone
+set firewall.@zone[1].name='wan'
+set firewall.@zone[1].input='REJECT'
+set firewall.@zone[1].output='ACCEPT'
+set firewall.@zone[1].forward='REJECT'
+set firewall.@zone[1].masq='1'
+set firewall.@zone[1].mtu_fix='1'
+set firewall.@zone[1].network='wan wan6 wwan'
+
+add firewall  forwarding
+set firewall.@forwarding[0]=forwarding
+set firewall.@forwarding[0].src='lan'
+set firewall.@forwarding[0].dest='wan'
+
+add firewall  rule
+set firewall.@rule[0]=rule
+set firewall.@rule[0].name='Allow-DHCP-Renew'
+set firewall.@rule[0].src='wan'
+set firewall.@rule[0].proto='udp'
+set firewall.@rule[0].dest_port='68'
+set firewall.@rule[0].target='ACCEPT'
+set firewall.@rule[0].family='ipv4'
+
+add firewall  rule
+set firewall.@rule[1]=rule
+set firewall.@rule[1].name='Allow-Ping'
+set firewall.@rule[1].src='wan'
+set firewall.@rule[1].proto='icmp'
+set firewall.@rule[1].icmp_type='echo-request'
+set firewall.@rule[1].family='ipv4'
+set firewall.@rule[1].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[2]=rule
+set firewall.@rule[2].name='Allow-IGMP'
+set firewall.@rule[2].src='wan'
+set firewall.@rule[2].proto='igmp'
+set firewall.@rule[2].family='ipv4'
+set firewall.@rule[2].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[3]=rule
+set firewall.@rule[3].name='Allow-DHCPv6'
+set firewall.@rule[3].src='wan'
+set firewall.@rule[3].proto='udp'
+set firewall.@rule[3].src_ip='fc00::/6'
+set firewall.@rule[3].dest_ip='fc00::/6'
+set firewall.@rule[3].dest_port='546'
+set firewall.@rule[3].family='ipv6'
+set firewall.@rule[3].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[4]=rule
+set firewall.@rule[4].name='Allow-MLD'
+set firewall.@rule[4].src='wan'
+set firewall.@rule[4].proto='icmp'
+set firewall.@rule[4].src_ip='fe80::/10'
+set firewall.@rule[4].icmp_type='130/0 131/0 132/0 143/0'
+set firewall.@rule[4].family='ipv6'
+set firewall.@rule[4].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[5]=rule
+set firewall.@rule[5].name='Allow-ICMPv6-Input'
+set firewall.@rule[5].src='wan'
+set firewall.@rule[5].proto='icmp'
+set firewall.@rule[5].icmp_type='echo-request echo-reply destination-unreachable packet-too-big time-exceeded bad-header unknown-header-type router-solicitation neighbour-solicitation router-advertisement neighbour-advertisement'
+set firewall.@rule[5].limit='1000/sec'
+set firewall.@rule[5].family='ipv6'
+set firewall.@rule[5].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[6]=rule
+set firewall.@rule[6].name='Allow-ICMPv6-Forward'
+set firewall.@rule[6].src='wan'
+set firewall.@rule[6].dest='*'
+set firewall.@rule[6].proto='icmp'
+set firewall.@rule[6].icmp_type='echo-request echo-reply destination-unreachable packet-too-big time-exceeded bad-header unknown-header-type'
+set firewall.@rule[6].limit='1000/sec'
+set firewall.@rule[6].family='ipv6'
+set firewall.@rule[6].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[7]=rule
+set firewall.@rule[7].name='Allow-IPSec-ESP'
+set firewall.@rule[7].src='wan'
+set firewall.@rule[7].dest='lan'
+set firewall.@rule[7].proto='esp'
+set firewall.@rule[7].target='ACCEPT'
+
+add firewall  rule
+set firewall.@rule[8]=rule
+set firewall.@rule[8].name='Allow-ISAKMP'
+set firewall.@rule[8].src='wan'
+set firewall.@rule[8].dest='lan'
+set firewall.@rule[8].dest_port='500'
+set firewall.@rule[8].proto='udp'
+set firewall.@rule[8].target='ACCEPT'
+
+add firewall  include
+set firewall.@include[0]=include
+set firewall.@include[0].path='/etc/set firewall.user'
+
+commit firewall
+EOF
+
+/etc/init.d/set firewall.enable || true
+
+uci import dhcp <<EOF
+EOF
+
+uci add      dhcp  dnsmasq
+uci set      dhcp.@dnsmasq[-1]=dnsmasq
+uci set      dhcp.@dnsmasq[-1].authoritative='1'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].boguspriv='1'
+uci set      dhcp.@dnsmasq[-1].loglevel='7'
+uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
+uci set      dhcp.@dnsmasq[-1].localise_queries='1'
+uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
+uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
+uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
+uci set      dhcp.@dnsmasq[-1].domain='imagilan'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
+uci set      dhcp.@dnsmasq[-1].expandhosts='1'
+uci set      dhcp.@dnsmasq[-1].nonegcache='0'
+uci set      dhcp.@dnsmasq[-1].localservice='1'
+uci set      dhcp.@dnsmasq[-1].logqueries='0'
+uci set      dhcp.@dnsmasq[-1].cachesize='4096'
+uci commit   dhcp.@dnsmasq[-1]
+
+uci set      dhcp.trusted=dhcp
+uci set      dhcp.trusted.interface='trusted'
+uci set      dhcp.trusted.force='1'
+uci set      dhcp.trusted.start='100'
+uci set      dhcp.trusted.limit='100'
+uci set      dhcp.trusted.leasetime='24h'
+uci set      dhcp.trusted.domain='imagilan'
+uci commit   dhcp.trusted
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.20'
+uci set      dhcp.@host[-1].name='camera01'
+uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+echo -e "All done with writing.\nRebooting..."
+reboot

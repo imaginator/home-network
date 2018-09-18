@@ -160,7 +160,7 @@ uci set      network.wg0="interface"
 uci set      network.wg0.proto="wireguard"
 uci set      network.wg0.private_key='${wg_vpn_private_key}'
 uci set      network.wg0.listen_port="12321"
-uci add_list network.wg0.addresses='10.7.11.200/24'
+uci add_list network.wg0.addresses='10.7.11.5/24'
 
 uci set      network.wg_furrow=wireguard_wg0
 uci set      network.wg_furrow.description='furrow'
@@ -175,6 +175,13 @@ uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
 uci set      network.wg_simonphone.persistent_keepalive='25'
 uci add_list network.wg_simonphone.allowed_ips='10.7.11.202/32'
 uci set      network.wg_simonphone.route_allowed_ips='1'
+
+uci set      network.wg_f17=wireguard_wg0
+uci set      network.wg_f17.description='F17 Gateway'
+uci set      network.wg_f17.public_key='${wg_f17gw_public_key}'
+uci set      network.wg_f17.persistent_keepalive='25'
+uci add_list network.wg_f17.allowed_ips='10.7.10.0/24'
+uci set      network.wg_f17.route_allowed_ips='1'
 
 uci commit   network
 
@@ -1218,7 +1225,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.61'
+uci set      dhcp.@host[-1].ip='10.7.10.20'
 uci set      dhcp.@host[-1].name='camera01'
 uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'

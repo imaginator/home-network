@@ -22,32 +22,32 @@ case $1 in
     $wg_furrow_private_key \
     $wg_simonphone_public_key \
     $wg_simonphone_private_key \
+    $wg_f17gw_public_key \
+    $wg_f17gw_private_key \
     $dh2048_pem \
     ' < edgerouterx.settings  | ssh root@10.7.11.5
     ;;
 
-  n750)
+  f17gw)
     envsubst \ '
     $trusted_wifikey \
-    $dual2_roaming_key \
-    $freifunk_roaming_key \
-    $henet_tunnelid \
-    $henet_username \
-    $henet_password \
-    $easybell_username \
-    $easybell_password \
-    $ddns4_domain \
-    $ddns4_username \
-    $ddns4_password \
-    $ddns6_domain \
-    $ddns6_username \
-    $ddns6_password \
-    $freifunk_ca_crt \
-    $freifunk_client_crt \
-    $freifunk_client_key \
-    $imagivpn_key \
-    $dh2048_pem \
-    ' < n750.settings  | ssh root@10.7.11.5
+    $f17gw_ddns4_domain \
+    $f17gw_ddns4_username \
+    $f17gw_ddns4_password \
+    $f17gw_ddns6_domain \
+    $f17gw_ddns6_username \
+    $f17gw_ddns6_password \
+    $wg_vpn_public_key \
+    $wg_vpn_private_key \
+    $wg_furrow_public_key \
+    $wg_furrow_private_key \
+    $wg_simonphone_public_key \
+    $wg_simonphone_private_key \
+    $wg_f17gw_public_key \
+    $wg_f17gw_private_key \
+    $pyur_community_username \
+    $pyur_community_password \
+    ' < f17gw.settings | ssh root@10.7.10.1
     ;;
 
   repeater0[1-6])
