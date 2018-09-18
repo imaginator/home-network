@@ -917,6 +917,12 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.1'
+uci set      dhcp.@domain[-1].name='f17gw'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
