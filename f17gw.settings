@@ -289,7 +289,9 @@ set firewall.@zone[0].name='lan'
 set firewall.@zone[0].input='ACCEPT'
 set firewall.@zone[0].output='ACCEPT'
 set firewall.@zone[0].forward='ACCEPT'
-set firewall.@zone[0].network='lan'
+set firewall.@zone[0].network='lan wg0'
+set firewall.@zone[0].log='1'
+set firewall.@zone[0].conntrack='1'
 
 add firewall  zone
 set firewall.@zone[1]=zone
@@ -299,12 +301,19 @@ set firewall.@zone[1].output='ACCEPT'
 set firewall.@zone[1].forward='REJECT'
 set firewall.@zone[1].masq='1'
 set firewall.@zone[1].mtu_fix='1'
-set firewall.@zone[1].network='wan wan6 wwan'
+set firewall.@zone[1].conntrack='1'
+set firewall.@zone[1].log='1'
+set firewall.@zone[1].network='wan wan6 wwan wwan5'
 
 add firewall  forwarding
-set firewall.@forwarding[0]=forwarding
-set firewall.@forwarding[0].src='lan'
-set firewall.@forwarding[0].dest='wan'
+set firewall.@forwarding[-1]=forwarding
+set firewall.@forwarding[-1].src='lan'
+set firewall.@forwarding[-1].dest='lan'
+
+add firewall  forwarding
+set firewall.@forwarding[-1]=forwarding
+set firewall.@forwarding[-1].src='lan'
+set firewall.@forwarding[-1].dest='wan'
 
 add firewall  rule
 set firewall.@rule[0]=rule
@@ -391,6 +400,15 @@ set firewall.@rule[8].dest_port='500'
 set firewall.@rule[8].proto='udp'
 set firewall.@rule[8].target='ACCEPT'
 
+add firewall  rule
+set firewall.@rule[9]=rule                        
+set firewall.@rule[9].name='ssh'    
+set firewall.@rule[9].enabled='1'              
+set firewall.@rule[9].src='wan'             
+set firewall.@rule[9].proto='tcp'          
+set firewall.@rule[9].dest_port='22'          
+set firewall.@rule[9].target='ACCEPT'      
+
 add firewall  include
 set firewall.@include[0]=include
 set firewall.@include[0].path='/etc/set firewall.user'
@@ -425,7 +443,7 @@ uci set      dhcp.@dnsmasq[-1].cachesize='4096'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
-uci set      dhcp.trusted.interface='trusted'
+uci set      dhcp.trusted.interface='lan'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.start='100'
 uci set      dhcp.trusted.limit='100'
