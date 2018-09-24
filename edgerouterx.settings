@@ -156,32 +156,36 @@ uci set      network.ffvpn.force_link='1'
 uci set      network.ffvpn.delegate='0'
 uci set      network.ffvpn.auto='1'
 
+# when sending packets, the list of allowed IPs behaves as a sort of routing table, 
+# and when receiving packets, the list of allowed IPs behaves as a sort of access control list
+
 uci set      network.wg0="interface"
 uci set      network.wg0.proto="wireguard"
 uci set      network.wg0.private_key='${wg_vpn_private_key}'
 uci set      network.wg0.listen_port="12321"
-uci add_list network.wg0.addresses='10.7.11.5/24'
+uci add_list network.wg0.addresses='10.7.13.1/24'
+
+uci set      network.wg_f17=wireguard_wg0
+uci set      network.wg_f17.description='F17 Gateway'
+uci set      network.wg_f17.public_key='${wg_f17gw_public_key}'
+uci set      network.wg_f17.persistent_keepalive='30'
+uci add_list network.wg_f17.allowed_ips='10.7.13.2/32'
+uci add_list network.wg_f17.allowed_ips='10.7.10.0/24'
+uci set      network.wg_f17.route_allowed_ips='1'
 
 uci set      network.wg_furrow=wireguard_wg0
 uci set      network.wg_furrow.description='furrow'
 uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
 uci set      network.wg_furrow.persistent_keepalive='25'
-uci add_list network.wg_furrow.allowed_ips='10.7.11.201/32'
+uci add_list network.wg_furrow.allowed_ips='10.7.13.3/32'
 uci set      network.wg_furrow.route_allowed_ips='1'
 
 uci set      network.wg_simonphone=wireguard_wg0
 uci set      network.wg_simonphone.description='Simon Mobile'
 uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
 uci set      network.wg_simonphone.persistent_keepalive='25'
-uci add_list network.wg_simonphone.allowed_ips='10.7.11.202/32'
+uci add_list network.wg_simonphone.allowed_ips='10.7.13.4/32'
 uci set      network.wg_simonphone.route_allowed_ips='1'
-
-uci set      network.wg_f17=wireguard_wg0
-uci set      network.wg_f17.description='F17 Gateway'
-uci set      network.wg_f17.public_key='${wg_f17gw_public_key}'
-uci set      network.wg_f17.persistent_keepalive='25'
-uci add_list network.wg_f17.allowed_ips='10.7.10.0/24'
-uci set      network.wg_f17.route_allowed_ips='1'
 
 uci commit   network
 
@@ -917,26 +921,8 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.10.1'
-uci set      dhcp.@domain[-1].name='f17gw'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
 uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.5'
-uci set      dhcp.@domain[-1].name='imagiswitch'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.7'
-uci set      dhcp.@domain[-1].name='ilo'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
@@ -965,7 +951,26 @@ uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-#nanostation
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.5'
+uci set      dhcp.@domain[-1].name='imagiswitch'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.6'
+uci set      dhcp.@host[-1].name='brother-printer'
+uci set      dhcp.@host[-1].mac='00:80:77:80:46:b9'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.7'
+uci set      dhcp.@domain[-1].name='ilo'
+uci commit   dhcp.@domain[-1]
+
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.11'
@@ -1228,6 +1233,12 @@ uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c0:2f'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.1'
+uci set      dhcp.@domain[-1].name='f17gw'
+uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
