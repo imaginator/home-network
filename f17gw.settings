@@ -23,16 +23,33 @@ set      system.@system[-1].log_size='64'
 set      system.@system[-1].log_proto=udp
 set      system.@system[-1].log_remote='1'
 
-add      system led
+add      system  led
 set      system.@led[-1]=led
-set      system.@led[-1].default=0
-set      system.@led[-1].dev=wg0
+set      system.@led[-1].default='0'
+set      system.@led[-1].dev='wg0'
 set      system.@led[-1].mode='link tx rx'
 set      system.@led[-1].name='vpn traffic'
-set      system.@led[-1].sysfs="tp-link:blue:qss"
-set      system.@led[-1].trigger=netdev
+set      system.@led[-1].sysfs='tp-link:blue:qss'
+set      system.@led[-1].trigger='netdev'
 
-add      system watchcat
+add      system  led
+set      system.@led[-1]=led
+set      system.@led[-1].name='5ghz'
+set      system.@led[-1].sysfs='tp-link:blue:wlan2g'
+set      system.@led[-1].default='0'
+set      system.@led[-1].trigger='netdev'
+set      system.@led[-1].dev='wlan1'
+set      system.@led[-1].mode='link tx rx'
+
+add      system  led
+set      system.@led[-1]=led
+set      system.@led[-1].sysfs='ath9k-phy0'
+set      system.@led[-1].default='0'
+set      system.@led[-1].trigger='netdev'
+set      system.@led[-1].dev='wlan0'
+set      system.@led[-1].mode='link tx rx'
+
+add      system  watchcat
 set      system.@watchcat[-1]=watchcat
 set      system.@watchcat[-1].mode='ping'
 set      system.@watchcat[-1].forcedelay='300'
@@ -123,12 +140,13 @@ set network.wg0.private_key='${wg_f17gw_private_key}'
 
 set network.wireguard_wg0=wireguard_wg0
 set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
-set network.wireguard_wg0.route_allowed_ips='1'
 set network.wireguard_wg0.endpoint_host='bunker.imaginator.com'
 set network.wireguard_wg0.endpoint_port='12321'
 set network.wireguard_wg0.persistent_keepalive='25'
 set network.wireguard_wg0.description='wolliner gateway'
-set network.wireguard_wg0.allowed_ips='10.7.11.0/24'
+set network.wireguard_wg0.route_allowed_ips='1'
+add_list network.wireguard_wg0.allowed_ips='10.7.13.0/24'
+add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
 
 set network.wwan=interface
 set network.wwan.proto='dhcp'
@@ -151,6 +169,8 @@ set wireless.radio0.htmode='HT20'
 set wireless.radio0.country='DE'
 set wireless.radio0.legacy_rates='0'
 set wireless.radio0.log_level='0'
+set wireless.radio0.disabled='0'
+set wireless.radio0.channel='auto'
 
 set wireless.radio1=wifi-device
 set wireless.radio1.type='mac80211'
@@ -158,46 +178,28 @@ set wireless.radio1.hwmode='11a'
 set wireless.radio1.path='pci0000:00/0000:00:00.0'
 set wireless.radio1.htmode='HT40'
 set wireless.radio1.country='DE'
+set wireless.radio1.channel='40'
 set wireless.radio1.legacy_rates='0'
 set wireless.radio1.disabled='0'
 set wireless.radio1.log_level='0'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
-set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-set wireless.@wifi-iface[-1].encryption='none'
 set wireless.@wifi-iface[-1].device='radio0'
-set wireless.@wifi-iface[-1].mode='sta'
 set wireless.@wifi-iface[-1].network='wwan'
-
-add wireless  wifi-iface
-set wireless.@wifi-iface[-1]=wifi-iface
-set wireless.@wifi-iface[-1].network='wwan5'
 set wireless.@wifi-iface[-1].ssid='PYUR Community'
-set wireless.@wifi-iface[-1].device='radio1'
 set wireless.@wifi-iface[-1].mode='sta'
+set wireless.@wifi-iface[-1].encryption='wpa+ccmp'
 set wireless.@wifi-iface[-1].eap_type='peap'
-set wireless.@wifi-iface[-1].password='${pyur_community_password}'
 set wireless.@wifi-iface[-1].auth='EAP-MSCHAPV2'
-set wireless.@wifi-iface[-1].encryption='wpa2'
-set wireless.@wifi-iface[-1].ca_cert='login.telecolumbus.net'
 set wireless.@wifi-iface[-1].identity='${pyur_community_username}'
-set wireless.@wifi-iface[-1].anonymous_identity='${pyur_community_username}'
+set wireless.@wifi-iface[-1].password='${pyur_community_password}'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio1'
 set wireless.@wifi-iface[-1].mode='ap'
-set wireless.@wifi-iface[-1].ssid='OpenWrt'
-set wireless.@wifi-iface[-1].network='lan'
-set wireless.@wifi-iface[-1].encryption='psk2'
-set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
-
-add wireless  wifi-iface
-set wireless.@wifi-iface[-1]=wifi-iface
-set wireless.@wifi-iface[-1].device='radio0'
-set wireless.@wifi-iface[-1].mode='ap'
-set wireless.@wifi-iface[-1].ssid='OpenWrt'
+set wireless.@wifi-iface[-1].ssid='imagiFi 5'
 set wireless.@wifi-iface[-1].network='lan'
 set wireless.@wifi-iface[-1].encryption='psk2'
 set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
