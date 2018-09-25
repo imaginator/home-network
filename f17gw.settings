@@ -418,7 +418,7 @@ set firewall.@include[0].path='/etc/set firewall.user'
 commit firewall
 EOF
 
-/etc/init.d/set firewall.enable || true
+/etc/init.d/firewall enable || true
 
 uci import dhcp <<EOF
 EOF
