@@ -896,6 +896,9 @@ uci set      dhcp.trusted.start='100'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.leasetime='24h'
 uci set      dhcp.trusted.domain='imagilan'
+uci set      dhcp.trusted.dhcpv6='server'
+uci set      dhcp.trusted.ra='server'
+uci set      dhcp.trusted.ra_management='1'
 uci commit   dhcp.trusted
 
 uci set      dhcp.notrust=dhcp
