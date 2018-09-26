@@ -137,7 +137,7 @@ set network.@switch_vlan[-1].ports='1 0t'
 set network.wg0=interface
 set network.wg0.proto='wireguard'
 set network.wg0.listen_port='12321'
-set network.wg0.addresses='10.7.10.1/24'
+set network.wg0.addresses='10.7.13.2/32'
 set network.wg0.private_key='${wg_f17gw_private_key}'
 
 set network.wireguard_wg0=wireguard_wg0
