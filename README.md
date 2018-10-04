@@ -1,9 +1,9 @@
 # Home Network
 
 This is the code that configures my home network. The network consists of the following gear:
-- [Ubiquiti EdgerouterX](https://openwrt.org/toh/ubiquiti/ubiquiti_edgerouter_x_er-x_ka) [config](edgerouter.settings)
-- 3x [Ubiquiti Nanostation M2 Locos](https://wiki.openwrt.org/toh/ubiquiti/nanostationm2) [config](nanostationm2.settings)
-- [Ubiquiti AP Pro](https://openwrt.org/toh/ubiquiti/unifi_appro) [config](nanostationm2.settings)
+- [Ubiquiti EdgerouterX](https://openwrt.org/toh/ubiquiti/ubiquiti_edgerouter_x_er-x_ka) ([config](edgerouter.settings))
+- 3x [Ubiquiti Nanostation M2 Locos](https://wiki.openwrt.org/toh/ubiquiti/nanostationm2) ([config](nanostationm2.settings))
+- [Ubiquiti AP Pro](https://openwrt.org/toh/ubiquiti/unifi_appro) ([config](nanostationm2.settings))
 
 The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/wifi using the (Prometheus Node Exporter)[https://github.com/openwrt/packages/tree/master/utils/prometheus-node-exporter-lua].
 
