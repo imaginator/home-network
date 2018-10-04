@@ -890,8 +890,8 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].name='iot DHCP'
-uci set      firewall.@rule[-1].src='IoT'
+uci set      firewall.@rule[-1].name='IoT DHCP'
+uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest_port='67-68'
 uci commit   firewall.@rule[-1]
 
