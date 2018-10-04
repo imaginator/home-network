@@ -1,76 +1,40 @@
 # Home Network
 
 This is the code that configures my home network. The network consists of the following gear:
-- TP-Link W8970 DSL router
-- TP-Link W8980B DSL router as a backup
-- 3x Ubiquiti NanostationM2 Locos
+- (Ubiquiti EdgerouterX)[https://openwrt.org/toh/ubiquiti/ubiquiti_edgerouter_x_er-x_ka] (config)[edgerouter.settings]
+- 3x (Ubiquiti Nanostation M2 Locos)[https://wiki.openwrt.org/toh/ubiquiti/nanostationm2] (config)[nanostationm2.settings]
+- 1x (Ubiquiti AP Pro)[https://openwrt.org/toh/ubiquiti/unifi_appro] (config)[nanostationm2.settings]
 
 The network is monitored at: https://bunker.imaginator.com/grafana/dashboard/db/wifi using the (Prometheus Node Exporter)[https://github.com/openwrt/packages/tree/master/utils/prometheus-node-exporter-lua].
 
-## Diagram
-```
-  ^                
-  |  uplink VDSL  (easybell, ptm0.7 etc)
-  |  ipv6 tunnel  (henet)
-  |  freifunk vpn (ffvpn)
-  |
-+-+-----------------------------------------------------------------+
-| imagiswitch.imagilan                                              |
-|===================================================================|
-| br-trusted (eth0.2, dual2)    <---> wan-trusted (easybell, henet) +------>wifi: dual2
-| br-notrust (eth0.3, freifunk) <---> wan|notrust (ff-vpn)          +------>wifi: freifunk
-+-+-----------------------------------------------------------------+
-  |
-  |  vlan2 (eth0.2)
-  |  vlan3 (eth0.3)
-  |
-  |    +---------------------------------+
-  |    |  repeater01.imagilan            |
-  |    |=================================|
-  +----+  br-trusted (eth0.2, dual2)     +------>wifi: dual2
-  |    |  br-notrust (eth0.3, freifunk)  +------>wifi: freifunk
-  |    +---------------------------------+
-  |
-  |    +---------------------------------+
-  |    |  repeater<nn>.imagilan          |
-  |    |=================================|
-  +----+  br-trusted (eth0.2, dual2)     |------>wifi: dual2
-       |  br-notrust (eth0.3, freifunk)  +------>wifi: freifunk
-       +---------------------------------+
-```
+## Subnetting
 
+From `10.7.8.0/21` we have `10.7.8.0` - `10.7.15.255` (2046 IPs)
 
-## Firmware
+| Use                | Subnet address | Netmask       | Range of addresses      | Useable IPs             | Hosts |
+| ------------------ | -------------- | ------------- | ----------------------- | ----------------------- | ----- |
+| VPN termination    | 10.7.8.0/24    | 255.255.255.0 | 10.7.8.0 -  10.7.8.255  | 10.7.8.1 -  10.7.8.254  | 254   |
+| IoT                | 10.7.9.0/24    | 255.255.255.0 | 10.7.9.0 -  10.7.9.255  | 10.7.9.1 -  10.7.9.254  | 254   |
+| F17 Trusted        | 10.7.10.0/24   | 255.255.255.0 | 10.7.10.0 - 10.7.10.255 | 10.7.10.1 - 10.7.10.254 | 254   |
+| W16A Trusted       | 10.7.11.0/24   | 255.255.255.0 | 10.7.11.0 - 10.7.11.255 | 10.7.11.1 - 10.7.11.254 | 254   |
+| Notrust / Freifunk | 10.7.12.0/22   | 255.255.252.0 | 10.7.12.0 - 10.7.15.255 | 10.7.12.1 - 10.7.15.254 | 1022  |
 
-Building the W8970 and W8980 firmware
+## Build Firmware
 
 ```
-# Upgrade build configs
-cd lede-w8970
-make menuconfig # twiddle packages and save
-scripts/diffconfig.sh  > /tmp/out
-diff ../w8970.diffconfig /tmp/out
-# edit ../w8970.diffconfig with any changes
-cd .. 
-./w8970-build.sh
-scp -v -P23 lede/bin/targets/lantiq/xrx200/lede-lantiq-xrx200-TDW8970-squashfs-sysupgrade.bin root@10.7.11.5:/tmp
-ssh -p 23 root@10.7.11.5
-echo 3 > /proc/sys/vm/drop_caches
-sysupgrade -v /tmp/lede-lantiq-xrx200-TDW8970-squashfs-sysupgrade.bin
+./build-firmware <edgerouterx|repeaterNN>
 ```
 
 ## Configure
-Configuring the routers
 
 ```
-cp network-secrets.env.example network-secrets.env
-# edit as appropriate
-
-./deploy <w8970|repeaterNN>
+cp network-secrets.env.example network-secrets.env # and edit as appropriate
+./deploy <edgerouterx|repeaterNN>
 ```
 
 ## Debugging Notes
-Wireless
+
+Wireless Mesh notes (no longer used since 802.11s was to be **really** slow)
 
 ```
 iw phy0 info

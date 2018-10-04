@@ -53,6 +53,7 @@ case $1 in
   repeater0[1-6])
     envsubst \ '
     $trusted_wifikey \
+    $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
     ' < nanostationm2.settings  | ssh root@$1

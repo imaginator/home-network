@@ -105,15 +105,7 @@ uci set      wireless.radio0.type='mac80211'
 uci set      wireless.radio0.path='pci0000:00/0000:00:00.0'
 uci set      wireless.radio0.log_level='0' # 0=verbose
 uci set      wireless.radio0.country='DE'
-#uci set      wireless.radio0.txpower='20'
-#uci set      wireless.radio0.antenna_gain='8'
-#uci set      wireless.radio0.hwmode='11g'
 uci set      wireless.radio0.require_mode='n'
-#uci set      wireless.radio0.htmode='HT20'
-#uci set      wireless.radio0.short_gi_20='1'
-#uci set      wireless.radio0.greenfield='0'
-#uci set      wireless.radio0.distance='100'
-#uci set      wireless.radio0.beacon_int='200'
 uci set      wireless.radio0.channel='auto'
 uci commit   wireless.radio0
 
@@ -263,6 +255,36 @@ uci set      wireless.@wifi-iface[-1].disassoc_low_ack='1'
 uci set      wireless.@wifi-iface[-1].wmm='1'
 uci commit   wireless.@wifi-iface[-1]
 
+uci add      wireless wifi-iface
+uci set      wireless.@wifi-iface[-1]=wifi-iface
+uci set      wireless.@wifi-iface[-1].ifname='iot2'
+uci set      wireless.@wifi-iface[-1].disabled='0'
+uci set      wireless.@wifi-iface[-1].device='radio0'
+uci set      wireless.@wifi-iface[-1].network='iot'
+uci set      wireless.@wifi-iface[-1].mode='ap'
+uci set      wireless.@wifi-iface[-1].isolate='1'
+uci set      wireless.@wifi-iface[-1].encryption='psk2'
+uci set      wireless.@wifi-iface[-1].key='${iot_wifikey}'
+uci set      wireless.@wifi-iface[-1].ssid='imagiFi IoT'
+uci set      wireless.@wifi-iface[-1].hidden='0'
+uci set      wireless.@wifi-iface[-1].wmm='1'
+uci commit   wireless.@wifi-iface[-1]
+
+uci add      wireless wifi-iface
+uci set      wireless.@wifi-iface[-1]=wifi-iface
+uci set      wireless.@wifi-iface[-1].ifname='iot5'
+uci set      wireless.@wifi-iface[-1].disabled='0'
+uci set      wireless.@wifi-iface[-1].device='radio1'
+uci set      wireless.@wifi-iface[-1].network='iot'
+uci set      wireless.@wifi-iface[-1].mode='ap'
+uci set      wireless.@wifi-iface[-1].isolate='1'
+uci set      wireless.@wifi-iface[-1].encryption='psk2'
+uci set      wireless.@wifi-iface[-1].key='${iot_wifikey}'
+uci set      wireless.@wifi-iface[-1].ssid='imagiFi IoT'
+uci set      wireless.@wifi-iface[-1].hidden='0'
+uci set      wireless.@wifi-iface[-1].wmm='1'
+uci commit   wireless.@wifi-iface[-1]
+
 uci import   network <<EOF
 EOF
 
@@ -289,9 +311,11 @@ uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
 uci add_list network.notrust.ifname='eth0.3'
 uci set      network.notrust.proto='none'
-uci set      network.notrust.hairpin='0'
-uci set      network.notrust.mcast_to_ucast='1'
-uci set      network.notrust.igmp_snooping='0'
+
+uci set      network.iot=interface
+uci set      network.iot.type='bridge'
+uci add_list network.iot.ifname='eth0.5'
+uci set      network.iot.proto='none'
 
 uci commit   network
 

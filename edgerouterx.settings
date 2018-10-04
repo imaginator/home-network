@@ -6,15 +6,6 @@ set -xe
 # Edgerouter X
 # depends on build settings in edgerouterx.diffconfig
 
-# Personal traffic
-# trusted   <-> wan_trusted (pyur henet)
-# 10.7.11.0/24
-
-# Freifunk traffic
-# notrust   <-> wan_notrust (ffvpn)
-# 10.7.12.0/24
-# 10.7.12.1 - 10.7.15.254
-
 uci import system <<EOF
 EOF
 
@@ -80,6 +71,7 @@ uci commit   network.@switch[-1]
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='1'
 uci set      network.@switch_vlan[-1].vlan='1'
 uci set      network.@switch_vlan[-1].ports='0t 1 2 3 6t'
 uci commit   network.@switch_vlan[-1]
@@ -87,6 +79,7 @@ uci commit   network.@switch_vlan[-1]
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='2'
 uci set      network.@switch_vlan[-1].vlan='2'
 uci set      network.@switch_vlan[-1].ports='0t 6t'
 uci commit   network.@switch_vlan[-1]
@@ -94,6 +87,7 @@ uci commit   network.@switch_vlan[-1]
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='3'
 uci set      network.@switch_vlan[-1].vlan='3'
 uci set      network.@switch_vlan[-1].ports='0t 6t'
 uci commit   network.@switch_vlan[-1]
@@ -101,8 +95,17 @@ uci commit   network.@switch_vlan[-1]
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='4'
 uci set      network.@switch_vlan[-1].vlan='4'
 uci set      network.@switch_vlan[-1].ports='0t 4 6t'
+uci commit   network.@switch_vlan[-1]
+
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='5'
+uci set      network.@switch_vlan[-1].vlan='5'
+uci set      network.@switch_vlan[-1].ports='0t 6t'
 uci commit   network.@switch_vlan[-1]
 
 uci set      network.loopback=interface
@@ -130,7 +133,7 @@ uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
 uci add_list network.notrust.ifname='eth0.3'
 uci set      network.notrust.proto='static'
-uci set      network.notrust.netmask='255.255.255.0'
+uci set      network.notrust.netmask='255.255.252.0'
 uci set      network.notrust.ipaddr='10.7.12.5'
 uci set      network.notrust.delegate='0'
 
@@ -142,6 +145,13 @@ uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
 uci add_list network.pyur4.dns='1.1.1.1'         # Cloudflare
 uci add_list network.pyur4.dns='1.0.0.1'         # Cloudflare
+
+uci set      network.iot=interface
+uci set      network.iot.ifname='eth0.5'
+uci set      network.iot.ipaddr='10.7.9.1'
+uci set      network.iot.netmask='255.255.255.0'
+uci set      network.iot.proto='static'
+uci set      network.iot.type='bridge'
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname='eth0.4'
@@ -196,7 +206,7 @@ uci commit   network
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
 uci add      network  rule
 uci set      network.@rule[-1]=rule
-uci set      network.@rule[-1].src='10.7.12.0/24'
+uci set      network.@rule[-1].src='10.7.12.0/22'
 uci set      network.@rule[-1].lookup='100'
 uci commit   network.@rule[-1]
             
@@ -385,9 +395,9 @@ sleep 10
 if [ `ip route show table 100 | grep "default via 172.31.240.1 dev ffvpn" | wc -l` -lt 1 ]; then
   ip route add default via 172.31.240.1 table 100
 fi
-if [ `ip route show table 100 | grep "10.7.12.0/24 dev br-notrust" | wc -l` -lt 2 ]; then
+if [ `ip route show table 100 | grep "10.7.12.0/22 dev br-notrust" | wc -l` -lt 2 ]; then
   ip route add 10.7.11.0/24 dev br-trusted table 100
-  ip route add 10.7.12.0/24 dev br-notrust table 100
+  ip route add 10.7.12.0/22 dev br-notrust table 100
 fi
 if [ `ip route show table 100 | grep "172.31.240.0/20 dev ffvpn" | wc -l` -lt 1 ]; then
   ip route add 172.31.240.0/20 dev ffvpn table 100
@@ -395,8 +405,8 @@ fi
 if [ `ip rule | grep "172.31.240.0/20 lookup 100" | wc -l` -lt 1 ]; then
   ip rule add from 172.31.240.0/20 table 100
 fi
-if [ `ip rule | grep "10.7.12.0/24 lookup 100" | wc -l` -lt 1 ]; then
-  ip rule add from 10.7.12.0/24 table 100
+if [ `ip rule | grep "10.7.12.0/22 lookup 100" | wc -l` -lt 1 ]; then
+  ip rule add from 10.7.12.0/22 table 100
 fi
 EOF
 chmod u+x /etc/openvpn/up.sh
@@ -458,7 +468,17 @@ uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
 uci commit   firewall.@zone[-1]
-   
+
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='iot'
+uci add_list firewall.@zone[-1].network='iot'
+uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].log='1'
+uci commit   firewall.@zone[-1]
+
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='wan_trusted'
@@ -867,6 +887,32 @@ uci set      firewall.@rule[-1].dest_ip='224.0.0.0/4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
+uci add      firewall rule
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].name='iot DHCP'
+uci set      firewall.@rule[-1].src='IoT'
+uci set      firewall.@rule[-1].dest_port='67-68'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci set      firewall.@rule[-1].proto='tcp udp'
+uci set      firewall.@rule[-1].dest_port='53'
+uci set      firewall.@rule[-1].name='IoT DNS'
+uci set      firewall.@rule[-1].src='iot'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest_port='80 443'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].name='IoT web outboud'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci commit   firewall.@rule[-1]
+
 /etc/init.d/firewall enable || true
 
 uci import dhcp <<EOF
@@ -908,12 +954,21 @@ uci commit   dhcp.trusted
 uci set      dhcp.notrust=dhcp
 uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
-uci set      dhcp.notrust.start='50'
-uci set      dhcp.notrust.limit='200'
-uci set      dhcp.notrust.leasetime='1h'
+uci set      dhcp.notrust.start='22'
+uci set      dhcp.notrust.limit='1000'
+uci set      dhcp.notrust.leasetime='23h'
 uci set      dhcp.notrust.dns='10.7.12.5'
 uci set      dhcp.notrust.domain='notrust'
 uci commit   dhcp.notrust
+
+uci set      dhcp.iot=dhcp
+uci set      dhcp.iot.interface='iot'
+uci set      dhcp.iot.dhcpv4='server'
+uci set      dhcp.iot.force='1'
+uci set      dhcp.iot.leasetime='12h'
+uci set      dhcp.iot.start='100'
+uci set      dhcp.iot.limit='150'
+uci commit   dhcp.iot
 
 uci set      dhcp.pyur4=dhcp
 uci set      dhcp.pyur4.interface='pyur4'
@@ -1254,6 +1309,30 @@ uci set      dhcp.@host[-1].name='camera01'
 uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.13.1'
+uci set      dhcp.@domain[-1].name='wolliner-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.13.2'
+uci set      dhcp.@domain[-1].name='f17gw-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.13.3'
+uci set      dhcp.@domain[-1].name='furrow-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.13.4'
+uci set      dhcp.@domain[-1].name='android-vpn'
+uci commit   dhcp.@domain[-1]
 
 echo -e "All done with writing.\nRebooting..."
 reboot
