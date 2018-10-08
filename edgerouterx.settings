@@ -517,6 +517,12 @@ uci commit firewall.@forwarding[-1]
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
 uci set    firewall.@forwarding[-1].src='trusted'
+uci set    firewall.@forwarding[-1].dest='iot'
+uci commit firewall.@forwarding[-1]
+
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='trusted'
 uci set    firewall.@forwarding[-1].dest='wan_trusted'
 uci commit firewall.@forwarding[-1]
 
@@ -788,7 +794,6 @@ uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
             
-
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='trust dhcp'
@@ -904,13 +909,21 @@ uci set      firewall.@rule[-1].src='iot'
 uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest_port='80 443'
-uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].name='IoT web outboud'
+uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest_port='80 443 9292 43439' # homematic is port 9292 43439
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1].name='ping out (homematic needs this)'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].icmp_type='echo-request'
+uci set      firewall.@rule[-1].proto='icmp'
+uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
 /etc/init.d/firewall enable || true
@@ -986,6 +999,30 @@ uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.2'
+uci set      dhcp.@host[-1].name='hue'
+uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.3'
+uci set      dhcp.@host[-1].name='homematic'
+uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.4'
+uci set      dhcp.@host[-1].name='imagisuck'
+uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1122,24 +1159,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.23'
-uci set      dhcp.@host[-1].name='hue'
-uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.24'
-uci set      dhcp.@host[-1].name='homematic'
-uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.25'
 uci set      dhcp.@host[-1].hostid='25'
 uci set      dhcp.@host[-1].name='furrow'
@@ -1179,14 +1198,6 @@ uci set      dhcp.@host[-1].ip='10.7.11.32'
 uci set      dhcp.@host[-1].name='pi02'
 uci set      dhcp.@host[-1].mac='b8:27:eb:98:32:62' #wireless
 uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.33'
-uci set      dhcp.@host[-1].name='imagisuck'
-uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
