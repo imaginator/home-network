@@ -1,30 +1,58 @@
-#!/bin/bash -x
-set -xe
+#!/bin/bash
+set -e
 
-# options include nanostationm2 and w8970
+# options include nanostationm2
 MODEL=$1
-TAG="v18.06.1"
+VERSION=18.06.1
 
-if [ -d $MODEL.src ]; then
-    cd $MODEL.src
-    git pull
-else
-  git clone --branch ${TAG} --depth 1 https://git.openwrt.org/openwrt/openwrt.git $MODEL.src
-  cd $MODEL.src
+case $MODEL in
+"f17gw")
+  PLATFORM=ar71xx
+  TYPE=generic
+  PROFILE=tl-wdr4300-v1
+  PACKAGES="luci-app-firewall luci-app-wireguard luci-proto-wireguard wireguard-tools prometheus-node-exporter-lua ddns-scripts luci-app-ddns -dnsmasq dnsmasq-full luci-proto-ipv6 tcpdump-mini curl ip-full uhttpd luci-mod-admin-full luci-theme-bootstrap libiwinfo-lua -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only curl ca-certificates libustream-openssl watchcat luci-app-watchcat"
+  REMOVED_PACKAGES="-dnsmasq -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only"
+;;
+
+"nanostationm2")
+  PLATFORM=ar71xx
+  TYPE=generic
+  PROFILE=ubnt-nano-m
+  PACKAGES="odhcp6c luci-base prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-theme-bootstrap"
+  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
+;;
+
+"edgerouterx")
+  PLATFORM=ramips 
+  PROFILE=ubnt-erx
+  TYPE=mt7621
+  PACKAGES="libatomic libnl libnl-core libnl-genl libnl-nf libnl-route libstdcpp uboot-envtools kmod-i2c-gpio-custom kmod-gpio-pca953x luci-base prometheus-node-exporter-lua  adblock luci-app-adblock sqm-scripts sqm-scripts-extra tcpdump-mini curl ip-full ip-bridge luci-mod-admin-full luci-theme-bootstrap luci-mod-admin-full luci-proto-ppp luci-app-firewall luci-app-watchcat luci-proto-wireguard tor tor-geoip kmod-wireguard wireguard-tools wireguard luci-app-wireguard luci-proto-wireguard libustream-openssl bind-host ca-bundle ca-certificates ddns-scripts luci-app-ddns openvpn-openssl kmod-tun lldpd iptables-mod-tee odhcp6c luci-proto-ipv6 dnsmasq-full"
+  REMOVED_PACKAGES="-dnsmasq -odhcpd"
+;;
+
+"ubnt-uap-pro") 
+  PLATFORM=ar71xx
+  TYPE=generic
+  PROFILE=ubnt-uap-pro
+  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci-theme-bootstrap" 
+  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
+;;
+
+*)
+  echo "specify build target (f17gw ; nanostationm2 ; edgerouterx ; ubnt-uap-pro)"
+  exit 1
+;;
+esac
+
+if [ ! -d build/openwrt-imagebuilder-${VERSION}-${PLATFORM}-${TYPE}.Linux-x86_64 ] ; then
+  if [ ! -f /tmp/openwrt-imagebuilder-${VERSION}-${PLATFORM}-${TYPE}.Linux-x86_64.tar.xz ]; then
+    (cd /tmp && curl -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${PLATFORM}-${TYPE}.Linux-x86_64.tar.xz )
+  fi
+  tar xfJ /tmp/openwrt-imagebuilder-${VERSION}-${PLATFORM}-${TYPE}.Linux-x86_64.tar.xz -C build/
 fi
 
-git checkout ${TAG}
+COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${PACKAGES}`" 
 
-./scripts/feeds update -a
-./scripts/feeds install -a
+( cd build/openwrt-imagebuilder-${VERSION}-${PLATFORM}-${TYPE}.Linux-x86_64 && sudo make image PROFILE="$PROFILE" PACKAGES="$COMBINED_PACKAGE_LIST" )
 
-# copy in the config things we care about
-cp ../$MODEL.diffconfig .config
-
-# expand to full config
-make defconfig
-
-# Build
-ionice --class 3 nice -n19 make -j1 #V=s
-
-cp .config .config.$MODEL.$(date --iso)
+echo "scp build/openwrt-imagebuilder-${VERSION}-${PLATFORM}-${TYPE}.Linux-x86_64/bin/targets/ar71xx/generic/openwrt-${VERSION}-${PLATFORM}-${TYPE}-${PROFILE}-squashfs-sysupgrade.bin root@<dest>:/tmp"

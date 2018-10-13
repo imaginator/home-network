@@ -29,8 +29,10 @@ uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
 uci set      system.@system[-1].klogconloglevel='8'
 uci set      system.@system[-1].cronloglevel='0'
+uci set      system.@system[-1].log_size='128'
+uci set      system.@system[-1].log_buffer_size='64'
 uci set      system.@system[-1].log_ip='10.7.11.1'
-uci set      system.@system[-1].log_proto=udp
+uci set      system.@system[-1].log_proto='tcp'
 uci set      system.@system[-1].log_remote='1'
 
 uci add      system ntp
@@ -298,9 +300,6 @@ uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
 uci set      network.trusted.proto='dhcp'
-uci set      network.trusted.hairpin='1'
-uci set      network.trusted.mcast_to_ucast='1'
-uci set      network.trusted.igmp_snooping='0'
 
 uci set      network.trusted6=interface
 uci set      network.trusted6.ifname='@trusted'
