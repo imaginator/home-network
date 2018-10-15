@@ -18,7 +18,7 @@ case $MODEL in
   PLATFORM=ar71xx
   TYPE=generic
   PROFILE=ubnt-nano-m
-  PACKAGES="odhcp6c luci-base prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-theme-bootstrap"
+  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap"
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
@@ -34,7 +34,7 @@ case $MODEL in
   PLATFORM=ar71xx
   TYPE=generic
   PROFILE=ubnt-uap-pro
-  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci-theme-bootstrap" 
+  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap" 
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
