@@ -201,6 +201,13 @@ uci set      network.wg_simonphone.persistent_keepalive='25'
 uci add_list network.wg_simonphone.allowed_ips='10.7.13.4/32'
 uci set      network.wg_simonphone.route_allowed_ips='1'
 
+uci set      network.wg_tablet=wireguard_wg0
+uci set      network.wg_tablet.description='OpenHAB Tablet'
+uci set      network.wg_tablet.public_key='${wg_tablet_public_key}'
+uci set      network.wg_tablet.persistent_keepalive='25'
+uci add_list network.wg_tablet.allowed_ips='10.7.13.5/32'
+uci set      network.wg_tablet.route_allowed_ips='1'
+
 uci commit   network
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948

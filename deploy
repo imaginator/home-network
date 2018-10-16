@@ -24,6 +24,8 @@ case $1 in
     $wg_simonphone_private_key \
     $wg_f17gw_public_key \
     $wg_f17gw_private_key \
+    $wg_tablet_public_key \
+    $wg_tablet_private_key \
     $dh2048_pem \
     ' < edgerouterx.settings  | ssh root@10.7.11.5
     ;;
