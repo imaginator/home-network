@@ -1033,18 +1033,18 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.2'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
+uci set      dhcp.@host[-1].ip='10.7.9.5'
+uci set      dhcp.@host[-1].name='knx-gw'
+uci set      dhcp.@host[-1].mac='00:0c:de:61:50:0b'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.3'
-uci set      dhcp.@host[-1].name='knx-gw'
-uci set      dhcp.@host[-1].mac='00:0c:de:61:50:0b'
+uci set      dhcp.@host[-1].ip='10.7.11.2'
+uci set      dhcp.@host[-1].name='switch01'
+uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
 uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1227,7 +1227,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.36'
-uci set      dhcp.@host[-1].name='home-mini-bathroom'
+uci set      dhcp.@host[-1].name='home-mini-kitchen'
 uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1235,7 +1235,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.37'
-uci set      dhcp.@host[-1].name='home-mini-kitchen'
+uci set      dhcp.@host[-1].name='home-mini-bathroom'
 uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
