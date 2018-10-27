@@ -177,13 +177,13 @@ uci set      network.wg0="interface"
 uci set      network.wg0.proto="wireguard"
 uci set      network.wg0.private_key='${wg_vpn_private_key}'
 uci set      network.wg0.listen_port="12321"
-uci add_list network.wg0.addresses='10.7.13.1/24'
+uci add_list network.wg0.addresses='10.7.8.1/24'
 
 uci set      network.wg_f17=wireguard_wg0
 uci set      network.wg_f17.description='F17 Gateway'
 uci set      network.wg_f17.public_key='${wg_f17gw_public_key}'
 uci set      network.wg_f17.persistent_keepalive='15'
-uci add_list network.wg_f17.allowed_ips='10.7.13.2/32'
+uci add_list network.wg_f17.allowed_ips='10.7.8.2/32'
 uci add_list network.wg_f17.allowed_ips='10.7.10.0/24'
 uci set      network.wg_f17.route_allowed_ips='1'
 
@@ -191,21 +191,21 @@ uci set      network.wg_furrow=wireguard_wg0
 uci set      network.wg_furrow.description='furrow'
 uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
 uci set      network.wg_furrow.persistent_keepalive='25'
-uci add_list network.wg_furrow.allowed_ips='10.7.13.3/32'
+uci add_list network.wg_furrow.allowed_ips='10.7.8.3/32'
 uci set      network.wg_furrow.route_allowed_ips='1'
 
 uci set      network.wg_simonphone=wireguard_wg0
 uci set      network.wg_simonphone.description='Simon Mobile'
 uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
 uci set      network.wg_simonphone.persistent_keepalive='25'
-uci add_list network.wg_simonphone.allowed_ips='10.7.13.4/32'
+uci add_list network.wg_simonphone.allowed_ips='10.7.8.4/32'
 uci set      network.wg_simonphone.route_allowed_ips='1'
 
 uci set      network.wg_tablet=wireguard_wg0
 uci set      network.wg_tablet.description='OpenHAB Tablet'
 uci set      network.wg_tablet.public_key='${wg_tablet_public_key}'
 uci set      network.wg_tablet.persistent_keepalive='25'
-uci add_list network.wg_tablet.allowed_ips='10.7.13.5/32'
+uci add_list network.wg_tablet.allowed_ips='10.7.8.5/32'
 uci set      network.wg_tablet.route_allowed_ips='1'
 
 uci commit   network
