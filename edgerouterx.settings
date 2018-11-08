@@ -1007,6 +1007,12 @@ uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
 
+uci add      dhcp  cname 
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='salt'
+uci set      dhcp.@cname[-1].target='bunker'
+uci commit   dhcp.@cname[-1]
+
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.2'
@@ -1037,6 +1043,22 @@ uci set      dhcp.@host[-1].ip='10.7.9.5'
 uci set      dhcp.@host[-1].name='knx-gw'
 uci set      dhcp.@host[-1].mac='00:0c:de:61:50:0b'
 uci set      dhcp.@host[-1].leasetime='infinite'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.6'
+uci set      dhcp.@host[-1].name='bathroom-scale'
+uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.20'
+uci set      dhcp.@host[-1].name='camera01'
+uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1250,14 +1272,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.40'
-uci set      dhcp.@host[-1].name='bathroom-scale'
-uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.51'
 uci set      dhcp.@host[-1].name='plugswitch01'
 uci set      dhcp.@host[-1].mac='50:C7:BF:01:F8:2C'
@@ -1319,14 +1333,6 @@ uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.10.1'
 uci set      dhcp.@domain[-1].name='f17gw'
 uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.20'
-uci set      dhcp.@host[-1].name='camera01'
-uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
