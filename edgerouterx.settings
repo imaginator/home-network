@@ -916,6 +916,15 @@ uci set      firewall.@rule[-1].src='iot'
 uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest_port='123'
+uci set      firewall.@rule[-1].name='IoT NTP'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
 uci set      firewall.@rule[-1].name='IoT web outboud'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='wan_trusted'
