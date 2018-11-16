@@ -107,14 +107,21 @@ set network.lan.ipaddr='10.7.10.1'
 set network.lan.dns='1.1.1.1 8.8.8.8 10.7.11.5'
 set network.lan.ip6assign='64'
 
-set network.wan=interface
-set network.wan.ifname='eth0.2'
-set network.wan.proto='dhcp'
-set network.wan.type='bridge'
-set network.wan6=interface
-set network.wan6.ifname='eth0.2'
-set network.wan6.proto='dhcpv6'
-set network.wan6.type='bridge'
+set network.pyur4=interface
+set network.pyur4.proto='dhcp'
+set network.pyur4.ifname='eth0.2'
+set network.pyur4.metric=5
+
+set network.pyur6=interface
+set network.pyur6.proto='dhcpv6'
+set network.pyur6.ifname='eth0.2'
+set network.pyur6.reqaddress='try'
+set network.pyur6.reqprefix='auto'
+
+set network.ff2=interface
+set network.ff2.proto='dhcp'
+set network.ff2.ifname='ff2'
+set network.ff2.metric=10
 
 add network switch
 set network.@switch[-1]=switch
@@ -147,14 +154,7 @@ set network.wireguard_wg0.endpoint_port='12321'
 set network.wireguard_wg0.persistent_keepalive='15'
 set network.wireguard_wg0.description='wolliner gateway'
 set network.wireguard_wg0.route_allowed_ips='1'
-add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
 add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
-
-set network.wwan=interface
-set network.wwan.proto='dhcp'
-
-set network.wwan5=interface
-set network.wwan5.proto='dhcp'
 
 commit network
 EOF
@@ -182,20 +182,26 @@ set wireless.radio1.htmode='HT40'
 set wireless.radio1.country='DE'
 set wireless.radio1.channel='40'
 set wireless.radio1.legacy_rates='0'
-set wireless.radio1.disabled='0'
+set wireless.radio1.disabled='1'
 set wireless.radio1.log_level='0'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio0'
-set wireless.@wifi-iface[-1].network='wwan'
-set wireless.@wifi-iface[-1].ssid='PYUR Community'
 set wireless.@wifi-iface[-1].mode='sta'
-set wireless.@wifi-iface[-1].encryption='wpa+ccmp'
-set wireless.@wifi-iface[-1].eap_type='peap'
-set wireless.@wifi-iface[-1].auth='EAP-MSCHAPV2'
-set wireless.@wifi-iface[-1].identity='${pyur_community_username}'
-set wireless.@wifi-iface[-1].password='${pyur_community_password}'
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
+set wireless.@wifi-iface[-1].network='ff2'
+set wireless.@wifi-iface[-1].ifname='ff2'
+set wireless.@wifi-iface[-1].encryption='none'
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].device='radio0'
+set wireless.@wifi-iface[-1].mode='ap'
+set wireless.@wifi-iface[-1].ssid='imagiFi'
+set wireless.@wifi-iface[-1].network='lan'
+set wireless.@wifi-iface[-1].encryption='psk2'
+set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
@@ -246,9 +252,9 @@ uci add    ddns  service
 uci set    ddns.@service[-1]=service
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].use_ipv6='1'
-uci set    ddns.@service[-1].interface='wan' # for hotplug events
-uci set    ddns.@service[-1].ip_source='network'
-uci set    ddns.@service[-1].ip_network='wan'
+uci set    ddns.@service[-1].interface='lan' # for hotplug events
+uci set    ddns.@service[-1].ip_interface='br-lan'
+uci set    ddns.@service[-1].ip_source='interface'
 uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
 uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
@@ -307,7 +313,7 @@ set firewall.@zone[1].masq='1'
 set firewall.@zone[1].mtu_fix='1'
 set firewall.@zone[1].conntrack='1'
 set firewall.@zone[1].log='1'
-set firewall.@zone[1].network='wan wan6 wwan wwan5'
+set firewall.@zone[1].network='pyur4 pyur6 ff2'
 
 add firewall  forwarding
 set firewall.@forwarding[-1]=forwarding

@@ -178,6 +178,8 @@ uci set      network.wg0.proto="wireguard"
 uci set      network.wg0.private_key='${wg_vpn_private_key}'
 uci set      network.wg0.listen_port="12321"
 uci add_list network.wg0.addresses='10.7.8.1/24'
+# /24 for this device. 
+# each client is represented by a /32
 
 uci set      network.wg_f17=wireguard_wg0
 uci set      network.wg_f17.description='F17 Gateway'
