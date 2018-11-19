@@ -1008,6 +1008,30 @@ uci commit   dhcp.pyur4
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.1'
+uci set      dhcp.@domain[-1].name='wolliner-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.2'
+uci set      dhcp.@domain[-1].name='f17gw-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.3'
+uci set      dhcp.@domain[-1].name='furrow-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.4'
+uci set      dhcp.@domain[-1].name='android-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
@@ -1299,74 +1323,10 @@ uci set      dhcp.@host[-1].leasetime='infinite'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].name='plugswitch03'
-uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c6:3b'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].name='plugswitch04'
-uci set      dhcp.@host[-1].mac='50:c7:bf:7c:b2:c5'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].name='plugswitch05'
-uci set      dhcp.@host[-1].mac='b0:4e:26:2b:bd:b7'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].name='plugswitch06'
-uci set      dhcp.@host[-1].mac='50:c7:bf:7c:b6:ac'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].name='plugswitch07'
-uci set      dhcp.@host[-1].mac='50:c7:bf:7c:c0:2f'
-uci set      dhcp.@host[-1].leasetime='infinite'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.10.1'
 uci set      dhcp.@domain[-1].name='f17gw'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.13.1'
-uci set      dhcp.@domain[-1].name='wolliner-vpn'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.13.2'
-uci set      dhcp.@domain[-1].name='f17gw-vpn'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.13.3'
-uci set      dhcp.@domain[-1].name='furrow-vpn'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.13.4'
-uci set      dhcp.@domain[-1].name='android-vpn'
 uci commit   dhcp.@domain[-1]
 
 echo -e "All done with writing.\nRebooting..."
