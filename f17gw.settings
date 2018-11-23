@@ -118,11 +118,6 @@ set network.pyur6.ifname='eth0.2'
 set network.pyur6.reqaddress='try'
 set network.pyur6.reqprefix='auto'
 
-set network.ff2=interface
-set network.ff2.proto='dhcp'
-set network.ff2.ifname='ff2'
-set network.ff2.metric=10
-
 add network switch
 set network.@switch[-1]=switch
 set network.@switch[-1].name='switch0'
@@ -306,7 +301,7 @@ set firewall.@zone[1].masq='1'
 set firewall.@zone[1].mtu_fix='1'
 set firewall.@zone[1].conntrack='1'
 set firewall.@zone[1].log='1'
-set firewall.@zone[1].network='pyur4 pyur6 ff2'
+set firewall.@zone[1].network='pyur4 pyur6'
 
 add firewall  forwarding
 set firewall.@forwarding[-1]=forwarding
