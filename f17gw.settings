@@ -154,6 +154,7 @@ set network.wireguard_wg0.endpoint_port='12321'
 set network.wireguard_wg0.persistent_keepalive='15'
 set network.wireguard_wg0.description='wolliner gateway'
 set network.wireguard_wg0.route_allowed_ips='1'
+add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
 add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
 
 commit network
