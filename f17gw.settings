@@ -183,17 +183,8 @@ set wireless.radio1.htmode='HT40'
 set wireless.radio1.country='DE'
 set wireless.radio1.channel='40'
 set wireless.radio1.legacy_rates='0'
-set wireless.radio1.disabled='1'
+set wireless.radio1.disabled='0'
 set wireless.radio1.log_level='0'
-
-add wireless  wifi-iface
-set wireless.@wifi-iface[-1]=wifi-iface
-set wireless.@wifi-iface[-1].device='radio0'
-set wireless.@wifi-iface[-1].mode='sta'
-set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-set wireless.@wifi-iface[-1].network='ff2'
-set wireless.@wifi-iface[-1].ifname='ff2'
-set wireless.@wifi-iface[-1].encryption='none'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
@@ -233,6 +224,7 @@ uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].use_ipv6='0'
 uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].ip_source='web'
+uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
 uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
 uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
 uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
@@ -253,8 +245,8 @@ uci add    ddns  service
 uci set    ddns.@service[-1]=service
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].use_ipv6='1'
-uci set    ddns.@service[-1].interface='lan' # for hotplug events
-uci set    ddns.@service[-1].ip_interface='br-lan'
+uci set    ddns.@service[-1].interface='pyur6' # for hotplug events
+uci set    ddns.@service[-1].ip_network='pyur6'
 uci set    ddns.@service[-1].ip_source='interface'
 uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'

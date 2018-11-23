@@ -16,7 +16,7 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
   PROFILE=tl-wdr4300-v1
-  PACKAGES="ipset iptables-mod-conntrack-extra iptables-mod-ipopt luci-app-firewall luci-app-wireguard luci-proto-wireguard wireguard-tools prometheus-node-exporter-lua ddns-scripts luci-app-ddns -dnsmasq dnsmasq-full luci-proto-ipv6 tcpdump-mini curl ip-full uhttpd luci-mod-admin-full luci-theme-bootstrap libiwinfo-lua -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only curl ca-certificates libustream-openssl watchcat luci-app-watchcat"
+  PACKAGES="ipset iptables-mod-conntrack-extra iptables-mod-ipopt luci-app-firewall luci-app-wireguard luci-proto-wireguard wireguard-tools prometheus-node-exporter-lua ddns-scripts luci-app-ddns -dnsmasq dnsmasq-full luci-proto-ipv6 tcpdump-mini curl ip-full uhttpd luci-mod-admin-full luci-theme-bootstrap libiwinfo-lua -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only curl ca-certificates libustream-openssl watchcat luci-app-watchcat bind-host ca-bundle ca-certificates"
   REMOVED_PACKAGES="-dnsmasq -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only"
 ;;
 
