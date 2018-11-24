@@ -11,7 +11,7 @@ EOF
 uci batch <<-EOF >/dev/null
 add      system  system
 set      system.@system[-1]=system
-set      system.@system[-1].hostname='f17gw'
+set      system.@system[-1].hostname='f17-gw'
 set      system.@system[-1].zonename='UTC'
 set      system.@system[-1].timezone='UTC'
 set      system.@system[-1].conloglevel='8'
@@ -109,12 +109,14 @@ set network.lan.ip6assign='64'
 
 set network.pyur4=interface
 set network.pyur4.proto='dhcp'
+set network.pyur4.dns='1.1.1.1 8.8.8.8 10.7.11.5'
+set network.pyur4.peerdns='0'
 set network.pyur4.ifname='eth0.2'
-set network.pyur4.metric=5
 
 set network.pyur6=interface
 set network.pyur6.proto='dhcpv6'
 set network.pyur6.ifname='eth0.2'
+set network.pyur6.peerdns='0'
 set network.pyur6.reqaddress='try'
 set network.pyur6.reqprefix='auto'
 
@@ -290,6 +292,7 @@ set firewall.@zone[0].forward='ACCEPT'
 set firewall.@zone[0].network='lan wg0'
 set firewall.@zone[0].log='1'
 set firewall.@zone[0].conntrack='1'
+set firewall.@zone[0].mtu_fix='1'
 
 add firewall  zone
 set firewall.@zone[1]=zone

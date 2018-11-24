@@ -11,7 +11,7 @@ EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].hostname='imagiswitch'
+uci set      system.@system[-1].hostname='w16-gw'
 uci set      system.@system[-1].zonename='UTC'
 uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
@@ -465,6 +465,7 @@ uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'  # FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
 uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].mtu_fix='1'
 #uci set      firewall.@zone[-1].log_limit='10/minute'
 uci commit   firewall.@zone[-1]
 
@@ -1089,13 +1090,11 @@ uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.20'
-uci set      dhcp.@host[-1].name='camera01'
-uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.20'
+uci set      dhcp.@domain[-1].name='camera01'
+uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1117,7 +1116,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.5'
-uci set      dhcp.@domain[-1].name='imagiswitch'
+uci set      dhcp.@domain[-1].name='w16-gw'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
