@@ -11,7 +11,7 @@ EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].hostname='w16-gw'
+uci set      system.@system[-1].hostname='w16gw'
 uci set      system.@system[-1].zonename='UTC'
 uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
@@ -1037,12 +1037,6 @@ uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
 
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='fe80::b25a:daff:fe87:ff3c'
-uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
 uci add      dhcp  cname 
 uci set      dhcp.@cname[-1]=cname
 uci set      dhcp.@cname[-1].cname='salt'
@@ -1116,7 +1110,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.5'
-uci set      dhcp.@domain[-1].name='w16-gw'
+uci set      dhcp.@domain[-1].name='w16gw'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
