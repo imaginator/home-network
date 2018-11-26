@@ -201,6 +201,24 @@ set wireless.@wifi-iface[-1].network='lan'
 set wireless.@wifi-iface[-1].encryption='psk2'
 set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
 
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].device='radio0'
+set wireless.@wifi-iface[-1].mode='ap'
+set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].network='lan'
+set wireless.@wifi-iface[-1].encryption='psk2'
+set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].device='radio1'
+set wireless.@wifi-iface[-1].mode='ap'
+set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].network='lan'
+set wireless.@wifi-iface[-1].encryption='psk2'
+set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+
 commit wireless
 EOF
 

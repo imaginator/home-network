@@ -29,7 +29,7 @@ case $MODEL in
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
-"edgerouterx")
+"w16gw")
   PLATFORM=ramips
   TYPE=mt7621
   TARGET_DEVICE=ramips-mt7621
@@ -57,7 +57,7 @@ case $MODEL in
 ;;
 
 *)
-  echo "specify build target (f17gw ; nanostationm2 ; edgerouterx ; ubnt-uap-pro; mr33)"
+  echo "specify build target (f17gw ; nanostationm2 ; w16gw ; ubnt-uap-pro; mr33)"
   exit 1
 ;;
 esac
