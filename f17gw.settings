@@ -106,6 +106,7 @@ set network.lan.netmask='255.255.255.0'
 set network.lan.ipaddr='10.7.10.1'
 set network.lan.dns='1.1.1.1 8.8.8.8 10.7.11.5'
 set network.lan.ip6assign='64'
+set network.lan.igmp_snooping=1
 
 set network.pyur4=interface
 set network.pyur4.proto='dhcp'

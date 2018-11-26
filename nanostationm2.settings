@@ -300,6 +300,7 @@ uci set      network.loopback.netmask='255.0.0.0'
 
 uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
+uci set      network.trusted.igmp_snooping=1
 uci add_list network.trusted.ifname='eth0.2'
 uci set      network.trusted.proto='dhcp'
 

@@ -59,7 +59,7 @@ case $1 in
     $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
-    ' < nanostationm2.settings  | ssh root@$1
+    ' < nanostationm2.settings  | ssh root@$1.imagilan
     ;;
 
   repeater07)

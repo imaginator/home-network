@@ -128,6 +128,7 @@ uci add_list network.trusted.ip6class='pyur6'
 uci set      network.trusted.ip6assign='64'
 uci set      network.trusted.ip6ifaceid='::5'
 uci set      network.trusted.ip6hint='0'
+uci set      network.trusted.igmp_snooping=1
            
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
