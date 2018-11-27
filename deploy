@@ -4,7 +4,7 @@ set -e # fail if we can't source the file
 set -x
 
 case $1 in
-  edgerouterx)
+  w16gw)
     envsubst \ '
     $ddns4_domain \
     $ddns4_username \
