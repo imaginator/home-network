@@ -469,6 +469,9 @@ uci set      dhcp.trusted.start='100'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.leasetime='24h'
 uci set      dhcp.trusted.domain='imagilan'
+uci add_list dhcp.trusted.dhcp_option='option:mtu, 1420'
+uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.trusted.dhcp_option='option:ntp-server, 10.7.11.1'
 uci commit   dhcp.trusted
 
 uci add      dhcp  host

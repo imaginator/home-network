@@ -16,7 +16,7 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
   PROFILE=tl-wdr4300-v1
-  PACKAGES="ipset iptables-mod-conntrack-extra iptables-mod-ipopt luci-app-firewall luci-app-wireguard luci-proto-wireguard wireguard-tools prometheus-node-exporter-lua ddns-scripts luci-app-ddns -dnsmasq dnsmasq-full luci-proto-ipv6 tcpdump-mini curl ip-full uhttpd luci-mod-admin-full luci-theme-bootstrap libiwinfo-lua -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only curl ca-certificates libustream-openssl watchcat luci-app-watchcat bind-host ca-bundle ca-certificates"
+  PACKAGES="ipset iptables-mod-conntrack-extra iptables-mod-ipopt luci-app-firewall luci-app-wireguard luci-proto-wireguard wireguard-tools prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations ddns-scripts luci-app-ddns -dnsmasq dnsmasq-full luci-proto-ipv6 tcpdump-mini curl ip-full uhttpd luci-mod-admin-full luci-theme-bootstrap libiwinfo-lua -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only curl ca-certificates libustream-openssl watchcat luci-app-watchcat bind-host ca-bundle ca-certificates"
   REMOVED_PACKAGES="-dnsmasq -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only"
 ;;
 
@@ -25,7 +25,7 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
   PROFILE=ubnt-nano-m
-  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap"
+  PACKAGES="odhcp6c hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations"
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
@@ -34,7 +34,7 @@ case $MODEL in
   TYPE=mt7621
   TARGET_DEVICE=ramips-mt7621
   PROFILE=ubnt-erx
-  PACKAGES="libatomic libnl libnl-core libnl-genl libnl-nf libnl-route libstdcpp uboot-envtools kmod-i2c-gpio-custom kmod-gpio-pca953x luci-base prometheus-node-exporter-lua  adblock luci-app-adblock sqm-scripts sqm-scripts-extra tcpdump-mini curl ip-full ip-bridge luci-mod-admin-full luci-theme-bootstrap luci-mod-admin-full luci-proto-ppp luci-app-firewall luci-app-watchcat luci-proto-wireguard tor tor-geoip kmod-wireguard wireguard-tools wireguard luci-app-wireguard luci-proto-wireguard libustream-openssl bind-host ca-bundle ca-certificates ddns-scripts luci-app-ddns openvpn-openssl kmod-tun lldpd iptables-mod-tee odhcp6c luci-proto-ipv6 dnsmasq-full luci luci-base luci-theme-bootstrap"
+  PACKAGES="libatomic libnl libnl-core libnl-genl libnl-nf libnl-route libstdcpp uboot-envtools kmod-i2c-gpio-custom kmod-gpio-pca953x luci-base adblock luci-app-adblock sqm-scripts sqm-scripts-extra tcpdump-mini curl ip-full ip-bridge luci-mod-admin-full luci-theme-bootstrap luci-mod-admin-full luci-proto-ppp luci-app-firewall luci-app-watchcat luci-proto-wireguard tor tor-geoip kmod-wireguard wireguard-tools wireguard luci-app-wireguard luci-proto-wireguard libustream-openssl bind-host ca-bundle ca-certificates ddns-scripts luci-app-ddns openvpn-openssl kmod-tun lldpd iptables-mod-tee odhcp6c luci-proto-ipv6 dnsmasq-full luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations"
   REMOVED_PACKAGES="-dnsmasq -odhcpd"
 ;;
 
@@ -43,7 +43,7 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
   PROFILE=ubnt-uap-pro
-  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap" 
+  PACKAGES="odhcp6c hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations" 
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
@@ -52,7 +52,7 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ipq40xx
   PROFILE=meraki_mr33
-  PACKAGES="odhcp6c prometheus-node-exporter-lua hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap" 
+  PACKAGES="odhcp6c hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations" 
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 

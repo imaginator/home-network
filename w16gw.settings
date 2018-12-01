@@ -973,34 +973,38 @@ uci set      dhcp.@dnsmasq[-1].cachesize='4096'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
+uci set      dhcp.trusted.domain='imagilan'
 uci set      dhcp.trusted.interface='trusted'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.start='100'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.leasetime='24h'
-uci set      dhcp.trusted.domain='imagilan'
 uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.ra='server'
 uci set      dhcp.trusted.ra_management='1'
+uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
 uci commit   dhcp.trusted
 
 uci set      dhcp.notrust=dhcp
+uci set      dhcp.notrust.domain='notrust'
 uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start='22'
 uci set      dhcp.notrust.limit='1000'
 uci set      dhcp.notrust.leasetime='23h'
 uci set      dhcp.notrust.dns='10.7.12.5'
-uci set      dhcp.notrust.domain='notrust'
+uci add_list dhcp.notrust.dhcp_option='option:log-server, 10.7.11.1'
 uci commit   dhcp.notrust
 
 uci set      dhcp.iot=dhcp
+uci set      dhcp.iot.domain='imagilan'
 uci set      dhcp.iot.interface='iot'
 uci set      dhcp.iot.dhcpv4='server'
 uci set      dhcp.iot.force='1'
 uci set      dhcp.iot.leasetime='12h'
 uci set      dhcp.iot.start='100'
 uci set      dhcp.iot.limit='150'
+uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
 uci commit   dhcp.iot
 
 uci set      dhcp.pyur4=dhcp
@@ -1087,7 +1091,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.51'
+uci set      dhcp.@host[-1].ip='10.7.9.51'
 uci set      dhcp.@host[-1].name='plugswitch01'
 uci set      dhcp.@host[-1].mac='50:C7:BF:01:F8:2C'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1096,7 +1100,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.52'
+uci set      dhcp.@host[-1].ip='10.7.9.52'
 uci set      dhcp.@host[-1].name='plugswitch02'
 uci set      dhcp.@host[-1].mac='50:C7:BF:01:7C:90'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1105,7 +1109,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.53'
+uci set      dhcp.@host[-1].ip='10.7.9.53'
 uci set      dhcp.@host[-1].name='plugswitch03'
 uci set      dhcp.@host[-1].mac='ac:84:c6:29:18:14'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1114,7 +1118,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.54'
+uci set      dhcp.@host[-1].ip='10.7.9.54'
 uci set      dhcp.@host[-1].name='plugswitch04'
 uci set      dhcp.@host[-1].mac='ac:84:c6:29:07:2f'
 uci set      dhcp.@host[-1].leasetime='infinite'
@@ -1123,7 +1127,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.55'
+uci set      dhcp.@host[-1].ip='10.7.9.55'
 uci set      dhcp.@host[-1].name='plugswitch05'
 uci set      dhcp.@host[-1].mac='ac:84:c6:3b:b4:5b'
 uci set      dhcp.@host[-1].leasetime='infinite'
