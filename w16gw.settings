@@ -1002,7 +1002,7 @@ uci set      dhcp.iot.domain='imagilan'
 uci set      dhcp.iot.interface='iot'
 uci set      dhcp.iot.dhcpv4='server'
 uci set      dhcp.iot.force='1'
-uci set      dhcp.iot.leasetime='12h'
+uci set      dhcp.iot.leasetime='11h'
 uci set      dhcp.iot.start='100'
 uci set      dhcp.iot.limit='150'
 uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
@@ -1261,14 +1261,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.26'
-uci set      dhcp.@host[-1].name='chromecast-audio-lounge'
-uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.27'
 uci set      dhcp.@host[-1].name='chromecast-ultra-lounge'
 uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30'
@@ -1328,6 +1320,70 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.39'
 uci set      dhcp.@host[-1].name='test-wall-tablet'
 uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.40'
+uci set      dhcp.@host[-1].name='cca-bedroom1'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:0d:f8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.41'
+uci set      dhcp.@host[-1].name='cca-guestbath'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:6f:d4'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.42'
+uci set      dhcp.@host[-1].name='cca-kitchen'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:1a:d2'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.43'
+uci set      dhcp.@host[-1].name='cca-bedroom3'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:70:64'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.44'
+uci set      dhcp.@host[-1].name='cca-mainbath'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:0c:b4'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.45'
+uci set      dhcp.@host[-1].name='cca-bedroom2'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:19:44'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.46'
+uci set      dhcp.@host[-1].name='cca-workroom'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:6b:bc'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.47'
+uci set      dhcp.@host[-1].name='cca-lounge'
+uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
