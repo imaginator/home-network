@@ -296,6 +296,26 @@ uci commit ddns.@service[-1]
 
 /etc/init.d/ddns enable || true
 
+uci import softflowd<<EOF
+EOF
+
+uci add    softflowd  softflowd
+uci set    softflowd.@softflowd[-1]=softflowd
+uci set    softflowd.@softflowd[-1].enabled='1'
+uci set    softflowd.@softflowd[-1].interface='eth0.4'
+uci set    softflowd.@softflowd[-1].timeout='maxlife=60'
+uci set    softflowd.@softflowd[-1].max_flows='8192'
+uci set    softflowd.@softflowd[-1].host_port='10.7.11.1:2055'
+uci set    softflowd.@softflowd[-1].pid_file='/var/run/softflowd.pid'
+uci set    softflowd.@softflowd[-1].control_socket='/var/run/softflowd.ctl'
+uci set    softflowd.@softflowd[-1].export_version='9'
+uci set    softflowd.@softflowd[-1].tracking_level='full'
+uci set    softflowd.@softflowd[-1].track_ipv6='1'
+uci set    softflowd.@softflowd[-1].sampling_rate='1'
+uci commit softflowd.@softflowd[-1]
+
+/etc/init.d/softflowd enable || true
+
 uci import prometheus-node-exporter-lua<<EOF
 EOF
 
