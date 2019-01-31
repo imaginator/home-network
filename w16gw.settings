@@ -1093,6 +1093,12 @@ uci set      dhcp.@cname[-1].cname='salt'
 uci set      dhcp.@cname[-1].target='bunker'
 uci commit   dhcp.@cname[-1]
 
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='vpn.imaginator.com'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.2'
