@@ -191,13 +191,6 @@ uci add_list network.wg_f17.allowed_ips='10.7.8.2/32'
 uci add_list network.wg_f17.allowed_ips='10.7.10.0/24'
 uci set      network.wg_f17.route_allowed_ips='1'
 
-uci set      network.wg_furrow=wireguard_wg0
-uci set      network.wg_furrow.description='furrow'
-uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
-uci set      network.wg_furrow.persistent_keepalive='25'
-uci add_list network.wg_furrow.allowed_ips='10.7.8.3/32'
-uci set      network.wg_furrow.route_allowed_ips='1'
-
 uci set      network.wg_simonphone=wireguard_wg0
 uci set      network.wg_simonphone.description='Simon Mobile'
 uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
@@ -211,6 +204,13 @@ uci set      network.wg_tablet.public_key='${wg_tablet_public_key}'
 uci set      network.wg_tablet.persistent_keepalive='25'
 uci add_list network.wg_tablet.allowed_ips='10.7.8.5/32'
 uci set      network.wg_tablet.route_allowed_ips='1'
+
+uci set      network.wg_furrow=wireguard_wg0
+uci set      network.wg_furrow.description='furrow'
+uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
+uci set      network.wg_furrow.persistent_keepalive='25'
+uci add_list network.wg_furrow.allowed_ips='10.7.8.248/29' # /29 for VMs
+uci set      network.wg_furrow.route_allowed_ips='1'
 
 uci commit   network
 
@@ -468,6 +468,9 @@ uci set    firewall.@defaults[-1]=defaults
 uci set    firewall.@defaults[-1].input='ACCEPT'
 uci set    firewall.@defaults[-1].output='ACCEPT'
 uci set    firewall.@defaults[-1].forward='DROP'
+uci set    firewall.@defaults[-1].flow_offloading=1
+uci set    firewall.@defaults[-1].flow_offloading_hw=1
+uci set    firewall.@defaults[-1].drop_invalid=1
 uci commit firewall.@defaults[-1]
 
 # A zone section groups one or more interfaces and serves as a source or destination for forwardings, 
@@ -488,6 +491,7 @@ uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'  # FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
+uci set      firewall.@zone[-1].conntrack=1
 #uci set      firewall.@zone[-1].log_limit='10/minute'
 uci commit   firewall.@zone[-1]
 
@@ -509,6 +513,7 @@ uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack=1
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
@@ -1063,6 +1068,12 @@ uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
 
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.1'
+uci set      dhcp.@domain[-1].name='bunker.imaginator.com'
+uci commit   dhcp.@domain[-1]
+
 uci add      dhcp  cname 
 uci set      dhcp.@cname[-1]=cname
 uci set      dhcp.@cname[-1].cname='salt'
@@ -1282,7 +1293,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.27'
-uci set      dhcp.@host[-1].name='chromecast-ultra-lounge'
+uci set      dhcp.@host[-1].name='ccultra-lounge'
 uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1306,7 +1317,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.34'
-uci set      dhcp.@host[-1].name='home-mini-lounge'
+uci set      dhcp.@host[-1].name='ccmini-lounge'
 uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1314,7 +1325,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.35'
-uci set      dhcp.@host[-1].name='home-mini-bedroom'
+uci set      dhcp.@host[-1].name='ccmini-bedroom'
 uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1322,7 +1333,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.36'
-uci set      dhcp.@host[-1].name='home-mini-kitchen'
+uci set      dhcp.@host[-1].name='ccmini-kitchen'
 uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1330,7 +1341,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.37'
-uci set      dhcp.@host[-1].name='home-mini-bathroom'
+uci set      dhcp.@host[-1].name='ccmini-bathroom'
 uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1404,6 +1415,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.47'
 uci set      dhcp.@host[-1].name='cca-lounge'
 uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.48'
+uci set      dhcp.@host[-1].name='cca-terrace'
+uci set      dhcp.@host[-1].mac='54:60:09:dc:70:32'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
