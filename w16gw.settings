@@ -596,6 +596,7 @@ uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='22'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
     
 uci add    firewall  redirect
@@ -634,6 +635,7 @@ uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='80'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
     
 uci add    firewall  redirect
@@ -646,6 +648,7 @@ uci set    firewall.@redirect[-1].src_dport='443'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='443'
 uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
 
 uci add    firewall  redirect
@@ -660,6 +663,7 @@ uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='443'
 uci commit firewall.@redirect[-1]
 
+# fixme
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].name='logs from notrust'
@@ -682,6 +686,21 @@ uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='32400'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='32400'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
+# fix to stop vpn traffic leaving and entering home network    
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='wireguard'
+uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].proto='udp'
+uci set    firewall.@redirect[-1].src_dport='12321'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
+uci set    firewall.@redirect[-1].dest_port='12321'
+uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
 
 # Rules
@@ -1066,12 +1085,6 @@ uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.1'
-uci set      dhcp.@domain[-1].name='bunker.imaginator.com'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  cname 
