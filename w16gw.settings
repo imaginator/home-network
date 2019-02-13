@@ -205,6 +205,13 @@ uci set      network.wg_tablet.persistent_keepalive='25'
 uci add_list network.wg_tablet.allowed_ips='10.7.8.5/32'
 uci set      network.wg_tablet.route_allowed_ips='1'
 
+uci set      network.wg_tablet=wireguard_wg0
+uci set      network.wg_tablet.description='Windows on Laptop'
+uci set      network.wg_tablet.public_key='${wg_windows_public_key}'
+uci set      network.wg_tablet.persistent_keepalive='25'
+uci add_list network.wg_tablet.allowed_ips='10.7.8.6/32'
+uci set      network.wg_tablet.route_allowed_ips='1'
+
 uci set      network.wg_furrow=wireguard_wg0
 uci set      network.wg_furrow.description='furrow'
 uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'

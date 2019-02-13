@@ -26,6 +26,8 @@ case $1 in
     $wg_f17gw_private_key \
     $wg_tablet_public_key \
     $wg_tablet_private_key \
+    $wg_windows_public_key \
+    $wg_windows_private_key \
     $dh2048_pem \
     ' < w16gw.settings  | ssh root@10.7.11.5
     ;;
