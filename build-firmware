@@ -1,14 +1,21 @@
 #!/bin/bash
-set -ex
+set -e
 
-# options include nanostationm2
 MODEL=$1
-VERSION=18.06.1
+VERSION=18.06.2
 BUILDDIR=/tmp/openwrt-build
-
-if [ ! -d ${BUILDDIR} ] ; then
-  mkdir ${BUILDDIR}
-fi
+BASE_PACKAGES=" \
+  dropbear \
+  prometheus-node-exporter-lua \
+  prometheus-node-exporter-lua-nat_traffic \
+  prometheus-node-exporter-lua-netstat \
+  prometheus-node-exporter-lua-openwrt \
+  prometheus-node-exporter-lua-wifi \
+  prometheus-node-exporter-lua-wifi_stations \
+  prometheus-node-exporter-lua-textfile \
+  softflowd \
+  tcpdump-mini \
+  "
 
 case $MODEL in
 "f17gw")
@@ -16,17 +23,32 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
   PROFILE=tl-wdr4300-v1
-  PACKAGES="ipset iptables-mod-conntrack-extra iptables-mod-ipopt luci-app-firewall luci-app-wireguard luci-proto-wireguard wireguard-tools prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations ddns-scripts luci-app-ddns -dnsmasq dnsmasq-full luci-proto-ipv6 tcpdump-mini curl ip-full uhttpd luci-mod-admin-full luci-theme-bootstrap libiwinfo-lua -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only curl ca-certificates libustream-openssl watchcat luci-app-watchcat bind-host ca-bundle ca-certificates softflowd"
+  EXTRA_PACKAGES="\
+    bind-host \
+    ca-bundle \
+    ca-certificates \
+    curl \
+    ddns-scripts \
+    dnsmasq-full \
+    ip-full \
+    ipset \
+    iptables-mod-conntrack-extra \
+    iptables-mod-ipopt \
+    libiwinfo-lua \
+    libustream-openssl \
+    luci-app-ddns \
+    luci-app-firewall \
+    luci-app-watchcat \
+    luci-app-wireguard \
+    luci-mod-admin-full \
+    luci-proto-ipv6 \
+    luci-proto-wireguard \
+    luci-theme-bootstrap \
+    uhttpd \
+    watchcat \
+    wireguard-tools \
+    "
   REMOVED_PACKAGES="-dnsmasq -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only"
-;;
-
-"nanostationm2")
-  PLATFORM=ar71xx
-  TYPE=generic
-  TARGET_DEVICE=ar71xx-generic
-  PROFILE=ubnt-nano-m
-  PACKAGES="odhcp6c hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations softflowd"
-  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "w16gw")
@@ -34,8 +56,65 @@ case $MODEL in
   TYPE=mt7621
   TARGET_DEVICE=ramips-mt7621
   PROFILE=ubnt-erx
-  PACKAGES="libatomic libnl libnl-core libnl-genl libnl-nf libnl-route libstdcpp uboot-envtools kmod-i2c-gpio-custom kmod-gpio-pca953x luci-base adblock luci-app-adblock sqm-scripts sqm-scripts-extra tcpdump-mini curl ip-full ip-bridge luci-mod-admin-full luci-theme-bootstrap luci-mod-admin-full luci-proto-ppp luci-app-firewall luci-app-watchcat luci-proto-wireguard tor tor-geoip kmod-wireguard wireguard-tools wireguard luci-app-wireguard luci-proto-wireguard libustream-openssl bind-host ca-bundle ca-certificates ddns-scripts luci-app-ddns openvpn-openssl kmod-tun lldpd iptables-mod-tee odhcp6c luci-proto-ipv6 dnsmasq-full luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations softflowd"
+  EXTRA_PACKAGES="\
+    bind-host \
+    ca-bundle \
+    ca-certificates \
+    curl \
+    ddns-scripts \
+    dnsmasq-full \
+    ip-bridge \
+    ip-full \
+    kmod-gpio-pca953x \
+    kmod-i2c-gpio-custom \
+    kmod-tun \
+    kmod-wireguard \
+    libatomic libnl \
+    libnl-core libnl-genl \
+    libnl-nf libnl-route \
+    libstdcpp uboot-envtools \
+    libustream-openssl \
+    lldpd iptables-mod-tee \
+    luci \
+    luci-app-adblock \
+    luci-app-ddns \
+    luci-app-firewall \
+    luci-app-watchcat \
+    luci-app-wireguard \
+    luci-base \
+    luci-base adblock \
+    luci-mod-admin-full \
+    luci-proto-ipv6 \
+    luci-proto-ppp \
+    luci-proto-wireguard \
+    luci-theme-bootstrap \
+    odhcp6c \
+    openvpn-openssl \
+    sqm-scripts \
+    sqm-scripts-extra \
+    tor \
+    tor-geoip \
+    wireguard \
+    wireguard-tools \
+  "
   REMOVED_PACKAGES="-dnsmasq -odhcpd"
+;;
+
+"nanostationm2")
+  PLATFORM=ar71xx
+  TYPE=generic
+  TARGET_DEVICE=ar71xx-generic
+  PROFILE=ubnt-nano-m
+  EXTRA_PACKAGES="\
+    curl \
+    hostapd \
+    ip-tiny \
+    luci \
+    luci-base \
+    luci-theme-bootstrap \
+    odhcp6c \
+    "
+  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "ubnt-uap-pro") 
@@ -43,7 +122,14 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
   PROFILE=ubnt-uap-pro
-  PACKAGES="odhcp6c hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations softflowd" 
+  EXTRA_PACKAGES="\
+    curl \
+    hostapd \
+    ip-tiny \
+    luci luci-base \
+    luci-theme-bootstrap \
+    odhcp6c \
+    " 
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
@@ -52,7 +138,15 @@ case $MODEL in
   TYPE=generic
   TARGET_DEVICE=ipq40xx
   PROFILE=meraki_mr33
-  PACKAGES="odhcp6c hostapd tcpdump-mini curl ip-tiny luci luci-base luci-theme-bootstrap prometheus-node-exporter-lua-openwrt prometheus-node-exporter-lua-nat_traffic prometheus-node-exporter-lua-netstat prometheus-node-exporter-lua-wifi prometheus-node-exporter-lua-wifi_stations softflowd" 
+  EXTRA_PACKAGES="\
+    curl \
+    hostapd \
+    ip-tiny \
+    luci \
+    luci-base \
+    luci-theme-bootstrap \
+    odhcp6c \
+    " 
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
@@ -61,6 +155,10 @@ case $MODEL in
   exit 1
 ;;
 esac
+
+if [ ! -d ${BUILDDIR} ] ; then
+  mkdir ${BUILDDIR}
+fi
 
 # the need for $TYPE and $TARGET_DEVICE seems dumb but it helps get aroudn the problem of downloads        ↓↓↓↓↓↓↓
 # http://downloads.openwrt.org/releases/18.06.1/targets/ar71xx/generic/openwrt-imagebuilder-18.06.1-ar71xx-generic.Linux-x86_64.tar.xz
@@ -73,7 +171,7 @@ if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86
   tar xfJ ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz -C ${BUILDDIR}/
 fi
 
-COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${PACKAGES}`" 
+COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${BASE_PACKAGES}` `echo ${EXTRA_PACKAGES}`" 
 
 ( cd ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 && sudo make image PROFILE="$PROFILE" PACKAGES="$COMBINED_PACKAGE_LIST" )
 
