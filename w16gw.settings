@@ -216,7 +216,7 @@ uci set      network.wg_furrow=wireguard_wg0
 uci set      network.wg_furrow.description='furrow'
 uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
 uci set      network.wg_furrow.persistent_keepalive='25'
-uci add_list network.wg_furrow.allowed_ips='10.7.8.248/29' # /29 for VMs
+uci add_list network.wg_furrow.allowed_ips='10.7.8.7/32'
 uci set      network.wg_furrow.route_allowed_ips='1'
 
 uci commit   network
@@ -1103,7 +1103,7 @@ uci commit   dhcp.@cname[-1]
 uci add      dhcp  cname
 uci set      dhcp.@cname[-1]=cname
 uci set      dhcp.@cname[-1].cname='vpn.imaginator.com'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imaginator.com'
 uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  host

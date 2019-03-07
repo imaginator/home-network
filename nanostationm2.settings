@@ -136,6 +136,7 @@ uci commit   wireless.radio0
 
 uci set      wireless.radio1=wifi-device
 uci set      wireless.radio1.channel='auto'
+uci set      wireless.radio1.doth=1
 uci set      wireless.radio1.country='DE'
 uci set      wireless.radio1.distance=30
 uci set      wireless.radio1.htmode='HT40'
