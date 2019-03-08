@@ -133,6 +133,22 @@ case $MODEL in
   REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
+"nanobridge-m5") 
+  PLATFORM=ar71xx
+  TYPE=generic
+  TARGET_DEVICE=ar71xx-generic
+  PROFILE=ubnt-nano-m
+  EXTRA_PACKAGES="\
+    curl \
+    wpa-supplicant \
+    ip-tiny \
+    luci luci-base \
+    luci-theme-bootstrap \
+    odhcp6c \
+    " 
+  REMOVED_PACKAGES="-wpad-mini"
+;;
+
 "mr33") 
   PLATFORM=ipq40xx
   TYPE=generic
@@ -151,7 +167,7 @@ case $MODEL in
 ;;
 
 *)
-  echo "specify build target (f17gw ; nanostationm2 ; w16gw ; ubnt-uap-pro; mr33)"
+  echo "specify build target (f17gw ; nanostationm2 ; nanobridge-m5 ; w16gw ; ubnt-uap-pro; mr33)"
   exit 1
 ;;
 esac
