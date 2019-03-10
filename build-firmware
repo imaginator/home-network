@@ -79,6 +79,9 @@ case $MODEL in
     luci-app-adblock \
     luci-app-ddns \
     luci-app-firewall \
+    luci-app-olsr \
+    luci-app-olsr-services \
+    luci-app-olsr-viz \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-base \
@@ -89,6 +92,20 @@ case $MODEL in
     luci-proto-wireguard \
     luci-theme-bootstrap \
     odhcp6c \
+    olsrd \
+    olsrd olsrd-mod-arprefresh \
+    olsrd-mod-arprefresh \
+    olsrd-mod-bmf \
+    olsrd-mod-dot-draw \
+    olsrd-mod-dyn-gw \
+    olsrd-mod-dyn-gw-plain \
+    olsrd-mod-httpinfo \
+    olsrd-mod-jsoninfo \
+    olsrd-mod-nameservice \
+    olsrd-mod-netjson \
+    olsrd-mod-pgraph \
+    olsrd-mod-txtinfo \
+    olsrd-mod-watchdog \
     openvpn-openssl \
     sqm-scripts \
     sqm-scripts-extra \
@@ -153,7 +170,7 @@ case $MODEL in
   PLATFORM=ipq40xx
   TYPE=generic
   TARGET_DEVICE=ipq40xx
-  PROFILE=meraki_mr33
+  PROFILE  eraki_mr33
   EXTRA_PACKAGES="\
     curl \
     hostapd \
