@@ -100,7 +100,7 @@ set network.globals.ula_prefix='fd83:a462:53eb::/48'
 
 set network.lan=interface
 set network.lan.type='bridge'
-set network.lan.ifname='eth0.1'
+set network.lan.ifname='eth0.2'
 set network.lan.proto='static'
 set network.lan.netmask='255.255.255.0'
 set network.lan.ipaddr='10.7.10.1'
@@ -108,15 +108,19 @@ set network.lan.dns='1.1.1.1 8.8.8.8 10.7.11.5'
 set network.lan.ip6assign='64'
 set network.lan.igmp_snooping=1
 
+set network.ffuplink=interface
+set network.ffuplink.ifname='eth0.3'
+set network.ffuplink.proto='none'
+
 set network.pyur4=interface
 set network.pyur4.proto='dhcp'
 set network.pyur4.dns='1.1.1.1 8.8.8.8 10.7.11.5'
 set network.pyur4.peerdns='0'
-set network.pyur4.ifname='eth0.2'
+set network.pyur4.ifname='eth0.4'
 
 set network.pyur6=interface
 set network.pyur6.proto='dhcpv6'
-set network.pyur6.ifname='eth0.2'
+set network.pyur6.ifname='eth0.4'
 set network.pyur6.peerdns='0'
 set network.pyur6.reqaddress='try'
 set network.pyur6.reqprefix='auto'
@@ -130,14 +134,20 @@ set network.@switch[-1].enable_vlan='1'
 add network switch_vlan
 set network.@switch_vlan[-1]=switch_vlan
 set network.@switch_vlan[-1].device='switch0'
-set network.@switch_vlan[-1].vlan='1'
-set network.@switch_vlan[-1].ports='2 3 4 5 0t'
+set network.@switch_vlan[-1].vlan='2'
+set network.@switch_vlan[-1].ports='0t 2 3 4t 5'
 
 add network switch_vlan
 set network.@switch_vlan[-1]=switch_vlan
 set network.@switch_vlan[-1].device='switch0'
-set network.@switch_vlan[-1].vlan='2'
-set network.@switch_vlan[-1].ports='1 0t'
+set network.@switch_vlan[-1].vlan='3'
+set network.@switch_vlan[-1].ports='0t 4'
+
+add network switch_vlan
+set network.@switch_vlan[-1]=switch_vlan
+set network.@switch_vlan[-1].device='switch0'
+set network.@switch_vlan[-1].vlan='4'
+set network.@switch_vlan[-1].ports='0t 1'
 
 set network.wg0=interface
 set network.wg0.proto='wireguard'
@@ -474,6 +484,14 @@ uci add_list dhcp.trusted.dhcp_option='option:mtu, 1420'
 uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
 uci add_list dhcp.trusted.dhcp_option='option:ntp-server, 10.7.11.1'
 uci commit   dhcp.trusted
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.2'
+uci set      dhcp.@host[-1].name='emmauskirche'
+uci set      dhcp.@host[-1].mac='dc:9f:db:8c:b2:0b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host

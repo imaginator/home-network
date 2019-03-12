@@ -1091,6 +1091,12 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.2'
+uci set      dhcp.@domain[-1].name='emmauskirche'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
@@ -1198,14 +1204,6 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.2'
 uci set      dhcp.@host[-1].name='switch01'
 uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.3'
-uci set      dhcp.@host[-1].name='emmauskirche'
-uci set      dhcp.@host[-1].mac='dc:9f:db:8c:b2:0b'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
