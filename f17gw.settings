@@ -319,50 +319,22 @@ uci add      olsrd  olsrd
 uci set      olsrd.@olsrd[-1]=olsrd
 uci set      olsrd.@olsrd[-1].AllowNoInt=yes
 uci set      olsrd.@olsrd[-1].DebugLevel=3
-uci set      olsrd.@olsrd[-1].FIBMetric=flat
-uci set      olsrd.@olsrd[-1].IpVersion=4
-uci set      olsrd.@olsrd[-1].LinkQualityAlgorithm=etx_ff
-uci set      olsrd.@olsrd[-1].NatThreshold=0.75
-uci set      olsrd.@olsrd[-1].Pollrate=0.025
-uci set      olsrd.@olsrd[-1].RtTable=111
-uci set      olsrd.@olsrd[-1].RtTableDefault=112
-uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority=20000
-uci set      olsrd.@olsrd[-1].RtTableTunnel=113
-uci set      olsrd.@olsrd[-1].RtTableTunnelPriority=100000
 uci set      olsrd.@olsrd[-1].SmartGateway=yes
-uci set      olsrd.@olsrd[-1].SmartGatewayThreshold=50
-uci set      olsrd.@olsrd[-1].TcRedundancy=2
 uci commit   olsrd.@olsrd[-1]
 
-# set InterfaceDefaults parameters
-uci add      olsrd  InterfaceDefaults
-uci set      olsrd.@InterfaceDefaults[-1]=InterfaceDefaults
-uci set      olsrd.@InterfaceDefaults[-1].HelloInterval=3.0
-uci set      olsrd.@InterfaceDefaults[-1].HelloValidityTime=125.0
-uci set      olsrd.@InterfaceDefaults[-1].HnaInterval=10.0
-uci set      olsrd.@InterfaceDefaults[-1].HnaValidityTime=125.0
-uci set      olsrd.@InterfaceDefaults[-1].Ip4Broadcast=255.255.255.255
-uci set      olsrd.@InterfaceDefaults[-1].MidInterval=25.0
-uci set      olsrd.@InterfaceDefaults[-1].MidValidityTime=500.0
-uci set      olsrd.@InterfaceDefaults[-1].TcInterval=2.0
-uci set      olsrd.@InterfaceDefaults[-1].TcValidityTime=500.0
-uci commit   olsrd.@InterfaceDefaults[-1]
-
 uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
-uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].interface='ffuplink'
-uci set      olsrd.@Interface[-1].Mode='ether'
+uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
+uci set      olsrd.@Interface[-1].Mode='ether'
 uci commit   olsrd.@Interface[-1]
 
-uci add      olsrd  Interface
-uci set      olsrd.@Interface[-1]=Interface
-uci set      olsrd.@Interface[-1].ignore='0'
-uci set      olsrd.@Interface[-1].interface='fflan'
-uci set      olsrd.@Interface[-1].Mode='ether'
-uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
-uci commit   olsrd.@Interface[-1]
+uci add      olsrd  Hna4
+uci set      olsrd.@Hna4[-1]=Hna4
+uci set      olsrd.@Hna4[-1].netaddr='10.36.189.0'
+uci set      olsrd.@Hna4[-1].netmask='255.255.255.0'
+uci commit   olsrd.@Hna4[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
