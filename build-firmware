@@ -29,7 +29,7 @@ case $MODEL in
     ca-certificates \
     curl \
     ddns-scripts \
-    dnsmasq-full \
+    dnsmasq \
     ip-full \
     ipset \
     iptables-mod-conntrack-extra \
@@ -67,8 +67,12 @@ case $MODEL in
     uhttpd \
     watchcat \
     wireguard-tools \
+    wpad-mini \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpa-supplicant -wpa-supplicant-mini -wpad-mini wpad -hostapd -hostapd-common -odhcpd-ipv6only"
+  REMOVED_PACKAGES="\
+    -dnsmasq-full \
+    -odhcpd-ipv6only \
+    "
 ;;
 
 "w16gw")
