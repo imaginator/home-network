@@ -34,6 +34,8 @@ case $MODEL in
     ipset \
     iptables-mod-conntrack-extra \
     iptables-mod-ipopt \
+    kmod-ipip \
+    kmod-tun \
     libiwinfo-lua \
     libustream-openssl \
     luci-app-ddns \
@@ -48,7 +50,6 @@ case $MODEL in
     luci-proto-wireguard \
     luci-theme-bootstrap \
     olsrd \
-    olsrd olsrd-mod-arprefresh \
     olsrd-mod-arprefresh \
     olsrd-mod-bmf \
     olsrd-mod-dot-draw \
@@ -56,8 +57,10 @@ case $MODEL in
     olsrd-mod-dyn-gw-plain \
     olsrd-mod-httpinfo \
     olsrd-mod-jsoninfo \
+    olsrd-mod-mdns \
     olsrd-mod-nameservice \
     olsrd-mod-netjson \
+    olsrd-mod-p2pd \
     olsrd-mod-pgraph \
     olsrd-mod-txtinfo \
     olsrd-mod-watchdog \
