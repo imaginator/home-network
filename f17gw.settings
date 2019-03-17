@@ -225,22 +225,34 @@ add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio0'
 set wireless.@wifi-iface[-1].mode='ap'
-set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
-set wireless.@wifi-iface[-1].encryption='psk2'
-set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+set wireless.@wifi-iface[-1].encryption='none'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio1'
 set wireless.@wifi-iface[-1].mode='ap'
-set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
-set wireless.@wifi-iface[-1].encryption='psk2'
-set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+set wireless.@wifi-iface[-1].encryption='none'
 
 commit wireless
 EOF
+
+uci add      network  rule
+uci set      network.@rule[-1]=rule
+uci set      network.@rule[-1].src='10.7.12.0/22'
+uci set      network.@rule[-1].lookup='100'
+uci commit   network.@rule[-1]
+
+uci add      network  route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].table=100
+uci set      network.@route[-1].interface=ffvpn
+uci set      network.@route[-1].target=0.0.0.0
+uci set      network.@route[-1].netmask=0.0.0.0
+uci commit   network.@route[-1]
 
 
 uci import ddns <<EOF
@@ -320,11 +332,20 @@ uci set      olsrd.@olsrd[-1]=olsrd
 uci set      olsrd.@olsrd[-1].AllowNoInt=yes
 uci set      olsrd.@olsrd[-1].DebugLevel=3
 uci set      olsrd.@olsrd[-1].SmartGateway=yes
+uci set      olsrd.@olsrd[-1].MainIp='10.36.189.1'
 uci commit   olsrd.@olsrd[-1]
 
 uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
 uci set      olsrd.@Interface[-1].interface='ffuplink'
+uci set      olsrd.@Interface[-1].ignore='0'
+uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
+uci set      olsrd.@Interface[-1].Mode='ether'
+uci commit   olsrd.@Interface[-1]
+
+uci add      olsrd  Interface
+uci set      olsrd.@Interface[-1]=Interface
+uci set      olsrd.@Interface[-1].interface='fflan'
 uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
 uci set      olsrd.@Interface[-1].Mode='ether'
@@ -336,6 +357,7 @@ uci set      olsrd.@Hna4[-1].netaddr='10.36.189.0'
 uci set      olsrd.@Hna4[-1].netmask='255.255.255.0'
 uci commit   olsrd.@Hna4[-1]
 
+# olsrd plugins
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_netjson'
@@ -346,6 +368,7 @@ uci commit   olsrd.@LoadPlugin[-1]
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_jsoninfo'
+uci set      olsrd.@LoadPlugin[-1].accept='0.0.0.0'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
@@ -370,6 +393,9 @@ uci commit   olsrd.@LoadPlugin[-1]
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_dyn_gw'
+uci add_list olsrd.@LoadPlugin[-1].Ping=85.214.20.141     # dns.digitalcourage.de
+uci add_list olsrd.@LoadPlugin[-1]=80.67.169.40           # www.fdn.fr/actions/dns
+uci add_list olsrd.@LoadPlugin[-1]=194.150.168.168        # dns.as250.net
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
@@ -388,6 +414,10 @@ uci commit   olsrd.@LoadPlugin[-1]
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_nameservice'
+uci set      olsrd.@LoadPlugin[-1]=.olsr
+uci set      olsrd.@LoadPlugin[-1]=/tmp/hosts/olsr
+uci set      olsrd.@LoadPlugin[-1]=/var/run/latlon.js
+uci set      olsrd.@LoadPlugin[-1]=/var/etc/services.olsr
 uci add_list olsrd.@LoadPlugin[-1].service='https://bunker.imaginator.com/grafana/ System Status'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
@@ -477,6 +507,12 @@ uci add      firewall  forwarding
 uci set      firewall.@forwarding[-1]=forwarding
 uci set      firewall.@forwarding[-1].src='fflan'
 uci set      firewall.@forwarding[-1].dest='ffuplink'
+uci commit   firewall.@forwarding[-1]
+
+uci add      firewall  forwarding
+uci set      firewall.@forwarding[-1]=forwarding
+uci set      firewall.@forwarding[-1].src='ffuplink'
+uci set      firewall.@forwarding[-1].dest='fflan'
 uci commit   firewall.@forwarding[-1]
 
 uci add      firewall  rule

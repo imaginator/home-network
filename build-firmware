@@ -27,9 +27,11 @@ case $MODEL in
     bind-host \
     ca-bundle \
     ca-certificates \
+    community-profiles \
     curl \
     ddns-scripts \
     dnsmasq \
+    freifunk-mapupdate \
     ip-full \
     ipset \
     iptables-mod-conntrack-extra \
@@ -46,6 +48,8 @@ case $MODEL in
     luci-app-watchcat \
     luci-app-wireguard \
     luci-mod-admin-full \
+    luci-mod-freifunk \
+    luci-mod-freifunk-community \
     luci-proto-ipv6 \
     luci-proto-wireguard \
     luci-theme-bootstrap \
@@ -70,6 +74,7 @@ case $MODEL in
     wpad-mini \
     "
   REMOVED_PACKAGES="\
+    -client-splash \
     -dnsmasq-full \
     -odhcpd-ipv6only \
     "
