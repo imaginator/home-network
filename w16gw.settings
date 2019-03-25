@@ -1327,15 +1327,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.27'
 uci set      dhcp.@host[-1].name='ccultra-lounge'
-uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30' # wireless interface
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.27'
-uci set      dhcp.@host[-1].name='ccultra-lounge'
-uci set      dhcp.@host[-1].mac='44:09:b8:13:10:7d' # wired interface
+uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30 44:09:b8:13:10:7d' # wireless interface is 20:df:b9:8a:44:30
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
