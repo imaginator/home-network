@@ -94,16 +94,20 @@ case $MODEL in
     dnsmasq-full \
     ip-bridge \
     ip-full \
+    iptables-mod-tee \
     kmod-gpio-pca953x \
     kmod-i2c-gpio-custom \
     kmod-tun \
     kmod-wireguard \
-    libatomic libnl \
-    libnl-core libnl-genl \
-    libnl-nf libnl-route \
-    libstdcpp uboot-envtools \
+    libatomic \
+    libnl \
+    libnl-core \
+    libnl-genl \
+    libnl-nf \
+    libnl-route \
+    libstdcpp \
     libustream-openssl \
-    lldpd iptables-mod-tee \
+    lldpd \
     luci \
     luci-app-adblock \
     luci-app-ddns \
@@ -114,7 +118,6 @@ case $MODEL in
     luci-base adblock \
     luci-mod-admin-full \
     luci-proto-ipv6 \
-    luci-proto-ppp \
     luci-proto-wireguard \
     luci-theme-bootstrap \
     odhcp6c \
@@ -123,6 +126,7 @@ case $MODEL in
     sqm-scripts-extra \
     tor \
     tor-geoip \
+    uboot-envtools \
     wireguard \
     wireguard-tools \
   "
