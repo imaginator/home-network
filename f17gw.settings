@@ -11,7 +11,7 @@ EOF
 uci batch <<-EOF >/dev/null
 add      system  system
 set      system.@system[-1]=system
-set      system.@system[-1].hostname='f17-gw'
+set      system.@system[-1].hostname='f17gw'
 set      system.@system[-1].zonename='UTC'
 set      system.@system[-1].timezone='UTC'
 set      system.@system[-1].conloglevel='8'
@@ -24,6 +24,9 @@ set      system.@system[-1].log_remote='1'
 set      system.@system[-1].log_ip='10.7.11.1'
 set      system.@system[-1].log_proto='tcp'
 set      system.@system[-1].log_port='514'
+set      system.@system[-1].location='Falckensteinstraße'
+set      system.@system[-1].latitude='52.497618743398135'
+set      system.@system[-1].longitude='13.441156148912176'
 
 add      system  led
 set      system.@led[-1]=led
@@ -112,7 +115,19 @@ set network.ffuplink=interface
 set network.ffuplink.ifname='eth0.3'
 set network.ffuplink.proto='static'
 set network.ffuplink.ipaddr='10.36.189.1'
+<<<<<<< HEAD
 set network.ffuplink.netmask='255.255.255.0'
+=======
+set network.ffuplink.netmask='255.255.255.255'
+set network.ffuplink.ip6addr='2001:bf7:830:6600::1/128'
+
+set network.fflan=interface
+set network.fflan.proto='static'
+set network.fflan.type='bridge'
+set network.fflan.ipaddr='10.36.189.1'
+set network.fflan.netmask='255.255.255.0'
+set network.fflan.ip6addr='2001:bf7:830:6600::1/56'
+>>>>>>> test
 
 set network.pyur4=interface
 set network.pyur4.proto='dhcp'
@@ -220,20 +235,6 @@ set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio0'
 set wireless.@wifi-iface[-1].mode='ap'
 <<<<<<< HEAD
-set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-set wireless.@wifi-iface[-1].network='fflan'
-set wireless.@wifi-iface[-1].encryption='none'
-=======
-set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
-set wireless.@wifi-iface[-1].network='lan'
-set wireless.@wifi-iface[-1].encryption='psk2'
-set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
->>>>>>> parent of 149cef2... no idea what I'm doing but this seems to work
-
-add wireless  wifi-iface
-set wireless.@wifi-iface[-1]=wifi-iface
-set wireless.@wifi-iface[-1].device='radio1'
-set wireless.@wifi-iface[-1].mode='ap'
 <<<<<<< HEAD
 set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
@@ -244,6 +245,32 @@ set wireless.@wifi-iface[-1].network='lan'
 set wireless.@wifi-iface[-1].encryption='psk2'
 set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
 >>>>>>> parent of 149cef2... no idea what I'm doing but this seems to work
+=======
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
+set wireless.@wifi-iface[-1].network='fflan'
+set wireless.@wifi-iface[-1].encryption='none'
+>>>>>>> test
+
+add wireless  wifi-iface
+set wireless.@wifi-iface[-1]=wifi-iface
+set wireless.@wifi-iface[-1].device='radio1'
+set wireless.@wifi-iface[-1].mode='ap'
+<<<<<<< HEAD
+<<<<<<< HEAD
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
+set wireless.@wifi-iface[-1].network='fflan'
+set wireless.@wifi-iface[-1].encryption='none'
+=======
+set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].network='lan'
+set wireless.@wifi-iface[-1].encryption='psk2'
+set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+>>>>>>> parent of 149cef2... no idea what I'm doing but this seems to work
+=======
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
+set wireless.@wifi-iface[-1].network='fflan'
+set wireless.@wifi-iface[-1].encryption='none'
+>>>>>>> test
 
 commit wireless
 EOF
@@ -334,18 +361,81 @@ uci commit prometheus-node-exporter-lua
 uci import olsrd<<EOF
 EOF
 
+uci import olsrd6<<EOF
+EOF
+
 # set olsrd defaults
 uci add      olsrd  olsrd
 uci set      olsrd.@olsrd[-1]=olsrd
 uci set      olsrd.@olsrd[-1].AllowNoInt=yes
 uci set      olsrd.@olsrd[-1].DebugLevel=3
+<<<<<<< HEAD
+=======
+uci set      olsrd.@olsrd[-1].FIBMetric=flat
+uci set      olsrd.@olsrd[-1].IpVersion=4
+uci set      olsrd.@olsrd[-1].LinkQualityAlgorithm=etx_ff
+uci set      olsrd.@olsrd[-1].NatThreshold=0.75
+uci set      olsrd.@olsrd[-1].Pollrate=0.025
+uci set      olsrd.@olsrd[-1].RtTable=111
+uci set      olsrd.@olsrd[-1].RtTableDefault=112
+uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
+uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
+uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
+>>>>>>> test
 uci set      olsrd.@olsrd[-1].SmartGateway=yes
 uci set      olsrd.@olsrd[-1].MainIp='10.36.189.1'
 uci commit   olsrd.@olsrd[-1]
 
+<<<<<<< HEAD
+=======
+uci add      olsrd6  olsrd
+uci set      olsrd6.@olsrd[-1]=olsrd
+uci set      olsrd6.@olsrd[-1].AllowNoInt='yes'
+uci set      olsrd6.@olsrd[-1].FIBMetric='flat'
+uci set      olsrd6.@olsrd[-1].IpVersion='6'
+uci set      olsrd6.@olsrd[-1].LinkQualityAlgorithm='etx_ffeth'
+uci set      olsrd6.@olsrd[-1].Pollrate='0.025'
+uci set      olsrd6.@olsrd[-1].RtTable='111'
+uci set      olsrd6.@olsrd[-1].RtTableDefault='112'
+uci set      olsrd6.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
+uci set      olsrd6.@olsrd[-1].RtTablePriority='1000'
+uci set      olsrd6.@olsrd[-1].TcRedundancy='2'
+uci commit   olsrd6.@olsrd[-1]
+
+# set InterfaceDefaults parameters
+uci add      olsrd  InterfaceDefaults
+uci set      olsrd.@InterfaceDefaults[-1]=InterfaceDefaults
+uci set      olsrd.@InterfaceDefaults[-1].HelloInterval='3.0'
+uci set      olsrd.@InterfaceDefaults[-1].HelloValidityTime='125.0'
+uci set      olsrd.@InterfaceDefaults[-1].HnaInterval='10.0'
+uci set      olsrd.@InterfaceDefaults[-1].HnaValidityTime='125.0'
+uci set      olsrd.@InterfaceDefaults[-1].Ip4Broadcast='255.255.255.255'
+uci set      olsrd.@InterfaceDefaults[-1].MidInterval='25.0'
+uci set      olsrd.@InterfaceDefaults[-1].MidValidityTime='500.0'
+uci set      olsrd.@InterfaceDefaults[-1].Mode='mesh'
+uci set      olsrd.@InterfaceDefaults[-1].TcInterval='2.0'
+uci set      olsrd.@InterfaceDefaults[-1].TcValidityTime='500.0'
+uci commit   olsrd.@InterfaceDefaults[-1]
+
+uci add      olsrd6  InterfaceDefaults
+uci set      olsrd6.@InterfaceDefaults[-1]=InterfaceDefaults
+uci set      olsrd6.@InterfaceDefaults[-1].HelloInterval='3.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HelloValidityTime='125.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HnaInterval='10.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HnaValidityTime='125.0'
+uci set      olsrd6.@InterfaceDefaults[-1].MidInterval='25.0'
+uci set      olsrd6.@InterfaceDefaults[-1].MidValidityTime='500.0'
+uci set      olsrd6.@InterfaceDefaults[-1].IPv6Multicast='ff02::6d'
+uci set      olsrd6.@InterfaceDefaults[-1].Mode='mesh'
+uci set      olsrd6.@InterfaceDefaults[-1].TcInterval='2.0'
+uci set      olsrd6.@InterfaceDefaults[-1].TcValidityTime='500.0'
+uci commit   olsrd6.@InterfaceDefaults[-1]
+
+>>>>>>> test
 uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
 uci set      olsrd.@Interface[-1].interface='ffuplink'
+<<<<<<< HEAD
 uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
 uci set      olsrd.@Interface[-1].Mode='ether'
@@ -359,6 +449,15 @@ uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
 uci set      olsrd.@Interface[-1].Mode='ether'
 uci commit   olsrd.@Interface[-1]
+=======
+uci commit   olsrd.@Interface[-1]
+
+uci add      olsrd6  Interface
+uci set      olsrd6.@Interface[-1]=Interface
+uci set      olsrd6.@Interface[-1].ignore='0'
+uci set      olsrd6.@Interface[-1].interface='ffuplink'
+uci commit   olsrd6.@Interface[-1]
+>>>>>>> test
 
 uci add      olsrd  Hna4
 uci set      olsrd.@Hna4[-1]=Hna4
@@ -366,6 +465,7 @@ uci set      olsrd.@Hna4[-1].netaddr='10.36.189.0'
 uci set      olsrd.@Hna4[-1].netmask='255.255.255.0'
 uci commit   olsrd.@Hna4[-1]
 
+<<<<<<< HEAD
 # olsrd plugins
 =======
 >>>>>>> parent of 149cef2... no idea what I'm doing but this seems to work
@@ -375,6 +475,13 @@ uci set      olsrd.@LoadPlugin[-1].library='olsrd_netjson'
 uci set      olsrd.@LoadPlugin[-1].accept='0.0.0.0'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
+=======
+uci add      olsrd6  Hna6
+uci set      olsrd6.@Hna6[-1]=Hna6
+uci set      olsrd6.@Hna6[-1].netaddr='2001:bf7:830:6600::'
+uci set      olsrd6.@Hna6[-1].prefix='56'
+uci commit   olsrd6.@Hna6[-1]
+>>>>>>> test
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
@@ -383,15 +490,17 @@ uci set      olsrd.@LoadPlugin[-1].accept='0.0.0.0'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_arprefresh'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_jsoninfo'
+uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
+uci set      olsrd6.@LoadPlugin[-1].accept='0::'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci commit   olsrd6.@LoadPlugin[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_bmf'
+uci set      olsrd.@LoadPlugin[-1].library='olsrd_arprefresh'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
@@ -410,11 +519,11 @@ uci add_list olsrd.@LoadPlugin[-1]=194.150.168.168        # dns.as250.net
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_dyn_gw_plain'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_dyn_gw'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci commit   olsrd6.@LoadPlugin[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
@@ -424,14 +533,32 @@ uci commit   olsrd.@LoadPlugin[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
+<<<<<<< HEAD
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_nameservice'
 uci set      olsrd.@LoadPlugin[-1]=.olsr
 uci set      olsrd.@LoadPlugin[-1]=/tmp/hosts/olsr
 uci set      olsrd.@LoadPlugin[-1]=/var/run/latlon.js
 uci set      olsrd.@LoadPlugin[-1]=/var/etc/services.olsr
+=======
+>>>>>>> test
 uci add_list olsrd.@LoadPlugin[-1].service='https://bunker.imaginator.com/grafana/ System Status'
+uci set      olsrd.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
+uci set      olsrd.@LoadPlugin[-1].latlon_file='/var/run/latlon.js'
+uci set      olsrd.@LoadPlugin[-1].library='olsrd_nameservice'
+uci set      olsrd.@LoadPlugin[-1].services_file='/var/etc/services.olsr'
+uci set      olsrd.@LoadPlugin[-1].suffix='.olsr'
 uci commit   olsrd.@LoadPlugin[-1]
+
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr.ipv6'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].latlon_file='/var/run/latlon.js.ipv6'
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_nameservice'
+uci set      olsrd6.@LoadPlugin[-1].services_file='/var/etc/services.olsr.ipv6'
+uci set      olsrd6.@LoadPlugin[-1].suffix='.olsr'
+uci commit   olsrd6.@LoadPlugin[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
@@ -442,15 +569,27 @@ uci commit   olsrd.@LoadPlugin[-1]
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_txtinfo'
+uci set      olsrd.@LoadPlugin[-1].accept='0.0.0.0'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
+
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].accept='::'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_txtinfo'
+uci set      olsrd6.@LoadPlugin[-1].port='2007'
+uci commit   olsrd6.@LoadPlugin[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_watchdog'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd4.watchdog'
 uci commit   olsrd.@LoadPlugin[-1]
 
+<<<<<<< HEAD
 
 # A zone section groups one or more interfaces and serves as a source or destination for forwardings, 
 # rules and redirects. Masquerading (NAT) of outgoing traffic is controlled on a per-zone basis. 
@@ -459,6 +598,14 @@ uci commit   olsrd.@LoadPlugin[-1]
 # INPUT   rules for a zone describe what happens to traffic trying to reach the router itself through an interface in that zone.
 # OUTPUT  rules for a zone describe what happens to traffic originating from the router itself going through an interface in that zone.
 # FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
+=======
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_watchdog'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd6.watchdog'
+uci commit   olsrd6.@LoadPlugin[-1]
+>>>>>>> test
 
 uci import firewall<<EOF
 EOF
@@ -674,6 +821,7 @@ uci set      firewall.@rule[-1].limit='1000/sec'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
+<<<<<<< HEAD
 =======
 uci batch <<-EOF
 add firewall  defaults
@@ -817,6 +965,28 @@ set firewall.@include[0].path='/etc/set firewall.user'
 commit firewall
 EOF
 >>>>>>> parent of 149cef2... no idea what I'm doing but this seems to work
+=======
+
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='ssh'
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].src='wan'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].dest_port='22'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='olsr updates'
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].src='freifunk'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest_port='698'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+>>>>>>> test
 
 /etc/init.d/firewall enable || true
 
