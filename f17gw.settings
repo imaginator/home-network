@@ -524,11 +524,20 @@ uci commit firewall.@defaults[-1]
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci add_list firewall.@zone[-1].network='fflan'
+uci set      firewall.@zone[-1].forward='ACCEPT'
+uci set      firewall.@zone[-1].input='ACCEPT'
+uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].name='fflan'
+uci set      firewall.@zone[-1].output='ACCEPT'
+uci commit   firewall.@zone[-1]
+
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
 uci add_list firewall.@zone[-1].network='ffuplink'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].name='freifunk'
+uci set      firewall.@zone[-1].name='ffuplink'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci commit   firewall.@zone[-1]
 
@@ -573,6 +582,12 @@ uci commit   firewall.@forwarding[-1]
 
 uci add      firewall  forwarding
 uci set      firewall.@forwarding[-1]=forwarding
+uci set      firewall.@forwarding[-1].src='ffuplink'
+uci set      firewall.@forwarding[-1].dest='fflan'
+uci commit   firewall.@forwarding[-1]
+
+uci add      firewall  forwarding
+uci set      firewall.@forwarding[-1]=forwarding
 uci set      firewall.@forwarding[-1].src='fflan'
 uci set      firewall.@forwarding[-1].dest='ffuplink'
 uci commit   firewall.@forwarding[-1]
@@ -590,18 +605,9 @@ uci commit   firewall.@rule[0]
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='Allow-Ping'
-uci set      firewall.@rule[-1].src='wan'
+uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].proto='icmp'
 uci set      firewall.@rule[-1].icmp_type='echo-request'
-uci set      firewall.@rule[-1].family='ipv4'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-IGMP'
-uci set      firewall.@rule[-1].src='wan'
-uci set      firewall.@rule[-1].proto='igmp'
 uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -656,7 +662,7 @@ uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='ssh'
 uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='wan'
+uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].dest_port='22'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -664,9 +670,19 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='freifunk DNS'
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].src='ffuplink'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest_port='53'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='olsr updates'
 uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='freifunk'
+uci set      firewall.@rule[-1].src='ffuplink'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].dest_port='698'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -693,7 +709,8 @@ uci set      dhcp.@dnsmasq[-1].loglevel='7'
 uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].nonwildcard='1'
 uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/var/run/hosts_olsr'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr.ipv6'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
