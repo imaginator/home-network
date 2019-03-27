@@ -484,9 +484,9 @@ uci commit firewall.@defaults[-1]
 # rules and redirects. Masquerading (NAT) of outgoing traffic is controlled on a per-zone basis. 
 # Note that masquerading is defined on the outgoing interface.
 
-# INPUT rules for a zone describe what happens to traffic trying to reach the router itself through an interface in that zone.
-# OUTPUT rules for a zone describe what happens to traffic originating from the router itself going through an interface in that zone.
-# FORWARD rules for a zone describe what happenys to traffic passing between different interfaces in that zone.
+# INPUT   rules for a zone describe what happens to traffic trying to reach the router itself through an interface in that zone.
+# OUTPUT  rules for a zone describe what happens to traffic originating from the router itself going through an interface in that zone.
+# FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
@@ -495,7 +495,7 @@ uci add_list firewall.@zone[-1].network='trusted'
 uci add_list firewall.@zone[-1].network='wg0'
 uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='ACCEPT'  # FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
+uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
 uci set      firewall.@zone[-1].conntrack=1
@@ -836,7 +836,7 @@ uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-            
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='trusted dns'
@@ -846,7 +846,7 @@ uci set      firewall.@rule[-1].proto='tcpudp'
 uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-            
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='notrust dns'
@@ -856,7 +856,7 @@ uci set      firewall.@rule[-1].proto='tcpudp'
 uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-            
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='trust dhcp'
@@ -866,7 +866,7 @@ uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-            
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='notrust dhcp'
@@ -876,7 +876,7 @@ uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-            
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='DHCPv6 requests'
@@ -945,7 +945,7 @@ uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].proto='igmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-            
+
 uci add      firewall rule
 uci set      firewall.@rule[-1].name='Multicast to LAN'
 uci set      firewall.@rule[-1].src='trusted'
@@ -1327,7 +1327,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.27'
 uci set      dhcp.@host[-1].name='ccultra-lounge'
-uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30'
+uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30 44:09:b8:13:10:7d' # wireless interface is 20:df:b9:8a:44:30
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 

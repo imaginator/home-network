@@ -11,7 +11,7 @@ EOF
 uci batch <<-EOF >/dev/null
 add      system  system
 set      system.@system[-1]=system
-set      system.@system[-1].hostname='f17-gw'
+set      system.@system[-1].hostname='f17gw'
 set      system.@system[-1].zonename='UTC'
 set      system.@system[-1].timezone='UTC'
 set      system.@system[-1].conloglevel='8'
@@ -24,6 +24,9 @@ set      system.@system[-1].log_remote='1'
 set      system.@system[-1].log_ip='10.7.11.1'
 set      system.@system[-1].log_proto='tcp'
 set      system.@system[-1].log_port='514'
+set      system.@system[-1].location='Falckensteinstraße'
+set      system.@system[-1].latitude='52.497618743398135'
+set      system.@system[-1].longitude='13.441156148912176'
 
 add      system  led
 set      system.@led[-1]=led
@@ -113,12 +116,14 @@ set network.ffuplink.ifname='eth0.3'
 set network.ffuplink.proto='static'
 set network.ffuplink.ipaddr='10.36.189.1'
 set network.ffuplink.netmask='255.255.255.255'
+set network.ffuplink.ip6addr='2001:bf7:830:6600::1/128'
 
 set network.fflan=interface
 set network.fflan.proto='static'
 set network.fflan.type='bridge'
 set network.fflan.ipaddr='10.36.189.1'
 set network.fflan.netmask='255.255.255.0'
+set network.fflan.ip6addr='2001:bf7:830:6600::1/56'
 
 set network.pyur4=interface
 set network.pyur4.proto='dhcp'
@@ -225,19 +230,17 @@ add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio0'
 set wireless.@wifi-iface[-1].mode='ap'
-set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
-set wireless.@wifi-iface[-1].encryption='psk2'
-set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+set wireless.@wifi-iface[-1].encryption='none'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio1'
 set wireless.@wifi-iface[-1].mode='ap'
-set wireless.@wifi-iface[-1].ssid='F17 Baustelle'
+set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
-set wireless.@wifi-iface[-1].encryption='psk2'
-set wireless.@wifi-iface[-1].key='${trusted_wifikey_baustelle}'
+set wireless.@wifi-iface[-1].encryption='none'
 
 commit wireless
 EOF
