@@ -329,13 +329,27 @@ uci set      olsrd.@olsrd[-1].NatThreshold=0.75
 uci set      olsrd.@olsrd[-1].Pollrate=0.025
 uci set      olsrd.@olsrd[-1].RtTable=111
 uci set      olsrd.@olsrd[-1].RtTableDefault=112
-uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority=20000
-uci set      olsrd.@olsrd[-1].RtTableTunnel=113
-uci set      olsrd.@olsrd[-1].RtTableTunnelPriority=100000
+uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
+uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
+uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
 uci set      olsrd.@olsrd[-1].SmartGateway=yes
 uci set      olsrd.@olsrd[-1].SmartGatewayThreshold=50
 uci set      olsrd.@olsrd[-1].TcRedundancy=2
 uci commit   olsrd.@olsrd[-1]
+
+uci add      olsrd6  olsrd
+uci set      olsrd6.@olsrd[-1]=olsrd
+uci set      olsrd6.@olsrd[-1].AllowNoInt='yes'
+uci set      olsrd6.@olsrd[-1].FIBMetric='flat'
+uci set      olsrd6.@olsrd[-1].IpVersion='6'
+uci set      olsrd6.@olsrd[-1].LinkQualityAlgorithm='etx_ffeth'
+uci set      olsrd6.@olsrd[-1].Pollrate='0.025'
+uci set      olsrd6.@olsrd[-1].RtTable='111'
+uci set      olsrd6.@olsrd[-1].RtTableDefault='112'
+uci set      olsrd6.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
+uci set      olsrd6.@olsrd[-1].RtTablePriority='1000'
+uci set      olsrd6.@olsrd[-1].TcRedundancy='2'
+uci commit   olsrd6.@olsrd[-1]
 
 # set InterfaceDefaults parameters
 uci add      olsrd  InterfaceDefaults
@@ -344,28 +358,49 @@ uci set      olsrd.@InterfaceDefaults[-1].HelloInterval=3.0
 uci set      olsrd.@InterfaceDefaults[-1].HelloValidityTime=125.0
 uci set      olsrd.@InterfaceDefaults[-1].HnaInterval=10.0
 uci set      olsrd.@InterfaceDefaults[-1].HnaValidityTime=125.0
-uci set      olsrd.@InterfaceDefaults[-1].Ip4Broadcast=255.255.255.255
+uci set      olsrd.@InterfaceDefaults[-1].Ip4Broadcast='255.255.255.255'
 uci set      olsrd.@InterfaceDefaults[-1].MidInterval=25.0
 uci set      olsrd.@InterfaceDefaults[-1].MidValidityTime=500.0
+uci set      olsrd.@InterfaceDefaults[-1].Mode='mesh'
 uci set      olsrd.@InterfaceDefaults[-1].TcInterval=2.0
 uci set      olsrd.@InterfaceDefaults[-1].TcValidityTime=500.0
 uci commit   olsrd.@InterfaceDefaults[-1]
+
+uci add      olsrd6  InterfaceDefaults
+uci set      olsrd6.@InterfaceDefaults[-1]=InterfaceDefaults
+uci set      olsrd6.@InterfaceDefaults[-1].MidValidityTime='500.0'
+uci set      olsrd6.@InterfaceDefaults[-1].TcInterval='2.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HnaValidityTime='125.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HelloValidityTime='125.0'
+uci set      olsrd6.@InterfaceDefaults[-1].TcValidityTime='500.0'
+uci set      olsrd6.@InterfaceDefaults[-1].MidInterval='25.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HelloInterval='3.0'
+uci set      olsrd6.@InterfaceDefaults[-1].HnaInterval='10.0'
+uci commit   olsrd6.@InterfaceDefaults[-1]
 
 uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
 uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].interface='ffuplink'
-uci set      olsrd.@Interface[-1].Mode='ether'
-uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
 uci commit   olsrd.@Interface[-1]
 
 uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
 uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].interface='fflan'
-uci set      olsrd.@Interface[-1].Mode='ether'
-uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
 uci commit   olsrd.@Interface[-1]
+
+uci add      olsrd6  Interface
+uci set      olsrd6.@Interface[-1]=Interface
+uci set      olsrd6.@Interface[-1].ignore='0'
+uci set      olsrd6.@Interface[-1].interface='ffuplink'
+uci commit   olsrd6.@Interface[-1]
+
+uci add      olsrd6  Interface
+uci set      olsrd6.@Interface[-1]=Interface
+uci set      olsrd6.@Interface[-1].ignore='0'
+uci set      olsrd6.@Interface[-1].interface='fflan'
+uci commit   olsrd6.@Interface[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
@@ -377,6 +412,14 @@ uci commit   olsrd.@LoadPlugin[-1]
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_jsoninfo'
+uci set      olsrd.@LoadPlugin[-1].ignore=0
+uci commit   olsrd.@LoadPlugin[-1]
+
+uci add      olsrd  LoadPlugin
+uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd.@LoadPlugin[-1].library='olsrd_jsoninfo.so.0.0'
+uci set      olsrd.@LoadPlugin[-1].ipv6only=true
+uci set      olsrd.@LoadPlugin[-1].accept='0::'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
@@ -423,6 +466,16 @@ uci add_list olsrd.@LoadPlugin[-1].service='https://bunker.imaginator.com/grafan
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr.ipv6'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].latlon_file='/var/run/latlon.js.ipv6'
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_nameservice.so.0.3'
+uci set      olsrd6.@LoadPlugin[-1].services_file='/var/etc/services.olsr.ipv6'
+uci set      olsrd6.@LoadPlugin[-1].suffix='.olsr'
+uci commit   olsrd6.@LoadPlugin[-1]
+
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_pgraph'
@@ -435,11 +488,26 @@ uci set      olsrd.@LoadPlugin[-1].library='olsrd_txtinfo'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_txtinfo'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
+uci commit   olsrd6.@LoadPlugin[-1]
+
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_watchdog'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd4.watchdog'
 uci commit   olsrd.@LoadPlugin[-1]
+
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_watchdog'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd6.watchdog'
+uci commit   olsrd6.@LoadPlugin[-1]
 
 uci import firewall<<EOF
 EOF
