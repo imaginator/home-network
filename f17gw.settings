@@ -182,6 +182,20 @@ add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
 commit network
 EOF
 
+uci add      network  rule
+uci set      network.@rule[-1]=rule
+uci set      network.@rule[-1].src='10.36.189.0/24'
+uci set      network.@rule[-1].lookup='100'
+uci commit   network.@rule[-1]
+
+uci add      network  route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].table=100
+uci set      network.@route[-1].interface=ffuplink
+uci set      network.@route[-1].target=0.0.0.0
+uci set      network.@route[-1].netmask=0.0.0.0
+uci commit   network.@route[-1]
+
 uci import   wireless<<EOF
 EOF
 
@@ -336,6 +350,7 @@ uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
 uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
 uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
 uci set      olsrd.@olsrd[-1].SmartGateway=yes
+uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none'
 uci set      olsrd.@olsrd[-1].SmartGatewayThreshold=50
 uci set      olsrd.@olsrd[-1].TcRedundancy=2
 uci commit   olsrd.@olsrd[-1]
