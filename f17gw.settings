@@ -113,12 +113,14 @@ set network.lan.igmp_snooping=1
 
 set network.ffuplink=interface
 set network.ffuplink.ifname='eth0.3'
+set network.ffuplink.disabled='1'
 set network.ffuplink.proto='static'
 set network.ffuplink.ipaddr='10.36.189.1'
 set network.ffuplink.netmask='255.255.255.255'
 set network.ffuplink.ip6addr='2001:bf7:830:6600::1/128'
 
 set network.fflan=interface
+set network.fflan.disabled='1'
 set network.fflan.proto='static'
 set network.fflan.type='bridge'
 set network.fflan.ipaddr='10.36.189.1'
@@ -137,6 +139,10 @@ set network.pyur6.ifname='eth0.4'
 set network.pyur6.peerdns='0'
 set network.pyur6.reqaddress='try'
 set network.pyur6.reqprefix='auto'
+
+set network.tunl0=interface
+set network.tunl0.ifname='tunl0'
+set network.tunl0.proto='none'
 
 add network switch
 set network.@switch[-1]=switch
