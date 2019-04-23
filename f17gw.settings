@@ -242,6 +242,7 @@ set wireless.@wifi-iface[-1]=wifi-iface
 set wireless.@wifi-iface[-1].device='radio1'
 set wireless.@wifi-iface[-1].mode='ap'
 set wireless.@wifi-iface[-1].ssid='imagiFi 5'
+set wireless.@wifi-iface[-1].macaddr='70:b8:c3:6e:fb:94'
 set wireless.@wifi-iface[-1].network='lan'
 set wireless.@wifi-iface[-1].encryption='psk2'
 set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
@@ -253,6 +254,7 @@ set wireless.@wifi-iface[-1].mode='ap'
 set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
 set wireless.@wifi-iface[-1].encryption='none'
+set wireless.@wifi-iface[-1].disabled='1'
 
 add wireless  wifi-iface
 set wireless.@wifi-iface[-1]=wifi-iface
@@ -261,6 +263,7 @@ set wireless.@wifi-iface[-1].mode='ap'
 set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
 set wireless.@wifi-iface[-1].network='fflan'
 set wireless.@wifi-iface[-1].encryption='none'
+set wireless.@wifi-iface[-1].disabled='1'
 
 commit wireless
 EOF
