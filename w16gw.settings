@@ -338,6 +338,8 @@ cat <<'EOF' > /etc/adblock/adblock.blacklist
 # the neighbour streams an inordinate amount of TV from here.
 zattoo.de
 zattoo.com
+reddit.com
+youtube.com
 EOF
 
 uci import adblock <<EOF
@@ -701,8 +703,8 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='wireguard'
-uci set    firewall.@redirect[-1].src='wan_trusted'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].src='trusted'
+uci set    firewall.@redirect[-1].dest='wan_trusted'
 uci set    firewall.@redirect[-1].proto='udp'
 uci set    firewall.@redirect[-1].src_dport='12321'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
@@ -1103,8 +1105,14 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  cname 
 uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='salt'
-uci set      dhcp.@cname[-1].target='bunker'
+uci set      dhcp.@cname[-1].cname='salt.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname 
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='transmission.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
 uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  cname
@@ -1153,6 +1161,7 @@ uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+# HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.51'
@@ -1161,6 +1170,7 @@ uci set      dhcp.@host[-1].mac='50:C7:BF:01:F8:2C'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+# HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.52'
@@ -1169,6 +1179,7 @@ uci set      dhcp.@host[-1].mac='50:C7:BF:01:7C:90'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+# HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.53'
@@ -1177,6 +1188,7 @@ uci set      dhcp.@host[-1].mac='ac:84:c6:29:18:14'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+# HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.54'
@@ -1185,11 +1197,56 @@ uci set      dhcp.@host[-1].mac='ac:84:c6:29:07:2f'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+# HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.55'
 uci set      dhcp.@host[-1].name='plugswitch05'
 uci set      dhcp.@host[-1].mac='ac:84:c6:3b:b4:5b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.56'
+uci set      dhcp.@host[-1].name='plugswitch06'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:29:51'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.57'
+uci set      dhcp.@host[-1].name='plugswitch07'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2c:8f'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.58'
+uci set      dhcp.@host[-1].name='plugswitch08'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2c:ea'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.59'
+uci set      dhcp.@host[-1].name='plugswitch09'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2a:8e'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.60'
+uci set      dhcp.@host[-1].name='veluxgw'
+uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1300,9 +1357,8 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='40:4e:36:93:4c:f7'
+uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
 uci set      dhcp.@host[-1].name='simon-phone' # same hostname irregardless of upgrades (for @home presense)
-uci set      dhcp.@host[-1].leasetime='9m'     # for 10 minute presense accuracy
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
