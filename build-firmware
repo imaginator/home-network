@@ -27,7 +27,17 @@ case $MODEL in
     bind-host \
     ca-bundle \
     ca-certificates \
-    community-profiles \
+    collectd \
+    collectd-mod-conntrack \
+    collectd-mod-cpu \
+    collectd-mod-exec \
+    collectd-mod-interface \
+    collectd-mod-iwinfo \
+    collectd-mod-load \
+    collectd-mod-network \
+    collectd-mod-olsrd \
+    collectd-mod-rrdtool \
+    collectd-mod-uptime \
     curl \
     ddns-scripts \
     dnsmasq \
@@ -37,19 +47,23 @@ case $MODEL in
     iptables-mod-conntrack-extra \
     iptables-mod-ipopt \
     kmod-ipip \
+    kmod-l2tp \
+    kmod-l2tp-eth \
+    kmod-l2tp-ip \
     kmod-tun \
     libiwinfo-lua \
     libustream-openssl \
     luci-app-ddns \
     luci-app-firewall \
+    luci-app-freifunk-diagnostics \
     luci-app-olsr \
     luci-app-olsr-services \
     luci-app-olsr-viz \
+    luci-app-owm \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-mod-admin-full \
     luci-mod-freifunk \
-    luci-mod-freifunk-community \
     luci-proto-ipv6 \
     luci-proto-wireguard \
     luci-theme-bootstrap \
