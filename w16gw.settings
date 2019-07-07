@@ -144,8 +144,6 @@ uci set      network.pyur4.ifname='eth0.4'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
-uci add_list network.pyur4.dns='1.1.1.1'         # Cloudflare
-uci add_list network.pyur4.dns='1.0.0.1'         # Cloudflare
 
 uci set      network.iot=interface
 uci set      network.iot.ifname='eth0.5'
@@ -160,8 +158,6 @@ uci set      network.pyur6.proto=dhcpv6
 uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns=0
-uci add_list network.pyur6.dns='2606:4700:4700::1111'
-uci add_list network.pyur6.dns='2606:4700:4700::1001'
 uci set      network.pyur6.metric='1'
 
 uci set      network.ffvpn=interface
@@ -301,7 +297,7 @@ uci set    ddns.@service[-1].service_name='google.com'
 uci set    ddns.@service[-1].use_https='1'
 uci commit ddns.@service[-1]
 
-/etc/init.d/ddns enable || true
+service ddns enable || true
 
 uci import softflowd<<EOF
 EOF
@@ -321,7 +317,7 @@ uci set    softflowd.@softflowd[-1].track_ipv6='1'
 uci set    softflowd.@softflowd[-1].sampling_rate='1'
 uci commit softflowd.@softflowd[-1]
 
-/etc/init.d/softflowd enable || true
+service softflowd enable || true
 
 uci import prometheus-node-exporter-lua<<EOF
 EOF
@@ -331,7 +327,7 @@ uci set    prometheus-node-exporter-lua.main.listen_address='0'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
-/etc/init.d/prometheus-node-exporter-lua enable || true
+service prometheus-node-exporter-lua enable || true
 
 cat <<'EOF' > /etc/adblock/adblock.blacklist
 # domains to block
@@ -397,7 +393,7 @@ uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-
 uci set    adblock.@source[-1].adb_src_desc='mozilla driven blocklist, numerous updates on the same day, approx. 6.500 entries'
 uci commit adblock.@source[-1]
 
-/etc/init.d/adblock enable || true
+service adblock enable || true
 
 uci import openvpn <<EOF
 EOF
@@ -467,7 +463,7 @@ cat <<'EOF' > /etc/openvpn/dh2048.pem
 ${dh2048_pem}
 EOF
 
-/etc/init.d/openvpn enable || true
+service openvpn enable || true
 
 uci import firewall <<EOF
 EOF
@@ -500,7 +496,7 @@ uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
-#uci set      firewall.@zone[-1].log_limit='10/minute'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
@@ -511,6 +507,7 @@ uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
@@ -521,6 +518,7 @@ uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='DROP'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
@@ -533,6 +531,7 @@ uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
@@ -544,6 +543,7 @@ uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
 uci add    firewall  forwarding
@@ -1009,7 +1009,20 @@ uci set      firewall.@rule[-1].proto='icmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-/etc/init.d/firewall enable || true
+service firewall enable || true
+
+uci import https_dns_proxy <<EOF
+EOF
+
+uci set      https_dns_proxy.dns="https_dns_proxy"
+uci set      https_dns_proxy.dns.listen_addr="127.0.0.1"
+uci set      https_dns_proxy.dns.listen_port="5053"
+uci set      https_dns_proxy.dns.user="nobody"
+uci set      https_dns_proxy.dns.group="nogroup"
+uci set      https_dns_proxy.dns.url_prefix="https://cloudflare-dns.com/dns-query?ct=application/dns-json&"
+uci commit   https_dns_proxy
+
+service https_dns_proxy enable || true
 
 uci import dhcp <<EOF
 EOF
@@ -1034,6 +1047,8 @@ uci set      dhcp.@dnsmasq[-1].nonegcache='0'
 uci set      dhcp.@dnsmasq[-1].localservice='1'
 uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
+uci set      dhcp.@dnsmasq[-1].noresolv='1'              # don't reference /etc/resolv.conf
+uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#5053'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp

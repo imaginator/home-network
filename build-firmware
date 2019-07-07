@@ -106,6 +106,7 @@ case $MODEL in
     curl \
     ddns-scripts \
     dnsmasq-full \
+    https_dns_proxy \
     ip-bridge \
     ip-full \
     iptables-mod-tee \
