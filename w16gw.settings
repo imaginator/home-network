@@ -994,7 +994,7 @@ uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT web outboud'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='wan_trusted'
-uci set      firewall.@rule[-1].dest_port='80 443 8883 9292 43439' # homematic is port 9292 43439
+uci set      firewall.@rule[-1].dest_port='80 443 8882 8883 8884 9292 43439' # homematic is port 9292 43439
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
