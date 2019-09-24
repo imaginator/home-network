@@ -2,7 +2,7 @@
 set -e
 
 MODEL=$1
-VERSION=18.06.2
+VERSION=19.07-SNAPSHOT
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -59,7 +59,6 @@ case $MODEL in
     luci-app-olsr \
     luci-app-olsr-services \
     luci-app-olsr-viz \
-    luci-app-owm \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-mod-admin-full \
@@ -162,7 +161,7 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     "
-  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "ubnt-uap-pro") 
@@ -178,7 +177,7 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     " 
-  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "nanobridge-m5") 
@@ -201,7 +200,7 @@ case $MODEL in
   PLATFORM=ipq40xx
   TYPE=generic
   TARGET_DEVICE=ipq40xx
-  PROFILE  eraki_mr33
+  PROFILE meraki_mr33
   EXTRA_PACKAGES="\
     curl \
     hostapd \
@@ -211,7 +210,7 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     " 
-  REMOVED_PACKAGES="-wpad-mini -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 *)
@@ -236,7 +235,9 @@ if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86
 fi
 
 COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${BASE_PACKAGES}` `echo ${EXTRA_PACKAGES}`" 
+echo "Combined package list ${COMBINED_PACKAGE_LIST}"
 
+echo "Building ${VERSION}..."
 ( cd ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 && sudo make image PROFILE="$PROFILE" PACKAGES="$COMBINED_PACKAGE_LIST" )
 
 echo "scp ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64/bin/targets/${PLATFORM}/${TYPE}/openwrt-${VERSION}-${TARGET_DEVICE}-${PROFILE}-squashfs-sysupgrade.bin root@<dest>:/tmp"

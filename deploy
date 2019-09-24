@@ -6,12 +6,12 @@ set -x
 case $1 in
   w16gw)
     envsubst \ '
-    $ddns4_domain \
-    $ddns4_username \
-    $ddns4_password \
-    $ddns6_domain \
-    $ddns6_username \
-    $ddns6_password \
+    $w16gw_ddns4_domain \
+    $w16gw_ddns4_username \
+    $w16gw_ddns4_password \
+    $w16gw_ddns6_domain \
+    $w16gw_ddns6_username \
+    $w16gw_ddns6_password \
     $freifunk_ca_crt \
     $freifunk_client_crt \
     $freifunk_client_key \

@@ -151,14 +151,13 @@ uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
 uci set      wireless.@wifi-iface[-1].device='radio0'
 uci set      wireless.@wifi-iface[-1].encryption='psk2+ccmp'
-uci set      wireless.@wifi-iface[-1].ft_over_ds=1
 uci set      wireless.@wifi-iface[-1].ft_psk_generate_local=1
 uci set      wireless.@wifi-iface[-1].ieee80211r=1
 uci set      wireless.@wifi-iface[-1].ifname='imagifi2'
 uci set      wireless.@wifi-iface[-1].key='${trusted_wifikey}'
 uci set      wireless.@wifi-iface[-1].mobility_domain='cafe'
 uci set      wireless.@wifi-iface[-1].mode='ap'
-uci set      wireless.@wifi-iface[-1].nasid='${imagifi2_nasid}'
+uci set      wireless.@wifi-iface[-1].nasid=${imagifi2_nasid} #without quotes so locally substitued
 uci set      wireless.@wifi-iface[-1].network='trusted'
 uci set      wireless.@wifi-iface[-1].ssid='imagiFi'
 uci commit   wireless.@wifi-iface[-1]
@@ -167,14 +166,13 @@ uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
 uci set      wireless.@wifi-iface[-1].device='radio1'
 uci set      wireless.@wifi-iface[-1].encryption='psk2+ccmp'
-uci set      wireless.@wifi-iface[-1].ft_over_ds=1
 uci set      wireless.@wifi-iface[-1].ft_psk_generate_local=1
 uci set      wireless.@wifi-iface[-1].ieee80211r=1
 uci set      wireless.@wifi-iface[-1].ifname='imagifi25'
 uci set      wireless.@wifi-iface[-1].key='${trusted_wifikey}'
 uci set      wireless.@wifi-iface[-1].mobility_domain='cafe'
 uci set      wireless.@wifi-iface[-1].mode='ap'
-uci set      wireless.@wifi-iface[-1].nasid='${imagifi2_nasid}'
+uci set      wireless.@wifi-iface[-1].nasid=${imagifi2_nasid} #without quotes so locally substitued
 uci set      wireless.@wifi-iface[-1].network='trusted'
 uci set      wireless.@wifi-iface[-1].ssid='imagiFi'
 uci commit   wireless.@wifi-iface[-1]
@@ -183,14 +181,13 @@ uci add      wireless  wifi-iface
 uci set      wireless.@wifi-iface[-1]=wifi-iface
 uci set      wireless.@wifi-iface[-1].device='radio1'
 uci set      wireless.@wifi-iface[-1].encryption='psk2+ccmp'
-uci set      wireless.@wifi-iface[-1].ft_over_ds=1
 uci set      wireless.@wifi-iface[-1].ft_psk_generate_local=1
 uci set      wireless.@wifi-iface[-1].ieee80211r=1
 uci set      wireless.@wifi-iface[-1].ifname='imagifi5'
 uci set      wireless.@wifi-iface[-1].key='${trusted_wifikey}'
 uci set      wireless.@wifi-iface[-1].mobility_domain='cafe'
 uci set      wireless.@wifi-iface[-1].mode='ap'
-uci set      wireless.@wifi-iface[-1].nasid='${imagifi2_nasid}'
+uci set      wireless.@wifi-iface[-1].nasid=${imagifi2_nasid} #without quotes so locally substitued
 uci set      wireless.@wifi-iface[-1].network='trusted'
 uci set      wireless.@wifi-iface[-1].ssid='imagiFi 5'
 uci commit   wireless.@wifi-iface[-1]
@@ -298,8 +295,6 @@ uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
 /etc/init.d/prometheus-node-exporter-lua enable || true
-
-/etc/init.d/dnsmasq disable
 
 echo "all done with writing"
 echo "rebooting..."

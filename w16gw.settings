@@ -182,6 +182,8 @@ uci add_list network.wg0.addresses='10.7.8.1/24'
 uci set      network.wg_f17=wireguard_wg0
 uci set      network.wg_f17.description='F17 Gateway'
 uci set      network.wg_f17.public_key='${wg_f17gw_public_key}'
+uci set      network.wg_f17.endpoint_host='f17gw6.imaginator.com'
+uci set      network.wg_f17.endpoint_port='12321'
 uci set      network.wg_f17.persistent_keepalive='15'
 uci add_list network.wg_f17.allowed_ips='10.7.8.2/32'
 uci add_list network.wg_f17.allowed_ips='10.7.10.0/24'
@@ -260,9 +262,9 @@ uci set    ddns.@service[-1].bind_network='pyur4'
 uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].ip_source='web'
 uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
-uci set    ddns.@service[-1].domain='${ddns4_domain}'
-uci set    ddns.@service[-1].username='${ddns4_username}'
-uci set    ddns.@service[-1].password='${ddns4_password}'
+uci set    ddns.@service[-1].domain='${w16gw_ddns4_domain}'
+uci set    ddns.@service[-1].username='${w16gw_ddns4_username}'
+uci set    ddns.@service[-1].password='${w16gw_ddns4_password}'
 uci set    ddns.@service[-1].use_syslog='1'
 uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
@@ -282,9 +284,9 @@ uci set    ddns.@service[-1].use_ipv6='1'
 uci set    ddns.@service[-1].interface='pyur6' # for hotplug events
 uci set    ddns.@service[-1].ip_source='network'
 uci set    ddns.@service[-1].ip_network='pyur6'
-uci set    ddns.@service[-1].domain='${ddns6_domain}'
-uci set    ddns.@service[-1].username='${ddns6_username}'
-uci set    ddns.@service[-1].password='${ddns6_password}'
+uci set    ddns.@service[-1].domain='${w16gw_ddns6_domain}'
+uci set    ddns.@service[-1].username='${w16gw_ddns6_username}'
+uci set    ddns.@service[-1].password='${w16gw_ddns6_password}'
 uci set    ddns.@service[-1].use_syslog='1'
 uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
@@ -1278,18 +1280,16 @@ uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2a:8e'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.60'
-uci set      dhcp.@host[-1].name='veluxgw'
-uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.10.20'
 uci set      dhcp.@domain[-1].name='camera01'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.104'
+uci set      dhcp.@domain[-1].name='veluxgw'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
@@ -1550,6 +1550,15 @@ uci set      dhcp.@host[-1].name='cca-terrace'
 uci set      dhcp.@host[-1].mac='54:60:09:dc:70:32'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.49'
+uci set      dhcp.@host[-1].name='onkyo-receiver'
+uci set      dhcp.@host[-1].mac='00:09:b0:b7:35:59'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 
 uci add      dhcp  domain 
 uci set      dhcp.@domain[-1]=domain
