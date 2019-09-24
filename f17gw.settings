@@ -702,6 +702,16 @@ uci set      firewall.@rule[-1].dest_port='698'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='wireguard'
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest_port='12321'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
 /etc/init.d/firewall enable || true
 
 uci import dhcp <<EOF
