@@ -52,7 +52,7 @@ case $1 in
     $wg_f17gw_private_key \
     $pyur_community_username \
     $pyur_community_password \
-    ' < f17gw.settings | ssh root@10.7.10.1
+    ' < f17gw.settings | ssh root@f17gw.imaginator.com
     ;;
 
   repeater0[1-6])

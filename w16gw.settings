@@ -993,6 +993,17 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='habpanel from tablets'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].dest_port='80'
+uci set      firewall.@rule[-1].dest_ip='10.7.11.1'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT web outboud'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='wan_trusted'
@@ -1280,6 +1291,86 @@ uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2a:8e'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.100'
+uci set      dhcp.@host[-1].name='tablet-hallway'
+uci set      dhcp.@host[-1].mac='fc:a6:67:dd:89:2a'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.101'
+uci set      dhcp.@host[-1].name='tablet-arbeit'
+uci set      dhcp.@host[-1].mac='68:37:e9:ee:f8:e5'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.102'
+uci set      dhcp.@host[-1].name='tablet-lounge'
+uci set      dhcp.@host[-1].mac='00:71:47:5d:46:43'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.103'
+uci set      dhcp.@host[-1].name='tablet-bedroom3'
+uci set      dhcp.@host[-1].mac='00:71:47:f0:7c:e8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.104'
+uci set      dhcp.@host[-1].name='tablet-bedroom2'
+uci set      dhcp.@host[-1].mac='38:f7:3d:88:51:c8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.105'
+uci set      dhcp.@host[-1].name='tablet-bedroom1'
+uci set      dhcp.@host[-1].mac='6c:56:97:c5:d9:4b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.106'
+uci set      dhcp.@host[-1].name='tablet-guestbath'
+uci set      dhcp.@host[-1].mac='38:f7:3d:82:42:18'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.107'
+uci set      dhcp.@host[-1].name='tablet-mainbath'
+uci set      dhcp.@host[-1].mac='6c:56:97:43:a3:42'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.108'
+uci set      dhcp.@host[-1].name='tablet-kitchen'
+uci set      dhcp.@host[-1].mac='aa:bb:cc:dd:ee:ff'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.109'
+uci set      dhcp.@host[-1].name='tablet-hd10'
+uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.10.20'
@@ -1468,14 +1559,6 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.37'
 uci set      dhcp.@host[-1].name='ccmini-mainbath'
 uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.39'
-uci set      dhcp.@host[-1].name='test-wall-tablet'
-uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
