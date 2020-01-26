@@ -2,7 +2,7 @@
 set -e
 
 MODEL=$1
-VERSION=19.07-SNAPSHOT
+VERSION=19.07.0
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -105,7 +105,6 @@ case $MODEL in
     curl \
     ddns-scripts \
     dnsmasq-full \
-    https_dns_proxy \
     ip-bridge \
     ip-full \
     iptables-mod-tee \
@@ -138,8 +137,6 @@ case $MODEL in
     openvpn-openssl \
     sqm-scripts \
     sqm-scripts-extra \
-    tor \
-    tor-geoip \
     uboot-envtools \
     wireguard \
     wireguard-tools \
@@ -154,7 +151,7 @@ case $MODEL in
   PROFILE=ubnt-nano-m
   EXTRA_PACKAGES="\
     curl \
-    hostapd \
+    hostapd-openssl \
     ip-tiny \
     luci \
     luci-base \
@@ -171,7 +168,7 @@ case $MODEL in
   PROFILE=ubnt-uap-pro
   EXTRA_PACKAGES="\
     curl \
-    hostapd \
+    hostapd-openssl \
     ip-tiny \
     luci luci-base \
     luci-theme-bootstrap \
@@ -187,7 +184,7 @@ case $MODEL in
   PROFILE=ubnt-nano-m
   EXTRA_PACKAGES="\
     curl \
-    wpa-supplicant \
+    hostapd-openssl \
     ip-tiny \
     luci luci-base \
     luci-theme-bootstrap \
@@ -203,7 +200,7 @@ case $MODEL in
   PROFILE meraki_mr33
   EXTRA_PACKAGES="\
     curl \
-    hostapd \
+    hostapd-openssl \
     ip-tiny \
     luci \
     luci-base \
