@@ -146,19 +146,19 @@ uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='2'
-uci set network.@switch_vlan[-1].ports='0t 2 3 4t 5'
+uci set network.@switch_vlan[-1].ports='0t 2 3t 4t 5'
 
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='3'
-uci set network.@switch_vlan[-1].ports='0t 4'
+uci set network.@switch_vlan[-1].ports='0t 3t 4'
 
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='4'
-uci set network.@switch_vlan[-1].ports='0t 1'
+uci set network.@switch_vlan[-1].ports='0t 1 3t'
 
 uci set network.wg0=interface
 uci set network.wg0.proto='wireguard'
