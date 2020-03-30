@@ -1022,6 +1022,16 @@ uci set      firewall.@rule[-1].proto='icmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='wireguard'
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest_port='12321'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
 service firewall enable || true
 
 uci import https_dns_proxy <<EOF
@@ -1061,7 +1071,10 @@ uci set      dhcp.@dnsmasq[-1].localservice='1'
 uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
 uci set      dhcp.@dnsmasq[-1].noresolv='1'              # don't reference /etc/resolv.conf
-uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#5053'
+uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
+uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
@@ -1207,6 +1220,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.6'
 uci set      dhcp.@host[-1].name='bathroom-scale'
 uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.7'
+uci set      dhcp.@host[-1].name='camera02'
+uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
