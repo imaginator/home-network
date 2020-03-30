@@ -292,24 +292,23 @@ uci commit ddns.@service[-1]
 
 uci add    ddns  service
 uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].enabled='1'
-uci set    ddns.@service[-1].use_ipv6='1'
-uci set    ddns.@service[-1].interface='pyur6' # for hotplug events
-uci set    ddns.@service[-1].ip_network='pyur6'
-uci set    ddns.@service[-1].ip_source='interface'
-uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
-uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
-uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
+uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].ip_network='pyur6'
+uci set    ddns.@service[-1].ip_source='network'
+uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='google.com'
 uci set    ddns.@service[-1].use_https='1'
+uci set    ddns.@service[-1].use_ipv6='1'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
 uci commit ddns.@service[-1]
 
 /etc/init.d/ddns enable || true
@@ -785,6 +784,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.104'
 uci set      dhcp.@host[-1].name='veluxgw'
 uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.105'
+uci set      dhcp.@host[-1].name='knxgw'
+uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
