@@ -2,7 +2,7 @@
 set -e
 
 MODEL=$1
-VERSION=19.07.0
+VERSION=19.07.1
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -41,7 +41,7 @@ case $MODEL in
     curl \
     ddns-scripts \
     dnsmasq \
-    freifunk-mapupdate \
+    hostapd-openssl \
     ip-full \
     ipset \
     iptables-mod-conntrack-extra \
@@ -55,14 +55,12 @@ case $MODEL in
     libustream-openssl \
     luci-app-ddns \
     luci-app-firewall \
-    luci-app-freifunk-diagnostics \
     luci-app-olsr \
     luci-app-olsr-services \
     luci-app-olsr-viz \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-mod-admin-full \
-    luci-mod-freifunk \
     luci-proto-ipv6 \
     luci-proto-wireguard \
     luci-theme-bootstrap \
@@ -81,15 +79,17 @@ case $MODEL in
     olsrd-mod-pgraph \
     olsrd-mod-txtinfo \
     olsrd-mod-watchdog \
+    qrencode \
     uhttpd \
     watchcat \
     wireguard-tools \
-    wpad-mini \
     "
   REMOVED_PACKAGES="\
     -client-splash \
     -dnsmasq-full \
     -odhcpd-ipv6only \
+    -wpad-basic \
+    -wpad-mini \
     "
 ;;
 
@@ -135,6 +135,7 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     openvpn-openssl \
+    qrencode \
     sqm-scripts \
     sqm-scripts-extra \
     uboot-envtools \
