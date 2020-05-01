@@ -12,6 +12,9 @@ case $1 in
     $w16gw_ddns6_domain \
     $w16gw_ddns6_username \
     $w16gw_ddns6_password \
+    $henet_w16_tunnelid \
+    $henet_w16_username \
+    $henet_w16_password \
     $freifunk_ca_crt \
     $freifunk_client_crt \
     $freifunk_client_key \
@@ -34,6 +37,9 @@ case $1 in
 
   f17gw)
     envsubst \ '
+    $henet_f17_tunnelid \
+    $henet_f17_username \
+    $henet_f17_password \
     $trusted_wifikey \
     $trusted_wifikey_baustelle \
     $f17gw_ddns4_domain \

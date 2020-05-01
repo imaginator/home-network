@@ -92,17 +92,16 @@ uci set network.loopback.proto='static'
 uci set network.loopback.ipaddr='127.0.0.1'
 uci set network.loopback.netmask='255.0.0.0'
 
-uci set network.globals=globals
-uci set network.globals.ula_prefix='fd83:a462:53eb::/48'
-
-uci set network.lan=interface
-uci set network.lan.type='bridge'
-uci set network.lan.ifname='eth0.2'
-uci set network.lan.proto='static'
-uci set network.lan.netmask='255.255.255.0'
-uci set network.lan.ipaddr='10.7.10.1'
-uci set network.lan.ip6assign='64'
-uci set network.lan.igmp_snooping=1
+uci set      network.lan=interface
+uci set      network.lan.type='bridge'
+uci set      network.lan.ifname='eth0.2'
+uci set      network.lan.proto='static'
+uci set      network.lan.netmask='255.255.255.0'
+uci set      network.lan.ipaddr='10.7.10.1'
+uci add_list network.lan.ip6class='henet'
+uci add_list network.lan.ip6class='pyur6'
+uci set      network.lan.ip6assign='64'
+uci set      network.lan.igmp_snooping=1
 
 uci set network.ffuplink=interface
 uci set network.ffuplink.ifname='eth0.3'
@@ -125,16 +124,36 @@ uci set network.pyur4.proto='dhcp'
 uci set network.pyur4.peerdns='0'
 uci set network.pyur4.ifname='eth0.4'
 
-uci set network.pyur6=interface
-uci set network.pyur6.proto='dhcpv6'
-uci set network.pyur6.ifname='eth0.4'
-uci set network.pyur6.peerdns='0'
-uci set network.pyur6.reqaddress='try'
-uci set network.pyur6.reqprefix='auto'
+uci set      network.pyur6=interface
+uci set      network.pyur6.proto='dhcpv6'
+uci set      network.pyur6.ifname='eth0.4'
+uci set      network.pyur6.reqaddress='try'
+uci set      network.pyur6.reqprefix='auto'
+uci set      network.pyur6.peerdns='0'
+uci set      network.pyur6.metric='0'
+
+uci set      network.henet=interface
+uci set      network.henet.proto='6in4'
+uci set      network.henet.peeraddr='216.66.86.114'
+uci set      network.henet.ip6addr='2001:470:6c:3f1::2/64'
+uci set      network.henet.tunnelid='${henet_f17_tunnelid}'
+uci set      network.henet.username='${henet_f17_username}'
+uci set      network.henet.ip6prefix='2001:470:51cd::/48'
+uci set      network.henet.password='${henet_f17_password}'
+uci set      network.henet.metric='1'
+uci set      network.henet.mtu='1480'
 
 uci set network.tunl0=interface
 uci set network.tunl0.ifname='tunl0'
 uci set network.tunl0.proto='none'
+
+#Port 	Switch port
+#CPU 	0
+#(WAN) 	1
+#LAN 1 	2
+#LAN 2 	3
+#LAN 3 	4
+#LAN 4 	5
 
 uci add network switch
 uci set network.@switch[-1]=switch
@@ -146,19 +165,19 @@ uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='2'
-uci set network.@switch_vlan[-1].ports='0t 2 3t 4t 5'
+uci set network.@switch_vlan[-1].ports='0t 2t 3t 4t 5'
 
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='3'
-uci set network.@switch_vlan[-1].ports='0t 3t 4'
+uci set network.@switch_vlan[-1].ports='0t 2t 3t 4t'
 
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='4'
-uci set network.@switch_vlan[-1].ports='0t 1 3t'
+uci set network.@switch_vlan[-1].ports='0t 1'
 
 uci set network.wg0=interface
 uci set network.wg0.proto='wireguard'
@@ -168,11 +187,21 @@ uci set network.wg0.addresses='10.7.8.2/32'
 uci set network.wg0.private_key='${wg_f17gw_private_key}'
 
 uci set network.wireguard_wg0=wireguard_wg0
+
 uci set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
 uci set network.wireguard_wg0.endpoint_host='w16gw6.imaginator.com'
 uci set network.wireguard_wg0.endpoint_port='12321'
 uci set network.wireguard_wg0.persistent_keepalive='15'
-uci set network.wireguard_wg0.description='wolliner gateway'
+uci set network.wireguard_wg0.description='wolliner gateway (ipv6)'
+uci set network.wireguard_wg0.route_allowed_ips='1'
+uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
+uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
+
+uci set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
+uci set network.wireguard_wg0.endpoint_host='w16gw.imaginator.com'
+uci set network.wireguard_wg0.endpoint_port='12321'
+uci set network.wireguard_wg0.persistent_keepalive='15'
+uci set network.wireguard_wg0.description='wolliner gateway (ipv4)'
 uci set network.wireguard_wg0.route_allowed_ips='1'
 uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
 uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
@@ -298,8 +327,9 @@ uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].ip_network='pyur6'
+uci set    ddns.@service[-1].interface='henet' # for hotplug events
 uci set    ddns.@service[-1].ip_source='network'
+uci set    ddns.@service[-1].ip_network='henet'
 uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
@@ -569,6 +599,7 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
+uci add_list firewall.@zone[-1].network='henet'
 uci set      firewall.@zone[-1].conntrack='1'
 uci set      firewall.@zone[-1].forward='REJECT'
 uci set      firewall.@zone[-1].input='REJECT'
@@ -748,7 +779,6 @@ uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.ra='server'
 uci set      dhcp.trusted.ra_management='1'
 uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
-uci add_list dhcp.trusted.dhcp_option='option:mtu, 1420'
 uci add_list dhcp.trusted.dhcp_option='option:ntp-server, 10.7.11.1'
 uci commit   dhcp.trusted
 
@@ -773,9 +803,42 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.11'
+uci set      dhcp.@host[-1].name='repeater01'
+uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.14'
+uci set      dhcp.@host[-1].name='repeater04'
+uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.15'
+uci set      dhcp.@host[-1].name='repeater05'
+uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.20'
 uci set      dhcp.@host[-1].name='camera01'
 uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.21'
+uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
+uci set      dhcp.@host[-1].name='simon-phone'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 

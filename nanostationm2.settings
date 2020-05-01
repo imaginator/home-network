@@ -235,6 +235,15 @@ uci set      wireless.iot5.key='${iot_wifikey}'
 uci set      wireless.iot5.ssid='imagiFi IoT'
 uci commit   wireless.iot5
 
+uci set      wireless.tinefi=wifi-iface
+uci set      wireless.tinefi.ssid='TineFi'
+uci set      wireless.tinefi.encryption='none'
+uci set      wireless.tinefi.device='radio0'
+uci set      wireless.tinefi.mode='ap'
+uci set      wireless.tinefi.network='trusted'
+uci set      wireless.tinefi.key='${tinefi_wifikey}'
+uci set      wireless.tinefi.encryption='psk2'
+
 uci import   network <<EOF
 EOF
 
