@@ -1,8 +1,8 @@
 #!/bin/bash
-set -e
+set -xe
 
 MODEL=$1
-VERSION=19.07.1
+VERSION=19.07.2
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -24,6 +24,7 @@ case $MODEL in
   TARGET_DEVICE=ar71xx-generic
   PROFILE=tl-wdr4300-v1
   EXTRA_PACKAGES="\
+    6in4 \
     bind-host \
     ca-bundle \
     ca-certificates \
@@ -82,6 +83,7 @@ case $MODEL in
     qrencode \
     uhttpd \
     watchcat \
+    wireguard \
     wireguard-tools \
     "
   REMOVED_PACKAGES="\
@@ -99,6 +101,7 @@ case $MODEL in
   TARGET_DEVICE=ramips-mt7621
   PROFILE=ubnt-erx
   EXTRA_PACKAGES="\
+    6in4 \
     bind-host \
     ca-bundle \
     ca-certificates \
@@ -227,7 +230,7 @@ fi
 
 if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 ] ; then
   if [ ! -f ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz ]; then
-    (cd ${BUILDDIR} && curl -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )
+   (cd ${BUILDDIR} && curl -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )  
   fi
   tar xfJ ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz -C ${BUILDDIR}/
 fi
