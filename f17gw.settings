@@ -770,14 +770,13 @@ uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
 uci set      dhcp.trusted.interface='lan'
-uci set      dhcp.trusted.domain='imagilan'
+uci add_list dhcp.trusted.domain='imagilan'
+uci add_list dhcp.trusted.domain='imaginator.com'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.leasetime='24h'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.start='100'
-uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.ra='server'
-uci set      dhcp.trusted.ra_management='1'
 uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
 uci add_list dhcp.trusted.dhcp_option='option:ntp-server, 10.7.11.1'
 uci commit   dhcp.trusted
@@ -857,6 +856,119 @@ uci set      dhcp.@host[-1].name='knxgw'
 uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.34'
+uci set      dhcp.@host[-1].name='ccmini-lounge'
+uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.35'
+uci set      dhcp.@host[-1].name='ccmini-bedroom1'
+uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.36'
+uci set      dhcp.@host[-1].name='ccmini-kitchen'
+uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.37'
+uci set      dhcp.@host[-1].name='ccmini-mainbath'
+uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.40'
+uci set      dhcp.@host[-1].name='cca-bedroom1'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:0d:f8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.41'
+uci set      dhcp.@host[-1].name='cca-guestbath'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:6f:d4'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.42'
+uci set      dhcp.@host[-1].name='cca-kitchen'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:1a:d2'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.43'
+uci set      dhcp.@host[-1].name='cca-bedroom3'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:70:64'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.44'
+uci set      dhcp.@host[-1].name='cca-mainbath'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:0c:b4'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.45'
+uci set      dhcp.@host[-1].name='cca-bedroom2'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:19:44'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.46'
+uci set      dhcp.@host[-1].name='cca-workroom'
+uci set      dhcp.@host[-1].mac='54:60:09:d2:6b:bc'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.47'
+uci set      dhcp.@host[-1].name='cca-lounge'
+uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.48'
+uci set      dhcp.@host[-1].name='cca-terrace'
+uci set      dhcp.@host[-1].mac='54:60:09:dc:70:32'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.49'
+uci set      dhcp.@host[-1].name='onkyo-receiver'
+uci set      dhcp.@host[-1].mac='00:09:b0:b7:35:59'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 
 echo -e "All done with writing.\nRebooting..."
 reboot
