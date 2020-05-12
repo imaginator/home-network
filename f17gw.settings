@@ -104,15 +104,17 @@ uci set      network.lan.ip6assign='64'
 uci set      network.lan.igmp_snooping=1
 
 uci set network.ffuplink=interface
-uci set network.ffuplink.ifname='eth0.3'
-uci set network.ffuplink.disabled='1'
+uci set network.ffuplink.ifname='eth0.6'
+uci set network.ffuplink.type='bridge'
+uci set network.ffuplink.disabled='0'
 uci set network.ffuplink.proto='static'
 uci set network.ffuplink.ipaddr='10.36.189.1'
 uci set network.ffuplink.netmask='255.255.255.255'
 uci set network.ffuplink.ip6addr='2001:bf7:830:6600::1/128'
 
 uci set network.fflan=interface
-uci set network.fflan.disabled='1'
+uci set network.fflan.ifname='eth0.3'
+uci set network.fflan.disabled='0'
 uci set network.fflan.proto='static'
 uci set network.fflan.type='bridge'
 uci set network.fflan.ipaddr='10.36.189.1'
@@ -161,23 +163,40 @@ uci set network.@switch[-1].name='switch0'
 uci set network.@switch[-1].reset='1'
 uci set network.@switch[-1].enable_vlan='1'
 
+# lan
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='2'
-uci set network.@switch_vlan[-1].ports='0t 2t 3t 4t 5'
+uci set network.@switch_vlan[-1].ports='0t 2t 3 4 5'
 
+# freifunk shared
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='3'
-uci set network.@switch_vlan[-1].ports='0t 2t 3t 4t'
+uci set network.@switch_vlan[-1].ports='0t 2t'
 
+# wan
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
 uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='4'
-uci set network.@switch_vlan[-1].ports='0t 1'
+uci set network.@switch_vlan[-1].ports='0t 1 2t'
+
+# iot
+uci add network switch_vlan
+uci set network.@switch_vlan[-1]=switch_vlan
+uci set network.@switch_vlan[-1].device='switch0'
+uci set network.@switch_vlan[-1].vlan='5'
+uci set network.@switch_vlan[-1].ports='0t 2t'
+
+# ffuplink
+uci add network switch_vlan
+uci set network.@switch_vlan[-1]=switch_vlan
+uci set network.@switch_vlan[-1].device='switch0'
+uci set network.@switch_vlan[-1].vlan='6'
+uci set network.@switch_vlan[-1].ports='0t 2t'
 
 uci set network.wg0=interface
 uci set network.wg0.proto='wireguard'
@@ -426,13 +445,13 @@ uci commit   olsrd6.@InterfaceDefaults[-1]
 
 uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
-uci set      olsrd.@Interface[-1].ignore='0'
+uci set      olsrd.@Interface[-1].ignore='1'
 uci set      olsrd.@Interface[-1].interface='ffuplink'
 uci commit   olsrd.@Interface[-1]
 
 uci add      olsrd6  Interface
 uci set      olsrd6.@Interface[-1]=Interface
-uci set      olsrd6.@Interface[-1].ignore='0'
+uci set      olsrd6.@Interface[-1].ignore='1'
 uci set      olsrd6.@Interface[-1].interface='ffuplink'
 uci commit   olsrd6.@Interface[-1]
 
@@ -796,7 +815,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.2'
 uci set      dhcp.@host[-1].name='emmauskirche'
-uci set      dhcp.@host[-1].mac='dc:9f:db:8c:b2:0b'
+uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
