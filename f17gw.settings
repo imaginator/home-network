@@ -451,12 +451,49 @@ uci set      olsrd6.@Hna6[-1].netaddr='2001:bf7:830:6600::'
 uci set      olsrd6.@Hna6[-1].prefix='56'
 uci commit   olsrd6.@Hna6[-1]
 
+# add txtinfo plugin - needed for collectd-mod-txtinfo
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_jsoninfo'
+uci set      olsrd.@LoadPlugin[-1].accept=0.0.0.0
+uci set      olsrd.@LoadPlugin[-1].library=olsrd_txtinfo
+uci set      olsrd.@LoadPlugin[-1].port=2006
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_txtinfo'
+uci set      olsrd6.@LoadPlugin[-1].accept='::'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
+uci set      olsrd6.@LoadPlugin[-1].port='2007'
+uci commit   olsrd6.@LoadPlugin[-1]
+
+# add arprefresh plugin
+uci add      olsrd  LoadPlugin
+uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd.@LoadPlugin[-1].library=olsrd_arprefresh
+uci commit   olsrd.@LoadPlugin[-1]
+
+# add nameservice plugin
+uci add      olsrd  LoadPlugin
+uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd.@LoadPlugin[-1].library=olsrd_nameservice
+uci set      olsrd.@LoadPlugin[-1].suffix=.olsr
+uci set      olsrd.@LoadPlugin[-1].hosts_file=/tmp/hosts/olsr
+uci set      olsrd.@LoadPlugin[-1].latlon_file=/var/run/latlon.js
+uci set      olsrd.@LoadPlugin[-1].services_file=/var/etc/services.olsr
+uci commit   olsrd.@LoadPlugin[-1]
+
+# add jsoninfo plugin (ipv4)
+uci add      olsrd  LoadPlugin
+uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd.@LoadPlugin[-1].accept=0.0.0.0
+uci set      olsrd.@LoadPlugin[-1].library=olsrd_jsoninfo
+uci set      olsrd.@LoadPlugin[-1].ignore=0
+uci commit   olsrd.@LoadPlugin[-1]
+
+# add jsoninfo plugin (ipv6)
 uci add      olsrd6  LoadPlugin
 uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd6.@LoadPlugin[-1].library='olsrd_jsoninfo'
@@ -465,9 +502,28 @@ uci set      olsrd6.@LoadPlugin[-1].accept='0::'
 uci set      olsrd6.@LoadPlugin[-1].ignore=0
 uci commit   olsrd6.@LoadPlugin[-1]
 
+
+# add watchdog plugin
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_arprefresh'
+uci set      olsrd.@LoadPlugin[-1].library=olsrd_watchdog
+uci set      olsrd.@LoadPlugin[-1].file=/var/run/olsrd.watchdog
+uci set      olsrd.@LoadPlugin[-1].interval=30
+uci commit   olsrd.@LoadPlugin[-1]
+
+uci add      olsrd6  LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd6.@LoadPlugin[-1].library='olsrd_watchdog'
+uci set      olsrd6.@LoadPlugin[-1].ignore=0
+uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd6.watchdog'
+uci commit   olsrd6.@LoadPlugin[-1]
+
+# add dyngw plain plugin - it is ipv4 only
+uci add      olsrd  LoadPlugin
+uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
+uci set      olsrd.@LoadPlugin[-1].library='olsrd_dyn_gw'
+uci add_list olsrd.@LoadPlugin[-1].Ping=1.1.1.1
+uci add_list olsrd.@LoadPlugin[-1].Ping=8.8.8.8
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
 
@@ -476,18 +532,6 @@ uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_dot_draw'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_dyn_gw'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_dyn_gw'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci commit   olsrd6.@LoadPlugin[-1]
 
 uci add      olsrd  LoadPlugin
 uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
@@ -521,37 +565,6 @@ uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
 uci set      olsrd.@LoadPlugin[-1].library='olsrd_pgraph'
 uci set      olsrd.@LoadPlugin[-1].ignore=0
 uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_txtinfo'
-uci set      olsrd.@LoadPlugin[-1].accept='0.0.0.0'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci set      olsrd.@LoadPlugin[-1].port=2006
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].accept='::'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_txtinfo'
-uci set      olsrd6.@LoadPlugin[-1].port='2007'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_watchdog'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd4.watchdog'
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_watchdog'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd6.watchdog'
-uci commit   olsrd6.@LoadPlugin[-1]
 
 uci import firewall<<EOF
 EOF
