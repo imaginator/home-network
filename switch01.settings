@@ -35,13 +35,22 @@ interface 0/1
 vlan participation exclude 2-6
 exit 
 interface 0/2
-vlan participation exclude 2-6
+description 'knxgw'
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
 exit 
 interface 0/3
-vlan participation exclude 2-6
+description 'veluxgw'
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
 exit 
 interface 0/4
-vlan participation exclude 2-6
+description 'camera01'
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
 exit 
 interface 0/5
 vlan participation exclude 2-6
@@ -98,9 +107,12 @@ interface 0/22
 vlan participation exclude 2-6
 exit 
 interface 0/23
+description 'ffuplink / Emmauskirche'
 vlan participation exclude 2-6
+poe opmode passive24v
 exit 
 interface 0/24
+description 'f17gw'
 vlan participation include 2-6
 vlan tagging 2-6
 exit 
