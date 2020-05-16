@@ -2,15 +2,15 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.1, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.1"
-!System Up Time          "4 days 19 hrs 53 mins 55 secs"
+!System Up Time          "4 days 20 hrs 2 mins 31 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
-!Current SNTP Synchronized Time: May 16 11:16:31 2020 UTC
+!Current SNTP Synchronized Time: May 16 11:25:06 2020 UTC
 ! 
 vlan database
 vlan 2-6
-vlan name 2 "VLAN 2" 
-vlan name 3 "VLAN 3" 
-vlan name 4 "VLAN 4" 
+vlan name 2 "trusted" 
+vlan name 3 "fflan" 
+vlan name 4 "wan" 
 vlan name 5 "iot" 
 vlan name 6 "ffuplink" 
 exit 
@@ -18,6 +18,7 @@ network mgmt_vlan 2
 configure
 no device analytics
 logging host "10.7.11.1" ipv4
+logging syslog
 username "ubnt" password cd4850c26569ef226ff14ba8ceba75643ae0688ff199592191354eb86ae8180412c6c054c0f373e81d7d282182b9879bd0f128fcb8dcc4d6942115f5d0346ddb level 15 encrypted
 line console
 exit 
