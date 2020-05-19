@@ -365,7 +365,7 @@ uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_address='0'
+uci set    prometheus-node-exporter-lua.main.listen_interface='lan'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
@@ -416,7 +416,7 @@ uci set      olsrd.@olsrd[-1].SmartGatewayThreshold=50
 uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
 uci set      olsrd.@olsrd[-1].MainIp='10.36.189.1'
 uci set      olsrd.@olsrd[-1].RtTable='111'
-uci set      olsrd.@olsrd[-1].RtTableDefault='254'
+uci set      olsrd.@olsrd[-1].RtTableDefault='112'
 uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='100000'
 uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
 uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='120000'
@@ -590,13 +590,21 @@ EOF
 
 uci add    firewall defaults 
 uci set    firewall.@defaults[-1]=defaults
-uci set    firewall.@defaults[-1].input='ACCEPT'
-uci set    firewall.@defaults[-1].output='ACCEPT'
+uci set    firewall.@defaults[-1].input='REJECT'
+uci set    firewall.@defaults[-1].output='REJECT'
 uci set    firewall.@defaults[-1].forward='REJECT'
 uci set    firewall.@defaults[-1].flow_offloading=1
 uci set    firewall.@defaults[-1].flow_offloading_hw=1
 uci set    firewall.@defaults[-1].drop_invalid=1
 uci commit firewall.@defaults[-1]
+
+# A zone section groups one or more interfaces and serves as a source or destination for forwardings, 
+# rules and redirects. Masquerading (NAT) of outgoing traffic is controlled on a per-zone basis. 
+# Note that masquerading is defined on the outgoing interface.
+
+# INPUT   rules for a zone describe what happens to traffic trying to reach the router itself through an interface in that zone.
+# OUTPUT  rules for a zone describe what happens to traffic originating from the router itself going through an interface in that zone.
+# FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
@@ -749,6 +757,16 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='prometheus'
+uci set      firewall.@rule[-1].enabled='1'
+uci set      firewall.@rule[-1].src='lan'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].dest_port='9100'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='freifunk DNS'
 uci set      firewall.@rule[-1].enabled='1'
 uci set      firewall.@rule[-1].src='fflan'
@@ -823,7 +841,7 @@ uci set      dhcp.fflan=dhcp
 uci set      dhcp.fflan.interface='fflan'
 uci set      dhcp.fflan.domain='freifunk'
 uci set      dhcp.fflan.force='1'
-uci set      dhcp.fflan.leasetime='24h'
+uci set      dhcp.fflan.leasetime='5m'
 uci set      dhcp.fflan.limit='100'
 uci set      dhcp.fflan.start='100'
 uci add_list dhcp.fflan.dhcp_option='option:mtu, 1420'
