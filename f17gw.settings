@@ -107,9 +107,8 @@ uci set network.ffuplink=interface
 uci set network.ffuplink.ifname='eth0.6'
 uci set network.ffuplink.disabled='0'
 uci set network.ffuplink.proto='static'
-uci set network.ffuplink.ipaddr='10.36.189.1'
+uci set network.ffuplink.ipaddr='10.31.14.84'
 uci set network.ffuplink.netmask='255.255.255.255'
-uci set network.ffuplink.ip6addr='2001:bf7:830:6600::1/128'
 
 uci set network.fflan=interface
 uci set network.fflan.ifname='eth0.3'
@@ -118,12 +117,12 @@ uci set network.fflan.proto='static'
 uci set network.fflan.type='bridge'
 uci set network.fflan.ipaddr='10.36.189.1'
 uci set network.fflan.netmask='255.255.255.0'
-uci set network.fflan.ip6addr='2001:bf7:830:6600::1/56'
 
 uci set network.pyur4=interface
 uci set network.pyur4.proto='dhcp'
 uci set network.pyur4.peerdns='0'
 uci set network.pyur4.ifname='eth0.4'
+uci set network.pyur4.defaultroute='1'
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.proto='dhcpv6'
@@ -144,9 +143,6 @@ uci set      network.henet.password='${henet_f17_password}'
 uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
 
-uci set network.tunl0=interface
-uci set network.tunl0.ifname='tunl0'
-uci set network.tunl0.proto='none'
 
 #Port 	Switch port
 #CPU 	0
@@ -224,19 +220,23 @@ uci set network.wireguard_wg0.route_allowed_ips='1'
 uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
 uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
 
-#uci add      network  route
-#uci set      network.@route[-1]=route
-#uci set      network.@route[-1].table=100
-#uci set      network.@route[-1].interface=tunl0
-#uci set      network.@route[-1].target=0.0.0.0
-#uci set      network.@route[-1].netmask=0.0.0.0
-#uci commit   network.@route[-1]
+uci add      network  route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].table=100
+uci set      network.@route[-1].interface=eth0.4
+uci set      network.@route[-1].target=0.0.0.0
+uci set      network.@route[-1].netmask=0.0.0.0
+uci commit   network.@route[-1]
 
-#uci add      network  rule
-#uci set      network.@rule[-1]=rule
-#uci set      network.@rule[-1].src='10.36.189.0/24'
-#uci set      network.@rule[-1].lookup='224'
-#uci commit   network.@rule[-1]
+
+# how to reach each network on ffuplink
+uci add      network  rule
+uci set      network.@rule[-1]=rule
+uci set      network.@rule[-1].source='0.0.0.0/0'
+uci set      network.@rule[-1].lookup='111'
+uci set      network.@rule[-1].priority='90000'
+uci commit   network.@rule[-1]
+
 
 uci commit network
 
@@ -385,6 +385,25 @@ EOF
 # (with smartgw: default is 254/223/224)
 # (without smartgw: default is 254/254/254, linux main table)
 
+# Specifies the policy rule priorities for the three routing tables and
+# a special rule for smartgateway routing (see README-Olsr-Extensions)
+# Priorities can only be set if three different routing tables are set.
+# if set the values must obey to condition
+# RtTablePriority < RtTableDefaultOlsrPriority < RtTableTunnelPriority < RtTableDefaultPriority
+# There are two special parameters, "auto" (choose fitting to SmartGW
+# mode) and "none" (do not set policy rule)
+# (with smartgw: default is none/32776/32786/32796)
+# (without smartgw: default is none/none/none/none)
+
+# root@f17gw:~# ip rule show 
+# 0:      from all lookup local 
+# 32766:  from all lookup main 
+# 32767:  from all lookup default 
+# 90000:  from all lookup 111 
+# 100000: from all iif eth0.6 lookup 112 
+# 120000: from all lookup 113 
+# 120010: from all lookup 112
+
 uci add      olsrd  olsrd
 uci set      olsrd.@olsrd[-1]=olsrd
 uci set      olsrd.@olsrd[-1].IpVersion=4
@@ -396,11 +415,11 @@ uci set      olsrd.@olsrd[-1].SmartGateway=yes
 uci set      olsrd.@olsrd[-1].SmartGatewayThreshold=50
 uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
 uci set      olsrd.@olsrd[-1].MainIp='10.36.189.1'
-uci set      olsrd.@olsrd[-1].RtTable='254'
-uci set      olsrd.@olsrd[-1].RtTableDefault='223'
-uci set      olsrd.@olsrd[-1].RtTableTunnel='224'
-uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
-uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
+uci set      olsrd.@olsrd[-1].RtTable='111'
+uci set      olsrd.@olsrd[-1].RtTableDefault='254'
+uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='100000'
+uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
+uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='120000'
 uci commit   olsrd.@olsrd[-1]
 
 uci import olsrd6<<EOF
@@ -581,30 +600,41 @@ uci commit firewall.@defaults[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='freifunk'
+uci set      firewall.@zone[-1].name='fflan'
 uci add_list firewall.@zone[-1].network='fflan'
-uci add_list firewall.@zone[-1].network='ffuplink'
-uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='REJECT'
 uci set      firewall.@zone[-1].log='1'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='ffuplink'
+uci add_list firewall.@zone[-1].network='ffuplink'
+uci set      firewall.@zone[-1].device='tnl_+'
+uci set      firewall.@zone[-1].input='REJECT'
+uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='ACCEPT'
+uci set      firewall.@zone[-1].log='1'
+uci commit   firewall.@zone[-1]
+
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='lan'
 uci add_list firewall.@zone[-1].network='lan'
 uci add_list firewall.@zone[-1].network='wg0'
 uci set      firewall.@zone[-1].conntrack='1'
-uci set      firewall.@zone[-1].forward='ACCEPT'
-uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
-uci set      firewall.@zone[-1].name='lan'
+uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='REJECT'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='wan'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci add_list firewall.@zone[-1].network='henet'
@@ -614,20 +644,31 @@ uci set      firewall.@zone[-1].input='REJECT'
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
-uci set      firewall.@zone[-1].name='wan'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  forwarding
 uci set      firewall.@forwarding[-1]=forwarding
-uci set      firewall.@forwarding[-1]='lan'
-uci set      firewall.@forwarding[-1]='lan'
+uci set      firewall.@forwarding[-1].src='lan'
+uci set      firewall.@forwarding[-1].dest='lan'
 uci commit   firewall.@forwarding[-1]
 
 uci add      firewall  forwarding
 uci set      firewall.@forwarding[-1]=forwarding
 uci set      firewall.@forwarding[-1].src='lan'
 uci set      firewall.@forwarding[-1].dest='wan'
+uci commit   firewall.@forwarding[-1]
+
+uci add      firewall  forwarding
+uci set      firewall.@forwarding[-1]=forwarding
+uci set      firewall.@forwarding[-1].src='fflan'
+uci set      firewall.@forwarding[-1].dest='fflan'
+uci commit   firewall.@forwarding[-1]
+
+uci add      firewall  forwarding
+uci set      firewall.@forwarding[-1]=forwarding
+uci set      firewall.@forwarding[-1].src='fflan'
+uci set      firewall.@forwarding[-1].dest='ffuplink'
 uci commit   firewall.@forwarding[-1]
 
 uci add      firewall  rule
@@ -710,8 +751,9 @@ uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='freifunk DNS'
 uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='ffuplink'
+uci set      firewall.@rule[-1].src='fflan'
 uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].dest_port='53'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -793,6 +835,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.2'
 uci set      dhcp.@host[-1].name='emmauskirche'
 uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.3'
+uci set      dhcp.@host[-1].name='switch01'
+uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
