@@ -16,14 +16,15 @@ imagifi2_r1_key_holder="000000000000"    && [[ -e /sys/class/net/imagifi2/addres
 freifunk_nasid="000000000000"         && [[ -e /sys/class/net/freifunk/address ]] &&         freifunk_nasid=$(cat /sys/class/net/freifunk/address | tr -d \:)
 freifunk_r1_key_holder="000000000000" && [[ -e /sys/class/net/freifunk/address ]] && freifunk_r1_key_holder=$(cat /sys/class/net/freifunk/address | tr -d \:)
 
-ETH0MAC=$(cat /sys/class/net/eth0/address |sed 's/://g')
+# little hack to ensure system hostname = dhcp given hostname
+system_hostname=$(ubus -v call  network.interface.trusted status | jsonfilter -e "@.data.hostname")
 
 uci import system <<EOF
 EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].hostname="repeater-$ETH0MAC"
+uci set      system.@system[-1].hostname="$system_hostname"
 uci set      system.@system[-1].zonename='UTC'
 uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
@@ -294,7 +295,7 @@ uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_address='0.0.0.0'
+uci set    prometheus-node-exporter-lua.main.listen_interface='trusted'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
