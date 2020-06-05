@@ -1,16 +1,17 @@
 #!/bin/sh
 
-# running on a TP-Link 4300
-
 # stop after any errors
 set -xe
+
+# Edgerouter X
+# depends on build settings in edgerouterx.diffconfig
 
 uci import system <<EOF
 EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].hostname='f17gw'
+uci set      system.@system[-1].hostname='w16gw'
 uci set      system.@system[-1].zonename='UTC'
 uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
@@ -27,44 +28,6 @@ uci set      system.ntp.enabled=1
 uci add_list system.ntp.server='0.de.pool.ntp.org'
 uci add_list system.ntp.server='1.de.pool.ntp.org'
 uci add_list system.ntp.server='2.de.pool.ntp.org'
-uci set      system.@system[-1].location='Falckensteinstraße'
-uci set      system.@system[-1].latitude='52.497618743398135'
-uci set      system.@system[-1].longitude='13.441156148912176'
-
-uci add      system  led
-uci set      system.@led[-1]=led
-uci set      system.@led[-1].default='0'
-uci set      system.@led[-1].dev='wg0'
-uci set      system.@led[-1].mode='link tx rx'
-uci set      system.@led[-1].name='vpn traffic'
-uci set      system.@led[-1].sysfs='tp-link:blue:qss'
-uci set      system.@led[-1].trigger='netdev'
-
-uci add      system  led
-uci set      system.@led[-1]=led
-uci set      system.@led[-1].name='5ghz'
-uci set      system.@led[-1].sysfs='tp-link:blue:wlan2g'
-uci set      system.@led[-1].default='0'
-uci set      system.@led[-1].trigger='netdev'
-uci set      system.@led[-1].dev='wlan1'
-uci set      system.@led[-1].mode='link tx rx'
-
-uci add      system  led
-uci set      system.@led[-1]=led
-uci set      system.@led[-1].sysfs='ath9k-phy0'
-uci set      system.@led[-1].default='0'
-uci set      system.@led[-1].trigger='netdev'
-uci set      system.@led[-1].dev='wlan0'
-uci set      system.@led[-1].mode='link tx rx'
-
-uci add      system  watchcat
-uci set      system.@watchcat[-1]=watchcat
-uci set      system.@watchcat[-1].mode='ping'
-uci set      system.@watchcat[-1].forcedelay='300'
-uci set      system.@watchcat[-1].period='30m'
-uci set      system.@watchcat[-1].pingperiod='5m'
-uci set      system.@watchcat[-1].pinghosts='1.1.1.1'
-
 uci commit   system
 
 uci import dropbear <<EOF
@@ -83,288 +46,223 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAADxTYX0f/RBMsEyObhp9xYFQ7cpMTaR+aEgXN+lGlbxEw/
 EOF
 chmod 0600 /etc/dropbear/authorized_keys
 
-uci import network <<EOF
+uci import   network <<EOF
 EOF
 
-uci set network.loopback=interface
-uci set network.loopback.ifname='lo'
-uci set network.loopback.proto='static'
-uci set network.loopback.ipaddr='127.0.0.1'
-uci set network.loopback.netmask='255.0.0.0'
+# switch: Numbers 2-5 are Ports 1-4 as labeled on the unit, number 1 is the 
+# Internet (WAN) on the unit, 0 is the internal connection to the router itself.
+#
+# Port   Switch port
+# ----   -----------
+# CPU       6 (all vlans are tagged to CPU)
+# ETH0      5 (vlan trunks to switch01.imagilan)
+# ETH1      5 ( )
+# ETH2      0 ( ) 
+# ETH3      2 ( ) 
+# ETH4      4 ( ) untagged WAN       
 
-uci set      network.lan=interface
-uci set      network.lan.type='bridge'
-uci set      network.lan.ifname='eth0.2'
-uci set      network.lan.proto='static'
-uci set      network.lan.netmask='255.255.255.0'
-uci set      network.lan.ipaddr='10.7.10.1'
-uci add_list network.lan.ip6class='henet'
-uci add_list network.lan.ip6class='pyur6'
-uci set      network.lan.ip6assign='64'
-uci set      network.lan.igmp_snooping=1
+uci add      network  switch
+uci set      network.@switch[-1]=switch
+uci set      network.@switch[-1].name='switch0'
+uci set      network.@switch[-1].reset='1'
+uci set      network.@switch[-1].enable_vlan='1'
+uci commit   network.@switch[-1]
+            
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='1'
+uci set      network.@switch_vlan[-1].vlan='1'
+uci set      network.@switch_vlan[-1].ports='6t'
+uci commit   network.@switch_vlan[-1]
+           
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='2'
+uci set      network.@switch_vlan[-1].vlan='2'
+uci set      network.@switch_vlan[-1].ports='1t 2t 3 4 6t'
+uci commit   network.@switch_vlan[-1]
+           
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='3'
+uci set      network.@switch_vlan[-1].vlan='3'
+uci set      network.@switch_vlan[-1].ports='1t 2t 6t'
+uci commit   network.@switch_vlan[-1]
 
-uci set network.ffuplink=interface
-uci set network.ffuplink.ifname='eth0.6'
-uci set network.ffuplink.disabled='0'
-uci set network.ffuplink.proto='none'
-#uci set network.ffuplink.ipaddr='10.31.14.84'
-#uci set network.ffuplink.netmask='255.255.255.255'
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='4'
+uci set      network.@switch_vlan[-1].vlan='4'
+uci set      network.@switch_vlan[-1].ports='0 6t'
+uci commit   network.@switch_vlan[-1]
 
-uci set network.fflan=interface
-uci set network.fflan.ifname='eth0.3'
-uci set network.fflan.disabled='0'
-uci set network.fflan.defaultroute='0'
-uci set network.fflan.type='bridge'
-uci set network.fflan.proto='static'
-uci set network.fflan.ipaddr='10.36.189.2'
-uci set network.fflan.netmask='255.255.255.0'
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='5'
+uci set      network.@switch_vlan[-1].vlan='5'
+uci set      network.@switch_vlan[-1].ports='1t 2t 6t'
+uci commit   network.@switch_vlan[-1]
 
-uci set network.pyur4=interface
-uci set network.pyur4.proto='dhcp'
-uci set network.pyur4.peerdns='0'
-uci set network.pyur4.ifname='eth0.4'
-uci set network.pyur4.defaultroute='1'
+uci set      network.loopback=interface
+uci set      network.loopback.force_link='1'
+uci set      network.loopback.ifname='lo'
+uci set      network.loopback.proto='static'
+uci set      network.loopback.ipaddr='127.0.0.1'
+uci set      network.loopback.netmask='255.0.0.0'
+
+uci set      network.trusted=interface
+uci set      network.trusted.type='bridge'
+uci add_list network.trusted.ifname='eth0.2'
+uci set      network.trusted.proto='static'
+uci set      network.trusted.ipaddr='10.7.11.5'
+uci set      network.trusted.netmask='255.255.255.0'
+uci add_list network.trusted.ip6class='pyur6'
+uci add_list network.trusted.ip6class='henet'
+uci set      network.trusted.ip6assign='64'
+uci set      network.trusted.ip6ifaceid='::5'
+uci set      network.trusted.igmp_snooping=1
+           
+uci set      network.notrust=interface
+uci set      network.notrust.type='bridge'
+uci add_list network.notrust.ifname='eth0.3'
+uci set      network.notrust.proto='static'
+uci set      network.notrust.netmask='255.255.252.0'
+uci set      network.notrust.ipaddr='10.7.12.5'
+uci set      network.notrust.delegate='0'
+
+# wan interface
+uci set      network.pyur4=interface
+uci set      network.pyur4.ifname='eth0.4'
+uci set      network.pyur4.proto=dhcp
+uci set      network.pyur4.broadcast=1
+uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.ip4table='pyur4'
+
+uci set      network.iot=interface
+uci set      network.iot.ifname='eth0.5'
+uci set      network.iot.ipaddr='10.7.9.1'
+uci set      network.iot.netmask='255.255.255.0'
+uci set      network.iot.proto='static'
+uci set      network.iot.type='bridge'
 
 uci set      network.pyur6=interface
-uci set      network.pyur6.proto='dhcpv6'
 uci set      network.pyur6.ifname='eth0.4'
+uci set      network.pyur6.proto=dhcpv6
 uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='0'
+uci set      network.pyur6.ip6table='pyur6'
+
+uci set      network.ffvpn=interface
+uci set      network.ffvpn.proto=none
+uci set      network.ffvpn.ifname=ffvpn
+uci set      network.ffvpn.force_link='1'
+uci set      network.ffvpn.delegate='0'
+uci set      network.ffvpn.auto='1'
 
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
 uci set      network.henet.peeraddr='216.66.86.114'
-uci set      network.henet.ip6addr='2001:470:6c:3f1::2/64'
-uci set      network.henet.tunnelid='${henet_f17_tunnelid}'
-uci set      network.henet.username='${henet_f17_username}'
-uci set      network.henet.ip6prefix='2001:470:51cd::/48'
-uci set      network.henet.password='${henet_f17_password}'
+uci set      network.henet.ip6addr='2001:470:6c:20a::2/64'
+uci set      network.henet.tunnelid='${henet_w16_tunnelid}'
+uci set      network.henet.username='${henet_w16_username}'
+uci set      network.henet.ip6prefix='2001:470:5155::/48'
+uci set      network.henet.password='${henet_w16_password}'
 uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
 
 
-#Port 	Switch port
-#CPU 	0
-#(WAN) 	1
-#LAN 1 	2
-#LAN 2 	3
-#LAN 3 	4
-#LAN 4 	5
+# when sending packets, the list of allowed IPs behaves as a sort of routing table, 
+# and when receiving packets, the list of allowed IPs behaves as a sort of access control list
 
-uci add network switch
-uci set network.@switch[-1]=switch
-uci set network.@switch[-1].name='switch0'
-uci set network.@switch[-1].reset='1'
-uci set network.@switch[-1].enable_vlan='1'
+uci set      network.wg0="interface"
+uci set      network.wg0.proto="wireguard"
+uci set      network.wg0.mtu=1420
+uci set      network.wg0.private_key='${wg_vpn_private_key}'
+uci set      network.wg0.listen_port="12321"
+uci add_list network.wg0.addresses='10.7.8.1/24'
+# /24 for this device. 
+# each client is represented by a /32
 
-# lan
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='2'
-uci set network.@switch_vlan[-1].ports='0t 2t 3 4 5'
+uci set      network.wg_f17_6=wireguard_wg0
+uci set      network.wg_f17_6.description='F17 Gateway ipv6'
+uci set      network.wg_f17_6.public_key='${wg_f17gw_public_key}'
+uci set      network.wg_f17_6.endpoint_host='f17gw6.imaginator.com'
+uci set      network.wg_f17_6.endpoint_port='12321'
+uci set      network.wg_f17_6.persistent_keepalive='15'
+uci add_list network.wg_f17_6.allowed_ips='10.7.8.2/32'
+uci add_list network.wg_f17_6.allowed_ips='10.7.10.0/24'
+uci set      network.wg_f17_6.route_allowed_ips='1'
 
-# freifunk shared
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='3'
-uci set network.@switch_vlan[-1].ports='0t 2t'
+uci set      network.wg_f17_4=wireguard_wg0
+uci set      network.wg_f17_4.description='F17 Gateway ipv4'
+uci set      network.wg_f17_4.public_key='${wg_f17gw_public_key}'
+uci set      network.wg_f17_4.endpoint_host='f17gw.imaginator.com'
+uci set      network.wg_f17_4.endpoint_port='12321'
+uci set      network.wg_f17_4.persistent_keepalive='15'
+uci add_list network.wg_f17_4.allowed_ips='10.7.8.2/32'
+uci add_list network.wg_f17_4.allowed_ips='10.7.10.0/24'
+uci set      network.wg_f17_4.route_allowed_ips='1'
 
-# wan
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='4'
-uci set network.@switch_vlan[-1].ports='0t 1 2t'
+uci set      network.wg_simonphone=wireguard_wg0
+uci set      network.wg_simonphone.description='Simon Mobile'
+uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
+uci set      network.wg_simonphone.persistent_keepalive='25'
+uci add_list network.wg_simonphone.allowed_ips='10.7.8.4/32'
+uci set      network.wg_simonphone.route_allowed_ips='1'
 
-# iot
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='5'
-uci set network.@switch_vlan[-1].ports='0t 2t'
+uci set      network.wg_tablet=wireguard_wg0
+uci set      network.wg_tablet.description='OpenHAB Tablet'
+uci set      network.wg_tablet.public_key='${wg_tablet_public_key}'
+uci set      network.wg_tablet.persistent_keepalive='25'
+uci add_list network.wg_tablet.allowed_ips='10.7.8.5/32'
+uci set      network.wg_tablet.route_allowed_ips='1'
 
-# ffuplink
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='6'
-uci set network.@switch_vlan[-1].ports='0t 2t'
+uci set      network.wg_tablet=wireguard_wg0
+uci set      network.wg_tablet.description='Windows on Laptop'
+uci set      network.wg_tablet.public_key='${wg_windows_public_key}'
+uci set      network.wg_tablet.persistent_keepalive='25'
+uci add_list network.wg_tablet.allowed_ips='10.7.8.6/32'
+uci set      network.wg_tablet.route_allowed_ips='1'
 
-uci set network.wg0=interface
-uci set network.wg0.proto='wireguard'
-uci set network.wg0.mtu=1420
-uci set network.wg0.listen_port='12321'
-uci set network.wg0.addresses='10.7.8.2/32'
-uci set network.wg0.private_key='${wg_f17gw_private_key}'
+uci set      network.wg_furrow=wireguard_wg0
+uci set      network.wg_furrow.description='furrow'
+uci set      network.wg_furrow.public_key='${wg_furrow_public_key}'
+uci set      network.wg_furrow.persistent_keepalive='25'
+uci add_list network.wg_furrow.allowed_ips='10.7.8.7/32'
+uci set      network.wg_furrow.route_allowed_ips='1'
 
-uci set network.wireguard_wg0=wireguard_wg0
+uci commit   network
 
-uci set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
-uci set network.wireguard_wg0.endpoint_host='w16gw6.imaginator.com'
-uci set network.wireguard_wg0.endpoint_port='12321'
-uci set network.wireguard_wg0.persistent_keepalive='15'
-uci set network.wireguard_wg0.description='wolliner gateway (ipv6)'
-uci set network.wireguard_wg0.route_allowed_ips='1'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
-
-uci set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
-uci set network.wireguard_wg0.endpoint_host='w16gw.imaginator.com'
-uci set network.wireguard_wg0.endpoint_port='12321'
-uci set network.wireguard_wg0.persistent_keepalive='15'
-uci set network.wireguard_wg0.description='wolliner gateway (ipv4)'
-uci set network.wireguard_wg0.route_allowed_ips='1'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
-
-# add routing tables
-
-tables="/etc/iproute2/rt_tables"
-test -d /etc/iproute2/ || mkdir -p /etc/iproute2/
-grep -q "111 olsr" $tables || echo "111 olsr" >> $tables
-grep -q "112 olsr-default" $tables || echo "112 olsr-default" >> $tables
-grep -q "113 olsr-tunnel" $tables || echo "113 olsr-tunnel" >> $tables
-
-# freifunk routing rules
-
-uci set network.olsr_allif_ipv4=rule
-uci set network.olsr_allif_ipv4.lookup='olsr'
-uci set network.olsr_allif_ipv4.priority='1000'
-
-uci set network.localnets_allif_ipv4=rule
-uci set network.localnets_allif_ipv4.lookup='localnets'
-uci set network.localnets_allif_ipv4.priority='2000'
-
-uci set network.olsr_tunnel_tunl0_ipv4=rule
-uci set network.olsr_tunnel_tunl0_ipv4.lookup='olsr-tunnel'
-uci set network.olsr_tunnel_tunl0_ipv4.priority='19999'
-uci set network.olsr_tunnel_tunl0_ipv4.in='tunl0'
-
-uci set network.olsr_default_tunl0_ipv4=rule
-uci set network.olsr_default_tunl0_ipv4.lookup='olsr-default'
-uci set network.olsr_default_tunl0_ipv4.priority='20000'
-uci set network.olsr_default_tunl0_ipv4.in='tunl0'
-
-uci set network.olsr_default_unreachable_tunl0_ipv4=rule
-uci set network.olsr_default_unreachable_tunl0_ipv4.action='unreachable'
-uci set network.olsr_default_unreachable_tunl0_ipv4.priority='20001'
-uci set network.olsr_default_unreachable_tunl0_ipv4.in='tunl0'
-
-uci set network.olsr_tunnel_wireless0_ipv4=rule
-uci set network.olsr_tunnel_wireless0_ipv4.lookup='olsr-tunnel'
-uci set network.olsr_tunnel_wireless0_ipv4.priority='19999'
-uci set network.olsr_tunnel_wireless0_ipv4.in='wireless0'
-
-uci set network.olsr_default_wireless0_ipv4=rule
-uci set network.olsr_default_wireless0_ipv4.lookup='olsr-default'
-uci set network.olsr_default_wireless0_ipv4.priority='20000'
-uci set network.olsr_default_wireless0_ipv4.in='wireless0'
-
-uci set network.olsr_default_unreachable_wireless0_ipv4=rule
-uci set network.olsr_default_unreachable_wireless0_ipv4.action='unreachable'
-uci set network.olsr_default_unreachable_wireless0_ipv4.priority='20001'
-uci set network.olsr_default_unreachable_wireless0_ipv4.in='wireless0'
-
-uci set network.olsr_tunnel_dhcp_ipv4=rule
-uci set network.olsr_tunnel_dhcp_ipv4.lookup='olsr-tunnel'
-uci set network.olsr_tunnel_dhcp_ipv4.priority='19999'
-uci set network.olsr_tunnel_dhcp_ipv4.in='dhcp'
-
-uci set network.olsr_default_dhcp_ipv4=rule
-uci set network.olsr_default_dhcp_ipv4.lookup='olsr-default'
-uci set network.olsr_default_dhcp_ipv4.priority='20000'
-uci set network.olsr_default_dhcp_ipv4.in='dhcp'
-
-uci set network.olsr_default_unreachable_dhcp_ipv4=rule
-uci set network.olsr_default_unreachable_dhcp_ipv4.action='unreachable'
-uci set network.olsr_default_unreachable_dhcp_ipv4.priority='20001'
-uci set network.olsr_default_unreachable_dhcp_ipv4.in='dhcp'
-
-#uci add      network  route
-#uci set      network.@route[-1]=route
-#uci set      network.@route[-1].table=100
-#uci set      network.@route[-1].interface=eth0.4
-#uci set      network.@route[-1].target=0.0.0.0
-#uci set      network.@route[-1].netmask=0.0.0.0
-#uci commit   network.@route[-1]
-
-# how to reach each network on ffuplink
-#uci add      network  rule
-#uci set      network.@rule[-1]=rule
-#uci set      network.@rule[-1].source='0.0.0.0/0'
-#uci set      network.@rule[-1].lookup='111'
-#uci set      network.@rule[-1].priority='90000'
-#uci commit   network.@rule[-1]
-
-uci commit network
-
-uci import   wireless<<EOF
-EOF
-
-uci set wireless.radio0=wifi-device
-uci set wireless.radio0.type='mac80211'
-uci set wireless.radio0.hwmode='11g'
-uci set wireless.radio0.path='platform/ar934x_wmac'
-uci set wireless.radio0.htmode='HT20'
-uci set wireless.radio0.country='DE'
-uci set wireless.radio0.legacy_rates='0'
-uci set wireless.radio0.log_level='0'
-uci set wireless.radio0.disabled='0'
-uci set wireless.radio0.channel='auto'
-
-uci set wireless.radio1=wifi-device
-uci set wireless.radio1.type='mac80211'
-uci set wireless.radio1.hwmode='11a'
-uci set wireless.radio1.path='pci0000:00/0000:00:00.0'
-uci set wireless.radio1.htmode='HT40'
-uci set wireless.radio1.country='DE'
-uci set wireless.radio1.channel='40'
-uci set wireless.radio1.legacy_rates='0'
-uci set wireless.radio1.disabled='0'
-uci set wireless.radio1.log_level='0'
-
-uci add wireless  wifi-iface
-uci set wireless.@wifi-iface[-1]=wifi-iface
-uci set wireless.@wifi-iface[-1].device='radio0'
-uci set wireless.@wifi-iface[-1].mode='ap'
-uci set wireless.@wifi-iface[-1].ssid='imagiFi'
-uci set wireless.@wifi-iface[-1].network='lan'
-uci set wireless.@wifi-iface[-1].encryption='psk2'
-uci set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
-
-uci add wireless  wifi-iface
-uci set wireless.@wifi-iface[-1]=wifi-iface
-uci set wireless.@wifi-iface[-1].device='radio1'
-uci set wireless.@wifi-iface[-1].mode='ap'
-uci set wireless.@wifi-iface[-1].ssid='imagiFi 5'
-uci set wireless.@wifi-iface[-1].macaddr='70:b8:c3:6e:fb:94'
-uci set wireless.@wifi-iface[-1].network='lan'
-uci set wireless.@wifi-iface[-1].encryption='psk2'
-uci set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
-
-uci add wireless  wifi-iface
-uci set wireless.@wifi-iface[-1]=wifi-iface
-uci set wireless.@wifi-iface[-1].device='radio0'
-uci set wireless.@wifi-iface[-1].mode='ap'
-uci set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-uci set wireless.@wifi-iface[-1].network='fflan'
-uci set wireless.@wifi-iface[-1].encryption='none'
-uci set wireless.@wifi-iface[-1].disabled='1'
-
-uci add wireless  wifi-iface
-uci set wireless.@wifi-iface[-1]=wifi-iface
-uci set wireless.@wifi-iface[-1].device='radio1'
-uci set wireless.@wifi-iface[-1].mode='ap'
-uci set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-uci set wireless.@wifi-iface[-1].network='fflan'
-uci set wireless.@wifi-iface[-1].encryption='none'
-uci set wireless.@wifi-iface[-1].disabled='1'
-
-uci commit wireless
+# https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
+uci add      network  rule
+uci set      network.@rule[-1]=rule
+uci set      network.@rule[-1].src='10.7.12.0/22'
+uci set      network.@rule[-1].lookup='100'
+uci commit   network.@rule[-1]
+            
+# due to a bug, these are now in '/etc/openvpn/up.sh'
+uci add      network  route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].table=100
+uci set      network.@route[-1].interface=br-trusted
+uci set      network.@route[-1].target=10.7.11.0
+uci set      network.@route[-1].netmask=255.255.255.0
+uci commit   network.@route[-1]
+            
+uci add      network  route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].table=100
+uci set      network.@route[-1].interface=ffvpn
+uci set      network.@route[-1].target=0.0.0.0
+uci set      network.@route[-1].netmask=0.0.0.0
+uci commit   network.@route[-1]
 
 uci import ddns <<EOF
 EOF
@@ -380,13 +278,14 @@ uci add    ddns  service
 uci set    ddns.@service[-1]=service
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].use_ipv6='0'
+uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
+uci set    ddns.@service[-1].bind_network='pyur4'
 uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].ip_source='web'
-uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
 uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
-uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
-uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
-uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
+uci set    ddns.@service[-1].domain='${w16gw_ddns4_domain}'
+uci set    ddns.@service[-1].username='${w16gw_ddns4_username}'
+uci set    ddns.@service[-1].password='${w16gw_ddns4_password}'
 uci set    ddns.@service[-1].use_syslog='1'
 uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
@@ -401,262 +300,202 @@ uci commit ddns.@service[-1]
 
 uci add    ddns  service
 uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].check_interval='5'
-uci set    ddns.@service[-1].check_unit='minutes'
-uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].enabled='1'
-uci set    ddns.@service[-1].force_interval='5'
-uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].use_ipv6='1'
 uci set    ddns.@service[-1].interface='henet' # for hotplug events
 uci set    ddns.@service[-1].ip_source='network'
 uci set    ddns.@service[-1].ip_network='henet'
-uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
+uci set    ddns.@service[-1].domain='${w16gw_ddns6_domain}'
+uci set    ddns.@service[-1].username='${w16gw_ddns6_username}'
+uci set    ddns.@service[-1].password='${w16gw_ddns6_password}'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].check_interval='5'
+uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].force_interval='5'
+uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='google.com'
 uci set    ddns.@service[-1].use_https='1'
-uci set    ddns.@service[-1].use_ipv6='1'
-uci set    ddns.@service[-1].use_logfile='0'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
 uci commit ddns.@service[-1]
 
-/etc/init.d/ddns enable || true
+service ddns enable || true
+
+uci import softflowd<<EOF
+EOF
+
+uci add    softflowd  softflowd
+uci set    softflowd.@softflowd[-1]=softflowd
+uci set    softflowd.@softflowd[-1].enabled='1'
+uci set    softflowd.@softflowd[-1].interface='eth0.4'
+uci set    softflowd.@softflowd[-1].timeout='maxlife=60'
+uci set    softflowd.@softflowd[-1].max_flows='8192'
+uci set    softflowd.@softflowd[-1].host_port='10.7.11.1:2055'
+uci set    softflowd.@softflowd[-1].pid_file='/var/run/softflowd.pid'
+uci set    softflowd.@softflowd[-1].control_socket='/var/run/softflowd.ctl'
+uci set    softflowd.@softflowd[-1].export_version='9'
+uci set    softflowd.@softflowd[-1].tracking_level='full'
+uci set    softflowd.@softflowd[-1].track_ipv6='1'
+uci set    softflowd.@softflowd[-1].sampling_rate='1'
+uci commit softflowd.@softflowd[-1]
+
+service softflowd enable || true
 
 uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_interface='lan'
+uci set    prometheus-node-exporter-lua.main.listen_interface='trusted'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
-/etc/init.d/prometheus-node-exporter-lua enable || true
+service prometheus-node-exporter-lua enable || true
 
-
-uci import olsrd<<EOF
+cat <<'EOF' > /etc/adblock/adblock.blacklist
+# domains to block
+# the neighbour streams an inordinate amount of TV from here.
+zattoo.de
+zattoo.com
+reddit.com
+youtube.com
 EOF
 
-
-# Specifies the routing Table olsr uses
-# RtTable is for host routes, 
-# RtTableDefault for the route to the default internet gateway
-# RtTableTunnel is for routes to the ipip tunnels, 
-# valid values are 1 to 254
-# There is a special parameter "auto" (choose default below)
-# (with smartgw: default is 254/223/224)
-# (without smartgw: default is 254/254/254, linux main table)
-
-# Specifies the policy rule priorities for the three routing tables and
-# a special rule for smartgateway routing (see README-Olsr-Extensions)
-# Priorities can only be set if three different routing tables are set.
-# if set the values must obey to condition
-# RtTablePriority < RtTableDefaultOlsrPriority < RtTableTunnelPriority < RtTableDefaultPriority
-# There are two special parameters, "auto" (choose fitting to SmartGW
-# mode) and "none" (do not set policy rule)
-# (with smartgw: default is none/32776/32786/32796)
-# (without smartgw: default is none/none/none/none)
-
-# root@f17gw:~# ip rule show 
-# 0:      from all lookup local 
-# 32766:  from all lookup main 
-# 32767:  from all lookup default 
-# 90000:  from all lookup 111 
-# 100000: from all iif eth0.6 lookup 112 
-# 120000: from all lookup 113 
-# 120010: from all lookup 112
-
-uci add      olsrd  olsrd
-uci set      olsrd.@olsrd[-1]=olsrd
-uci set      olsrd.@olsrd[-1].DebugLevel=9
-uci set      olsrd.@olsrd[-1].AllowNoInt='yes'
-uci set      olsrd.@olsrd[-1].FIBMetric='flat'
-uci set      olsrd.@olsrd[-1].IpVersion='4'
-uci set      olsrd.@olsrd[-1].LinkQualityAlgorithm='etx_ff'
-uci set      olsrd.@olsrd[-1].NatThreshold='0.75'
-uci set      olsrd.@olsrd[-1].Pollrate='0.025'
-uci set      olsrd.@olsrd[-1].RtTable='111'
-uci set      olsrd.@olsrd[-1].RtTableDefault='112'
-uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
-uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
-uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
-uci set      olsrd.@olsrd[-1].SmartGateway='yes'
-uci set      olsrd.@olsrd[-1].SmartGatewayThreshold='50'
-uci set      olsrd.@olsrd[-1].TcRedundancy='2'
-uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
-uci commit   olsrd.@olsrd[-1]
-
-uci import olsrd6<<EOF
+uci import adblock <<EOF
 EOF
 
-uci add      olsrd6  olsrd
-uci set      olsrd6.@olsrd[-1]=olsrd
-uci set      olsrd6.@olsrd[-1].IpVersion='6'
-uci set      olsrd6.@olsrd[-1].FIBMetric='flat'
-uci set      olsrd6.@olsrd[-1].AllowNoInt='yes'
-uci set      olsrd6.@olsrd[-1].TcRedundancy='2'
-uci set      olsrd6.@olsrd[-1].LinkQualityAlgorithm='etx_ffeth'
-uci set      olsrd6.@olsrd[-1].Pollrate='0.025'
-uci set      olsrd6.@olsrd[-1].RtTable='111'
-uci set      olsrd6.@olsrd[-1].RtTableDefault='112'
-uci set      olsrd6.@olsrd[-1].RtTablePriority='1000'
-uci set      olsrd6.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
-uci set      olsrd6.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
-uci commit   olsrd6.@olsrd[-1]
+uci set    adblock.global=adblock
+uci set    adblock.global.adb_backup='0'
+uci set    adblock.global.adb_backupdir='/mnt'
+uci set    adblock.global.adb_debug='1'
+uci set    adblock.global.adb_dns='dnsmasq'
+uci set    adblock.global.adb_enabled='1'
+uci set    adblock.global.adb_forcedns='0'
+uci set    adblock.global.adb_forcesrt='0'
+uci set    adblock.global.adb_manmode='0'
+uci set    adblock.global.adb_rtfile='/tmp/adb_runtime.json'
+uci set    adblock.global.adb_trigger='pyur4'
+uci set    adblock.global.adb_triggerdelay='5' # gives us the chance to log in and change this if using too much memory.
+uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
+uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
+uci commit adblock.global
 
-uci add      olsrd  Interface
-uci set      olsrd.@Interface[-1]=Interface
-uci set      olsrd.@Interface[-1].ignore='0'
-uci set      olsrd.@Interface[-1].interface='ffuplink'
-uci set      olsrd.@Interface[-1].Mode='mesh'
-uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
-uci set      olsrd.@Interface[-1].ignore='1'
-uci commit   olsrd.@Interface[-1]
+uci add    adblock source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=blacklist
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='/etc/adblock/adblock.blacklist'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='static local domain blacklist (always deny these domains)'
+uci commit adblock.@source[-1]
 
-uci add      olsrd6  Interface
-uci set      olsrd6.@Interface[-1]=Interface
-uci set      olsrd6.@Interface[-1].ignore='0'
-uci set      olsrd6.@Interface[-1].interface='ffuplink'
-uci set      olsrd6.@Interface[-1].Mode='mesh'
-uci set      olsrd6.@Interface[-1].IPv6Multicast='ff02::6d'
-uci set      olsrd6.@Interface[-1].ignore='1'
-uci commit   olsrd6.@Interface[-1]
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=adway
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='https://adaway.org/hosts.txt'
+uci set    adblock.@source[-1].adb_src_rset='\$0 ~/^127\.0\.0\.1[ \t]+([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$2)}'
+uci set    adblock.@source[-1].adb_src_desc='focus on mobile ads, infrequent updates, approx. 400 entries'
+uci commit adblock.@source[-1]
 
-uci add      olsrd  Hna4
-uci set      olsrd.@Hna4[-1]=Hna4
-uci set      olsrd.@Hna4[-1].netaddr='10.36.189.0'
-uci set      olsrd.@Hna4[-1].netmask='255.255.255.0'
-uci commit   olsrd.@Hna4[-1]
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=yoyo
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='https://pgl.yoyo.org/adservers/serverlist.php?hostformat=nohtml&showintro=0&mimetype=plaintext'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='focus on ad related domains, weekly updates, approx. 2.500 entries'
+uci commit adblock.@source[-1]
 
-uci add      olsrd6  Hna6
-uci set      olsrd6.@Hna6[-1]=Hna6
-uci set      olsrd6.@Hna6[-1].netaddr='2001:bf7:830:6600::'
-uci set      olsrd6.@Hna6[-1].prefix='56'
-uci commit   olsrd6.@Hna6[-1]
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=malvertising
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='mozilla driven blocklist, numerous updates on the same day, approx. 6.500 entries'
+uci commit adblock.@source[-1]
 
-# add txtinfo plugin - needed for collectd-mod-txtinfo
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].accept=0.0.0.0
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_txtinfo
-uci set      olsrd.@LoadPlugin[-1].port=2006
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
+service adblock enable || true
 
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_txtinfo'
-uci set      olsrd6.@LoadPlugin[-1].accept='::'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
-uci set      olsrd6.@LoadPlugin[-1].port='2007'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-# add arprefresh plugin
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_arprefresh
-uci commit   olsrd.@LoadPlugin[-1]
-
-# add nameservice plugin
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_nameservice
-uci set      olsrd.@LoadPlugin[-1].suffix=.olsr
-uci set      olsrd.@LoadPlugin[-1].hosts_file=/tmp/hosts/olsr
-uci set      olsrd.@LoadPlugin[-1].latlon_file=/var/run/latlon.js
-uci set      olsrd.@LoadPlugin[-1].services_file=/var/etc/services.olsr
-uci commit   olsrd.@LoadPlugin[-1]
-
-# add jsoninfo plugin (ipv4)
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].accept=0.0.0.0
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_jsoninfo
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-# add jsoninfo plugin (ipv6)
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_jsoninfo'
-uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
-uci set      olsrd6.@LoadPlugin[-1].accept='0::'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci commit   olsrd6.@LoadPlugin[-1]
-
-
-# add watchdog plugin
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_watchdog
-uci set      olsrd.@LoadPlugin[-1].file=/var/run/olsrd.watchdog
-uci set      olsrd.@LoadPlugin[-1].interval=30
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_watchdog'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd6.watchdog'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-# add dyngw plain plugin - it is ipv4 only
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_dyn_gw'
-uci add_list olsrd.@LoadPlugin[-1].Ping=1.1.1.1
-uci add_list olsrd.@LoadPlugin[-1].Ping=8.8.8.8
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_dot_draw'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_httpinfo'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci add_list olsrd.@LoadPlugin[-1].service='https://bunker.imaginator.com/grafana/ System Status'
-uci set      olsrd.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci set      olsrd.@LoadPlugin[-1].latlon_file='/var/run/latlon.js'
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_nameservice'
-uci set      olsrd.@LoadPlugin[-1].services_file='/var/etc/services.olsr'
-uci set      olsrd.@LoadPlugin[-1].suffix='.olsr'
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr.ipv6'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].latlon_file='/var/run/latlon.js.ipv6'
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_nameservice'
-uci set      olsrd6.@LoadPlugin[-1].services_file='/var/etc/services.olsr.ipv6'
-uci set      olsrd6.@LoadPlugin[-1].suffix='.olsr'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_pgraph'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci import firewall<<EOF
+uci import openvpn <<EOF
 EOF
 
-uci add    firewall defaults 
+uci set      openvpn.ffvpn=openvpn
+uci set      openvpn.ffvpn.enabled='1'
+uci set      openvpn.ffvpn.client='1'
+uci set      openvpn.ffvpn.nobind='1'
+uci set      openvpn.ffvpn.proto='udp'
+uci set      openvpn.ffvpn.dev='ffvpn'
+uci set      openvpn.ffvpn.dev_type='tun'
+uci set      openvpn.ffvpn.persist_key='1'
+uci set      openvpn.ffvpn.keepalive='10 60'
+uci set      openvpn.ffvpn.compress='lzo'
+uci set      openvpn.ffvpn.script_security='2'
+uci set      openvpn.ffvpn.cipher='none'
+uci set      openvpn.ffvpn.mute_replay_warnings='1'
+uci add_list openvpn.ffvpn.remote='vpn03.berlin.freifunk.net 1194 udp'
+uci add_list openvpn.ffvpn.remote='vpn03-backup.berlin.freifunk.net 1194 udp'
+uci set      openvpn.ffvpn.ns_cert_type='server'
+uci set      openvpn.ffvpn.ca='/etc/openvpn/freifunk-ca.crt'
+uci set      openvpn.ffvpn.cert='/etc/openvpn/freifunk_client.crt'
+uci set      openvpn.ffvpn.key='/etc/openvpn/freifunk_client.key'
+uci set      openvpn.ffvpn.up='/etc/openvpn/up.sh'
+uci set      openvpn.ffvpn.route_nopull='1'
+uci commit   openvpn.ffvpn
+
+if [ ! -d "/etc/openvpn" ]; then
+  mkdir /etc/openvpn
+fi
+cat <<'EOF' > /etc/openvpn/up.sh
+#!/bin/sh
+set -x
+sleep 10
+if [ `ip route show table 100 | grep "default via 172.31.240.1 dev ffvpn" | wc -l` -lt 1 ]; then
+  ip route add default via 172.31.240.1 table 100
+fi
+if [ `ip route show table 100 | grep "10.7.12.0/22 dev br-notrust" | wc -l` -lt 2 ]; then
+  ip route add 10.7.11.0/24 dev br-trusted table 100
+  ip route add 10.7.12.0/22 dev br-notrust table 100
+fi
+if [ `ip route show table 100 | grep "172.31.240.0/20 dev ffvpn" | wc -l` -lt 1 ]; then
+  ip route add 172.31.240.0/20 dev ffvpn table 100
+fi
+if [ `ip rule | grep "172.31.240.0/20 lookup 100" | wc -l` -lt 1 ]; then
+  ip rule add from 172.31.240.0/20 table 100
+fi
+if [ `ip rule | grep "10.7.12.0/22 lookup 100" | wc -l` -lt 1 ]; then
+  ip rule add from 10.7.12.0/22 table 100
+fi
+EOF
+chmod u+x /etc/openvpn/up.sh
+
+cat <<'EOF' > /etc/openvpn/freifunk-ca.crt
+${freifunk_ca_crt}
+EOF
+cat <<'EOF' > /etc/openvpn/freifunk_client.crt
+${freifunk_client_crt}
+EOF
+cat <<'EOF' > /etc/openvpn/freifunk_client.key
+${freifunk_client_key}
+EOF
+cat <<'EOF' > /etc/openvpn/imagivpn.key
+${imagivpn_key}
+EOF
+cat <<'EOF' > /etc/openvpn/dh2048.pem
+${dh2048_pem}
+EOF
+
+service openvpn enable || true
+
+uci import firewall <<EOF
+EOF
+
+uci add    firewall defaults
 uci set    firewall.@defaults[-1]=defaults
-uci set    firewall.@defaults[-1].input='REJECT'
-uci set    firewall.@defaults[-1].output='REJECT'
-uci set    firewall.@defaults[-1].forward='REJECT'
+uci set    firewall.@defaults[-1].input='DROP'
+uci set    firewall.@defaults[-1].output='DROP'
+uci set    firewall.@defaults[-1].forward='DROP'
 uci set    firewall.@defaults[-1].flow_offloading=1
 uci set    firewall.@defaults[-1].flow_offloading_hw=1
 uci set    firewall.@defaults[-1].drop_invalid=1
@@ -672,187 +511,536 @@ uci commit firewall.@defaults[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='fflan'
-uci add_list firewall.@zone[-1].network='fflan'
-uci set      firewall.@zone[-1].input='ACCEPT'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='REJECT'
-uci set      firewall.@zone[-1].log='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='ffuplink'
-uci add_list firewall.@zone[-1].network='ffuplink'
-uci set      firewall.@zone[-1].device='tnl_+'
-uci set      firewall.@zone[-1].input='REJECT'
+uci set      firewall.@zone[-1].name='trusted'
+uci add_list firewall.@zone[-1].network='trusted'
+uci add_list firewall.@zone[-1].network='wg0'
+uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='lan'
-uci add_list firewall.@zone[-1].network='lan'
-uci add_list firewall.@zone[-1].network='wg0'
-uci set      firewall.@zone[-1].conntrack='1'
-uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].mtu_fix='1'
-uci set      firewall.@zone[-1].input='ACCEPT'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='REJECT'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='wan'
+uci set      firewall.@zone[-1].name='notrust'
+uci add_list firewall.@zone[-1].network='notrust'
+uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='ACCEPT'
+uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
+uci commit   firewall.@zone[-1]
+
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='iot'
+uci add_list firewall.@zone[-1].network='iot'
+uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].output='DROP'
+uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
+uci commit   firewall.@zone[-1]
+
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='wan_trusted'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci add_list firewall.@zone[-1].network='henet'
-uci set      firewall.@zone[-1].conntrack='1'
-uci set      firewall.@zone[-1].forward='REJECT'
-uci set      firewall.@zone[-1].input='REJECT'
-uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].mtu_fix='1'
+uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
 
-uci add      firewall  forwarding
-uci set      firewall.@forwarding[-1]=forwarding
-uci set      firewall.@forwarding[-1].src='lan'
-uci set      firewall.@forwarding[-1].dest='lan'
-uci commit   firewall.@forwarding[-1]
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='wan_notrust'
+uci add_list firewall.@zone[-1].network='ffvpn'
+uci set      firewall.@zone[-1].masq='1'
+uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].log='1'
+uci set      firewall.@zone[-1].conntrack='1'
+uci commit   firewall.@zone[-1]
 
-uci add      firewall  forwarding
-uci set      firewall.@forwarding[-1]=forwarding
-uci set      firewall.@forwarding[-1].src='lan'
-uci set      firewall.@forwarding[-1].dest='wan'
-uci commit   firewall.@forwarding[-1]
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='trusted'
+uci set    firewall.@forwarding[-1].dest='trusted'
+uci commit firewall.@forwarding[-1]
 
-uci add      firewall  forwarding
-uci set      firewall.@forwarding[-1]=forwarding
-uci set      firewall.@forwarding[-1].src='lan'
-uci set      firewall.@forwarding[-1].dest='fflan'
-uci commit   firewall.@forwarding[-1]
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='trusted'
+uci set    firewall.@forwarding[-1].dest='notrust'
+uci commit firewall.@forwarding[-1]
 
-uci add      firewall  forwarding
-uci set      firewall.@forwarding[-1]=forwarding
-uci set      firewall.@forwarding[-1].src='fflan'
-uci set      firewall.@forwarding[-1].dest='fflan'
-uci commit   firewall.@forwarding[-1]
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='trusted'
+uci set    firewall.@forwarding[-1].dest='iot'
+uci commit firewall.@forwarding[-1]
 
-uci add      firewall  forwarding
-uci set      firewall.@forwarding[-1]=forwarding
-uci set      firewall.@forwarding[-1].src='fflan'
-uci set      firewall.@forwarding[-1].dest='ffuplink'
-uci commit   firewall.@forwarding[-1]
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='trusted'
+uci set    firewall.@forwarding[-1].dest='wan_trusted'
+uci commit firewall.@forwarding[-1]
 
-uci add      firewall  rule
-uci set      firewall.@rule[0]=rule
-uci set      firewall.@rule[0].name='Allow-DHCP-Renew'
-uci set      firewall.@rule[0].src='wan'
-uci set      firewall.@rule[0].proto='udp'
-uci set      firewall.@rule[0].dest_port='68'
-uci set      firewall.@rule[0].target='ACCEPT'
-uci set      firewall.@rule[0].family='ipv4'
-uci commit   firewall.@rule[0]
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='wan_trusted'
+uci set    firewall.@forwarding[-1].dest='wan_trusted'
+uci commit firewall.@forwarding[-1]
 
-uci add      firewall  rule
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='notrust'
+uci set    firewall.@forwarding[-1].dest='notrust'
+uci commit firewall.@forwarding[-1]
+
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='notrust'
+uci set    firewall.@forwarding[-1].dest='wan_notrust'
+uci commit firewall.@forwarding[-1]
+
+# Port forwardings (DNAT) are defined by redirect sections. 
+# All incoming traffic on the specified source zone which matches the given rules will be directed to the specified internal host.
+# Redirects are also commonly known as “port forwarding”, and “virtual servers”.
+# Port ranges are specified as start:stop, for instance 6666:6670. This is similar to the iptables syntax.
+
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].name='ssh from wan to bunker'
+uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].src_dport='23'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_port='22'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+    
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='capture dns from trusted'
+uci set    firewall.@redirect[-1].src='trusted'
+uci set    firewall.@redirect[-1].proto='tcpudp'
+uci set    firewall.@redirect[-1].src_dport='53'
+uci set    firewall.@redirect[-1].proto='tcpudp'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
+uci set    firewall.@redirect[-1].dest_port='53'
+uci commit firewall.@redirect[-1]
+
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='capture dns from notrust'
+uci set    firewall.@redirect[-1].src='notrust'
+uci set    firewall.@redirect[-1].proto='tcpudp'
+uci set    firewall.@redirect[-1].src_dport='53'
+uci set    firewall.@redirect[-1].proto='tcpudp'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
+uci set    firewall.@redirect[-1].dest_port='53'
+uci commit firewall.@redirect[-1]
+
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].name='80 on bunker'
+uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].src_dport='80'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_port='80'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+    
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].name='443 on bunker'
+uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].src_dport='443'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_port='443'
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='443 on bunker from ff users'
+uci set    firewall.@redirect[-1].src='wan_notrust'
+uci set    firewall.@redirect[-1].dest='wan_trusted'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].src_dport='443'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_port='443'
+uci commit firewall.@redirect[-1]
+
+# fixme
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].name='logs from notrust'
+uci set    firewall.@redirect[-1].src='notrust'
+uci set    firewall.@redirect[-1].src_dport='514'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_port='514'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].target='DNAT'
+uci commit firewall.@redirect[-1]
+    
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='plex on bunker'
+uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].src_dport='32400'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_port='32400'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
+# fix to stop vpn traffic leaving and entering home network    
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='wireguard'
+uci set    firewall.@redirect[-1].src='trusted'
+uci set    firewall.@redirect[-1].dest='wan_trusted'
+uci set    firewall.@redirect[-1].proto='udp'
+uci set    firewall.@redirect[-1].src_dport='12321'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
+uci set    firewall.@redirect[-1].dest_port='12321'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
+# Rules
+
+# Sections of the type rule can be used to define basic accept or reject rules to allow or restrict access to specific ports or hosts.
+
+# If src and dest are given, the rule matches forwarded traffic
+# If only src is given, the rule matches incoming traffic
+# If only dest is given, the rule matches outgoing traffic
+# If neither src nor dest are given, the rule defaults to an outgoing traffic rule
+
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-Ping'
+uci set      firewall.@rule[-1].name='IPv6 input from LAN'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
+uci set      firewall.@rule[-1].limit='1000/sec'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+        
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IPv6 input from WAN'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
+uci set      firewall.@rule[-1].limit='1000/sec'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Forward ICMPv6 from wan to lan'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci set      firewall.@rule[-1].limit='1000/sec'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Allow-ICMPv6-LAN-output'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci set      firewall.@rule[-1].limit='1000/sec'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+# all zones
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='ssh to router'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].dest_port='22'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='dns'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].dest_port='53'
+uci set      firewall.@rule[-1].proto='tcpudp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='luci accees to router'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].dest_port='80'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name="Allow-Wireguard-Inbound"
+uci set      firewall.@rule[-1].src="*"
+uci set      firewall.@rule[-1].dest_port="12321"
+uci set      firewall.@rule[-1].proto="udp"
+uci set      firewall.@rule[-1].target="ACCEPT"
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='ping router'
 uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].proto='icmp'
-uci set      firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
 uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-DHCPv6'
-uci set      firewall.@rule[-1].src='wan'
+uci set      firewall.@rule[-1].name='notrust dhcp'
+uci set      firewall.@rule[-1].src='notrust'
+uci set      firewall.@rule[-1].dest_port='67-68'
 uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].src_ip='fc00::/6'
-uci set      firewall.@rule[-1].dest_ip='fc00::/6'
-uci set      firewall.@rule[-1].dest_port='546'
-uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-MLD'
-uci set      firewall.@rule[-1].src='wan'
-uci set      firewall.@rule[-1].proto='icmp'
+uci set      firewall.@rule[-1].name='DHCPv6 requests'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
-uci set      firewall.@rule[-1].icmp_type='130/0 131/0 132/0 143/0'
+uci set      firewall.@rule[-1].src_port='546'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest_ip='ff02::1:2'
+uci set      firewall.@rule[-1].dest_port='547'
+uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-ICMPv6-Input'
-uci set      firewall.@rule[-1].src='wan'
+uci set      firewall.@rule[-1].name='DHCPv6 replies'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].src_ip='fe80::/10'
+uci set      firewall.@rule[-1].src_port='547'
+uci set      firewall.@rule[-1].dest_ip='fe80::/10'
+uci set      firewall.@rule[-1].dest_port='546'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Allow ICMP Input'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='icmp'
-uci set      firewall.@rule[-1].icmp_type='echo-request echo-reply destination-unreachable packet-too-big time-exceeded bad-header unknown-header-type router-solicitation neighbour-solicitation router-advertisement neighbour-advertisement'
-uci set      firewall.@rule[-1].limit='1000/sec'
-uci set      firewall.@rule[-1].family='ipv6'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-ICMPv6-Forward'
-uci set      firewall.@rule[-1].src='wan'
-uci set      firewall.@rule[-1].dest='*'
+uci set      firewall.@rule[-1].name='Allow ICMP Forward'
+uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='icmp'
-uci set      firewall.@rule[-1].icmp_type='echo-request echo-reply destination-unreachable packet-too-big time-exceeded bad-header unknown-header-type'
-uci set      firewall.@rule[-1].limit='1000/sec'
-uci set      firewall.@rule[-1].family='ipv6'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='ssh'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='*'
-uci set      firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].dest_port='22'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall  rule
+# Trusted zone specific rules
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='prometheus'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='lan'
-uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].dest_port='9100'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='freifunk DNS'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='fflan'
-uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].dest_port='53'
+uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='olsr updates'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='ffuplink'
+uci set      firewall.@rule[-1].name='trust dhcp'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].dest_port='67-68'
 uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].dest_port='698'
+uci set      firewall.@rule[-1].family='ipv4'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IGMP from trusted'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='igmp'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Multicast to LAN'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].family='ipv4'
+uci set      firewall.@rule[-1].dest_ip='224.0.0.0/4'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+# IoT zone specific rules
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IoT DHCP inbound'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].src_port='68'
+uci set      firewall.@rule[-1].dest_port='67'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IoT DHCP outbound'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest='iot' 
+uci set      firewall.@rule[-1].src_port='67'
+uci set      firewall.@rule[-1].dest_port='68'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IoT NTP outbound' # all other zones can outbound by default, not IoT
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest_port='123'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='habpanel from tablets'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].dest_port='80'
+uci set      firewall.@rule[-1].dest_ip='10.7.11.1'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IoT web outboud'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest_port='80 443 8882 8883 8884 9292 43439' # homematic is port 9292 43439
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='IoT ping outbound (homematic needs this)'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].icmp_type='echo-request'
+uci set      firewall.@rule[-1].proto='icmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
@@ -866,91 +1054,415 @@ uci set      firewall.@rule[-1].dest_port='12321'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-/etc/init.d/firewall enable || true
+service firewall enable || true
+
+uci import https_dns_proxy <<EOF
+EOF
+
+uci set      https_dns_proxy.dns="https_dns_proxy"
+uci set      https_dns_proxy.dns.listen_addr="127.0.0.1"
+uci set      https_dns_proxy.dns.listen_port="5053"
+uci set      https_dns_proxy.dns.user="nobody"
+uci set      https_dns_proxy.dns.group="nogroup"
+uci set      https_dns_proxy.dns.url_prefix="https://cloudflare-dns.com/dns-query?ct=application/dns-json&"
+uci commit   https_dns_proxy
+
+service https_dns_proxy enable || true
 
 uci import dhcp <<EOF
 EOF
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
-uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
 uci set      dhcp.@dnsmasq[-1].authoritative='1'
-uci set      dhcp.@dnsmasq[-1].cachesize='4096'
-uci set      dhcp.@dnsmasq[-1].domain='imagilan'
 uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].expandhosts='1'
+uci set      dhcp.@dnsmasq[-1].boguspriv='1'
+uci set      dhcp.@dnsmasq[-1].loglevel='7'
 uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
 uci set      dhcp.@dnsmasq[-1].localise_queries='1'
-uci set      dhcp.@dnsmasq[-1].localservice='1'
-uci set      dhcp.@dnsmasq[-1].loglevel='7'
-uci set      dhcp.@dnsmasq[-1].logqueries='0'
-uci set      dhcp.@dnsmasq[-1].nonwildcard='1'
+uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
 uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
-uci add_list dhcp.@dnsmasq[-1].server="/imagilan/10.7.11.5"
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='/imagilan/'
-uci add_list dhcp.@dnsmasq[-1].server='8.8.4.4'
-uci add_list dhcp.@dnsmasq[-1].server='8.8.8.8'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr.ipv6'
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
+uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
+uci set      dhcp.@dnsmasq[-1].domain='imagilan'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
+uci set      dhcp.@dnsmasq[-1].expandhosts='1'
+uci set      dhcp.@dnsmasq[-1].nonegcache='0'
+uci set      dhcp.@dnsmasq[-1].localservice='1'
+uci set      dhcp.@dnsmasq[-1].logqueries='0'
+uci set      dhcp.@dnsmasq[-1].cachesize='4096'
+uci set      dhcp.@dnsmasq[-1].noresolv='1'              # don't reference /etc/resolv.conf
+uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
+uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
-uci set      dhcp.trusted.interface='lan'
+uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
 uci add_list dhcp.trusted.domain='imagilan'
-uci add_list dhcp.trusted.domain='imaginator.com'
+uci add_list dhcp.trusted.domain='imaginaor.com'
 uci set      dhcp.trusted.force='1'
+uci set      dhcp.trusted.interface='trusted'
 uci set      dhcp.trusted.leasetime='24h'
 uci set      dhcp.trusted.limit='100'
-uci set      dhcp.trusted.start='100'
+uci set      dhcp.trusted.ra_default='1'
 uci set      dhcp.trusted.ra='server'
-uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
-uci add_list dhcp.trusted.dhcp_option='option:ntp-server, 10.7.11.1'
+uci set      dhcp.trusted.start='100'
 uci commit   dhcp.trusted
 
-uci set      dhcp.fflan=dhcp
-uci set      dhcp.fflan.interface='fflan'
-uci set      dhcp.fflan.domain='freifunk'
-uci set      dhcp.fflan.force='1'
-uci set      dhcp.fflan.leasetime='5m'
-uci set      dhcp.fflan.limit='100'
-uci set      dhcp.fflan.start='3'
-uci add_list dhcp.fflan.dhcp_option='option:mtu, 1420'
-uci add_list dhcp.fflan.dhcp_option='option:ntp-server, 10.7.11.1'
-uci add_list dhcp.fflan.dhcp_option='3,10.36.189.1'
-uci commit   dhcp.fflan
+uci set      dhcp.notrust=dhcp
+uci set      dhcp.notrust.domain='notrust'
+uci set      dhcp.notrust.interface='notrust'
+uci set      dhcp.notrust.dhcpv4='server'
+uci set      dhcp.notrust.start='22'
+uci set      dhcp.notrust.limit='1000'
+uci set      dhcp.notrust.leasetime='23h'
+uci set      dhcp.notrust.dns='10.7.12.5'
+uci add_list dhcp.notrust.dhcp_option='option:log-server, 10.7.11.1'
+uci commit   dhcp.notrust
+
+uci set      dhcp.iot=dhcp
+uci set      dhcp.iot.domain='imagilan'
+uci set      dhcp.iot.interface='iot'
+uci set      dhcp.iot.dhcpv4='server'
+uci set      dhcp.iot.force='1'
+uci set      dhcp.iot.leasetime='11h'
+uci set      dhcp.iot.start='100'
+uci set      dhcp.iot.limit='150'
+uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
+uci commit   dhcp.iot
+
+uci set      dhcp.pyur4=dhcp
+uci set      dhcp.pyur4.interface='pyur4'
+uci set      dhcp.pyur4.ignore='1'
+uci commit   dhcp.pyur4
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.1'
+uci set      dhcp.@domain[-1].name='wolliner-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.2'
+uci set      dhcp.@domain[-1].name='f17gw-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.3'
+uci set      dhcp.@domain[-1].name='furrow-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.8.4'
+uci set      dhcp.@domain[-1].name='android-vpn'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.2'
+uci set      dhcp.@domain[-1].name='emmauskirche'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.1'
+uci set      dhcp.@domain[-1].name='bunker'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='salt.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='mqtt.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='openhab.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='transmission.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='vpn.imaginator.com'
+uci set      dhcp.@cname[-1].target='bunker.imaginator.com'
+uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.2'
-uci set      dhcp.@host[-1].name='emmauskirche'
-uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
+uci set      dhcp.@host[-1].ip='10.7.9.2'
+uci set      dhcp.@host[-1].name='hue'
+uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.3'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
+uci set      dhcp.@host[-1].ip='10.7.9.3'
+uci set      dhcp.@host[-1].name='homematic'
+uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.4'
-uci set      dhcp.@host[-1].name='freifunkgw'
-uci set      dhcp.@host[-1].mac='a0:f3:c1:5e:d0:36'
+uci set      dhcp.@host[-1].ip='10.7.9.4'
+uci set      dhcp.@host[-1].name='imagisuck'
+uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.5'
+uci set      dhcp.@host[-1].name='knx-gw'
+uci set      dhcp.@host[-1].mac='00:0c:de:61:50:0b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.6'
+uci set      dhcp.@host[-1].name='bathroom-scale'
+uci set      dhcp.@host[-1].mac='00:24:e4:44:b3:a8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.7'
+uci set      dhcp.@host[-1].name='camera02'
+uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+# HS110
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.51'
+uci set      dhcp.@host[-1].name='plugswitch01'
+uci set      dhcp.@host[-1].mac='50:C7:BF:01:F8:2C'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+# HS110
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.52'
+uci set      dhcp.@host[-1].name='plugswitch02'
+uci set      dhcp.@host[-1].mac='50:C7:BF:01:7C:90'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+# HS110
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.53'
+uci set      dhcp.@host[-1].name='plugswitch03'
+uci set      dhcp.@host[-1].mac='ac:84:c6:29:18:14'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+# HS110
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.54'
+uci set      dhcp.@host[-1].name='plugswitch04'
+uci set      dhcp.@host[-1].mac='ac:84:c6:29:07:2f'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+# HS110
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.55'
+uci set      dhcp.@host[-1].name='plugswitch05'
+uci set      dhcp.@host[-1].mac='ac:84:c6:3b:b4:5b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.56'
+uci set      dhcp.@host[-1].name='plugswitch06'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:29:51'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.57'
+uci set      dhcp.@host[-1].name='plugswitch07'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2c:8f'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.58'
+uci set      dhcp.@host[-1].name='plugswitch08'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2c:ea'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#SP111
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.59'
+uci set      dhcp.@host[-1].name='plugswitch09'
+uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2a:8e'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.100'
+uci set      dhcp.@host[-1].name='tablet-hallway'
+uci set      dhcp.@host[-1].mac='fc:a6:67:dd:89:2a'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.101'
+uci set      dhcp.@host[-1].name='tablet-arbeit'
+uci set      dhcp.@host[-1].mac='68:37:e9:ee:f8:e5'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.102'
+uci set      dhcp.@host[-1].name='tablet-lounge'
+uci set      dhcp.@host[-1].mac='00:71:47:5d:46:43'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.103'
+uci set      dhcp.@host[-1].name='tablet-bedroom3'
+uci set      dhcp.@host[-1].mac='00:71:47:f0:7c:e8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.104'
+uci set      dhcp.@host[-1].name='tablet-bedroom2'
+uci set      dhcp.@host[-1].mac='38:f7:3d:88:51:c8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.105'
+uci set      dhcp.@host[-1].name='tablet-bedroom1'
+uci set      dhcp.@host[-1].mac='6c:56:97:c5:d9:4b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.106'
+uci set      dhcp.@host[-1].name='tablet-guestbath'
+uci set      dhcp.@host[-1].mac='38:f7:3d:82:42:18'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.107'
+uci set      dhcp.@host[-1].name='tablet-mainbath'
+uci set      dhcp.@host[-1].mac='6c:56:97:43:a3:42'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.108'
+uci set      dhcp.@host[-1].name='tablet-kitchen'
+uci set      dhcp.@host[-1].mac='aa:bb:cc:dd:ee:ff'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.109'
+uci set      dhcp.@host[-1].name='tablet-hd10'
+uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.20'
+uci set      dhcp.@domain[-1].name='camera01'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.104'
+uci set      dhcp.@domain[-1].name='veluxgw'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.4'
+uci set      dhcp.@host[-1].name='win10'
+uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.5'
+uci set      dhcp.@domain[-1].name='w16gw'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.6'
+uci set      dhcp.@host[-1].name='brother-printer'
+uci set      dhcp.@host[-1].mac='00:80:77:80:46:b9'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.7'
+uci set      dhcp.@domain[-1].name='ilo'
+uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.11'
 uci set      dhcp.@host[-1].name='repeater01'
-uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+#nanostation
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.14'
@@ -959,50 +1471,85 @@ uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+#nanostation
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.15'
 uci set      dhcp.@host[-1].name='repeater05'
-uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
+uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#AP Pro
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.16'
+uci set      dhcp.@host[-1].name='repeater06'
+uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+#mr33
+uci add      dhcp host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.17'
+uci set      dhcp.@host[-1].name='repeater07'
+uci set      dhcp.@host[-1].mac='0c:8d:db:65:95:59'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.20'
-uci set      dhcp.@host[-1].name='camera01'
-uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.21'
+uci set      dhcp.@host[-1].ip='10.7.11.21'
 uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
-uci set      dhcp.@host[-1].name='simon-phone'
+uci set      dhcp.@host[-1].name='simon-phone' # same hostname irregardless of upgrades (for @home presense)
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.104'
-uci set      dhcp.@host[-1].name='veluxgw'
-uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
+uci set      dhcp.@host[-1].ip='10.7.11.22'
+uci set      dhcp.@host[-1].mac='ac:22:0b:a9:58:b5'
+uci set      dhcp.@host[-1].name='simon-nexus7'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.105'
-uci set      dhcp.@host[-1].name='knxgw'
-uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
+uci set      dhcp.@host[-1].ip='10.7.11.25'
+uci set      dhcp.@host[-1].hostid='25'
+uci set      dhcp.@host[-1].name='furrow'
+uci set      dhcp.@host[-1].mac='34:E1:2D:78:F5:D7'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.34'
+uci set      dhcp.@host[-1].ip='10.7.11.27'
+uci set      dhcp.@host[-1].name='ccultra-lounge'
+uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30 44:09:b8:13:10:7d' # wireless interface is 20:df:b9:8a:44:30
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.31'
+uci set      dhcp.@host[-1].name='pi01'
+uci set      dhcp.@host[-1].mac='e0:91:53:74:ba:d7' #wireless
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.32'
+uci set      dhcp.@host[-1].name='pi02'
+uci set      dhcp.@host[-1].mac='b8:27:eb:98:32:62' #wireless
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.34'
 uci set      dhcp.@host[-1].name='ccmini-lounge'
 uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
 uci set      dhcp.@host[-1].dns='1'
@@ -1010,7 +1557,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.35'
+uci set      dhcp.@host[-1].ip='10.7.11.35'
 uci set      dhcp.@host[-1].name='ccmini-bedroom1'
 uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
 uci set      dhcp.@host[-1].dns='1'
@@ -1018,7 +1565,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.36'
+uci set      dhcp.@host[-1].ip='10.7.11.36'
 uci set      dhcp.@host[-1].name='ccmini-kitchen'
 uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
 uci set      dhcp.@host[-1].dns='1'
@@ -1026,92 +1573,85 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.37'
+uci set      dhcp.@host[-1].ip='10.7.11.37'
 uci set      dhcp.@host[-1].name='ccmini-mainbath'
 uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
+uci add      dhcp  host 
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.40'
-uci set      dhcp.@host[-1].name='cca-bedroom1'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:0d:f8'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.41'
-uci set      dhcp.@host[-1].name='cca-guestbath'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:6f:d4'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.42'
-uci set      dhcp.@host[-1].name='cca-kitchen'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:1a:d2'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.43'
-uci set      dhcp.@host[-1].name='cca-bedroom3'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:70:64'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.44'
-uci set      dhcp.@host[-1].name='cca-mainbath'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:0c:b4'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.45'
-uci set      dhcp.@host[-1].name='cca-bedroom2'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:19:44'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.46'
-uci set      dhcp.@host[-1].name='cca-workroom'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:6b:bc'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.47'
-uci set      dhcp.@host[-1].name='cca-lounge'
-uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.48'
-uci set      dhcp.@host[-1].name='cca-terrace'
-uci set      dhcp.@host[-1].mac='54:60:09:dc:70:32'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.49'
+uci set      dhcp.@host[-1].ip='10.7.11.49'
 uci set      dhcp.@host[-1].name='onkyo-receiver'
 uci set      dhcp.@host[-1].mac='00:09:b0:b7:35:59'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.1'
+uci set      dhcp.@domain[-1].name='f17gw'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.40'
+uci set      dhcp.@domain[-1].name='cca-bedroom1'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.41'
+uci set      dhcp.@domain[-1].name='cca-guestbath'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.42'
+uci set      dhcp.@domain[-1].name='cca-kitchen'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.43'
+uci set      dhcp.@domain[-1].name='cca-bedroom3'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.44'
+uci set      dhcp.@domain[-1].name='cca-mainbath'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.45'
+uci set      dhcp.@domain[-1].name='cca-bedroom2'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.46'
+uci set      dhcp.@domain[-1].name='cca-workroom'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.47'
+uci set      dhcp.@domain[-1].name='cca-lounge'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.48'
+uci set      dhcp.@domain[-1].name='cca-terrace'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.3'
+uci set      dhcp.@domain[-1].name='switch01'
+uci commit   dhcp.@domain[-1]
 
 echo -e "All done with writing.\nRebooting..."
 reboot
