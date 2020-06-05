@@ -106,16 +106,17 @@ uci set      network.lan.igmp_snooping=1
 uci set network.ffuplink=interface
 uci set network.ffuplink.ifname='eth0.6'
 uci set network.ffuplink.disabled='0'
-uci set network.ffuplink.proto='static'
-uci set network.ffuplink.ipaddr='10.31.14.84'
-uci set network.ffuplink.netmask='255.255.255.255'
+uci set network.ffuplink.proto='none'
+#uci set network.ffuplink.ipaddr='10.31.14.84'
+#uci set network.ffuplink.netmask='255.255.255.255'
 
 uci set network.fflan=interface
 uci set network.fflan.ifname='eth0.3'
 uci set network.fflan.disabled='0'
-uci set network.fflan.proto='static'
+uci set network.fflan.defaultroute='0'
 uci set network.fflan.type='bridge'
-uci set network.fflan.ipaddr='10.36.189.1'
+uci set network.fflan.proto='static'
+uci set network.fflan.ipaddr='10.36.189.2'
 uci set network.fflan.netmask='255.255.255.0'
 
 uci set network.pyur4=interface
@@ -220,23 +221,84 @@ uci set network.wireguard_wg0.route_allowed_ips='1'
 uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
 uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
 
-uci add      network  route
-uci set      network.@route[-1]=route
-uci set      network.@route[-1].table=100
-uci set      network.@route[-1].interface=eth0.4
-uci set      network.@route[-1].target=0.0.0.0
-uci set      network.@route[-1].netmask=0.0.0.0
-uci commit   network.@route[-1]
+# add routing tables
 
+tables="/etc/iproute2/rt_tables"
+test -d /etc/iproute2/ || mkdir -p /etc/iproute2/
+grep -q "111 olsr" $tables || echo "111 olsr" >> $tables
+grep -q "112 olsr-default" $tables || echo "112 olsr-default" >> $tables
+grep -q "113 olsr-tunnel" $tables || echo "113 olsr-tunnel" >> $tables
+
+# freifunk routing rules
+
+uci set network.olsr_allif_ipv4=rule
+uci set network.olsr_allif_ipv4.lookup='olsr'
+uci set network.olsr_allif_ipv4.priority='1000'
+
+uci set network.localnets_allif_ipv4=rule
+uci set network.localnets_allif_ipv4.lookup='localnets'
+uci set network.localnets_allif_ipv4.priority='2000'
+
+uci set network.olsr_tunnel_tunl0_ipv4=rule
+uci set network.olsr_tunnel_tunl0_ipv4.lookup='olsr-tunnel'
+uci set network.olsr_tunnel_tunl0_ipv4.priority='19999'
+uci set network.olsr_tunnel_tunl0_ipv4.in='tunl0'
+
+uci set network.olsr_default_tunl0_ipv4=rule
+uci set network.olsr_default_tunl0_ipv4.lookup='olsr-default'
+uci set network.olsr_default_tunl0_ipv4.priority='20000'
+uci set network.olsr_default_tunl0_ipv4.in='tunl0'
+
+uci set network.olsr_default_unreachable_tunl0_ipv4=rule
+uci set network.olsr_default_unreachable_tunl0_ipv4.action='unreachable'
+uci set network.olsr_default_unreachable_tunl0_ipv4.priority='20001'
+uci set network.olsr_default_unreachable_tunl0_ipv4.in='tunl0'
+
+uci set network.olsr_tunnel_wireless0_ipv4=rule
+uci set network.olsr_tunnel_wireless0_ipv4.lookup='olsr-tunnel'
+uci set network.olsr_tunnel_wireless0_ipv4.priority='19999'
+uci set network.olsr_tunnel_wireless0_ipv4.in='wireless0'
+
+uci set network.olsr_default_wireless0_ipv4=rule
+uci set network.olsr_default_wireless0_ipv4.lookup='olsr-default'
+uci set network.olsr_default_wireless0_ipv4.priority='20000'
+uci set network.olsr_default_wireless0_ipv4.in='wireless0'
+
+uci set network.olsr_default_unreachable_wireless0_ipv4=rule
+uci set network.olsr_default_unreachable_wireless0_ipv4.action='unreachable'
+uci set network.olsr_default_unreachable_wireless0_ipv4.priority='20001'
+uci set network.olsr_default_unreachable_wireless0_ipv4.in='wireless0'
+
+uci set network.olsr_tunnel_dhcp_ipv4=rule
+uci set network.olsr_tunnel_dhcp_ipv4.lookup='olsr-tunnel'
+uci set network.olsr_tunnel_dhcp_ipv4.priority='19999'
+uci set network.olsr_tunnel_dhcp_ipv4.in='dhcp'
+
+uci set network.olsr_default_dhcp_ipv4=rule
+uci set network.olsr_default_dhcp_ipv4.lookup='olsr-default'
+uci set network.olsr_default_dhcp_ipv4.priority='20000'
+uci set network.olsr_default_dhcp_ipv4.in='dhcp'
+
+uci set network.olsr_default_unreachable_dhcp_ipv4=rule
+uci set network.olsr_default_unreachable_dhcp_ipv4.action='unreachable'
+uci set network.olsr_default_unreachable_dhcp_ipv4.priority='20001'
+uci set network.olsr_default_unreachable_dhcp_ipv4.in='dhcp'
+
+#uci add      network  route
+#uci set      network.@route[-1]=route
+#uci set      network.@route[-1].table=100
+#uci set      network.@route[-1].interface=eth0.4
+#uci set      network.@route[-1].target=0.0.0.0
+#uci set      network.@route[-1].netmask=0.0.0.0
+#uci commit   network.@route[-1]
 
 # how to reach each network on ffuplink
-uci add      network  rule
-uci set      network.@rule[-1]=rule
-uci set      network.@rule[-1].source='0.0.0.0/0'
-uci set      network.@rule[-1].lookup='111'
-uci set      network.@rule[-1].priority='90000'
-uci commit   network.@rule[-1]
-
+#uci add      network  rule
+#uci set      network.@rule[-1]=rule
+#uci set      network.@rule[-1].source='0.0.0.0/0'
+#uci set      network.@rule[-1].lookup='111'
+#uci set      network.@rule[-1].priority='90000'
+#uci commit   network.@rule[-1]
 
 uci commit network
 
@@ -406,20 +468,22 @@ EOF
 
 uci add      olsrd  olsrd
 uci set      olsrd.@olsrd[-1]=olsrd
-uci set      olsrd.@olsrd[-1].IpVersion=4
 uci set      olsrd.@olsrd[-1].DebugLevel=9
+uci set      olsrd.@olsrd[-1].AllowNoInt='yes'
+uci set      olsrd.@olsrd[-1].FIBMetric='flat'
+uci set      olsrd.@olsrd[-1].IpVersion='4'
 uci set      olsrd.@olsrd[-1].LinkQualityAlgorithm='etx_ff'
-uci set      olsrd.@olsrd[-1].NatThreshold=0.75
-uci set      olsrd.@olsrd[-1].Pollrate=0.025
-uci set      olsrd.@olsrd[-1].SmartGateway=yes
-uci set      olsrd.@olsrd[-1].SmartGatewayThreshold=50
-uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
-uci set      olsrd.@olsrd[-1].MainIp='10.36.189.1'
+uci set      olsrd.@olsrd[-1].NatThreshold='0.75'
+uci set      olsrd.@olsrd[-1].Pollrate='0.025'
 uci set      olsrd.@olsrd[-1].RtTable='111'
 uci set      olsrd.@olsrd[-1].RtTableDefault='112'
-uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='100000'
+uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
 uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
-uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='120000'
+uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
+uci set      olsrd.@olsrd[-1].SmartGateway='yes'
+uci set      olsrd.@olsrd[-1].SmartGatewayThreshold='50'
+uci set      olsrd.@olsrd[-1].TcRedundancy='2'
+uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
 uci commit   olsrd.@olsrd[-1]
 
 uci import olsrd6<<EOF
@@ -428,18 +492,16 @@ EOF
 uci add      olsrd6  olsrd
 uci set      olsrd6.@olsrd[-1]=olsrd
 uci set      olsrd6.@olsrd[-1].IpVersion='6'
-uci set      olsrd6.@olsrd[-1].DebugLevel='9'
+uci set      olsrd6.@olsrd[-1].FIBMetric='flat'
+uci set      olsrd6.@olsrd[-1].AllowNoInt='yes'
+uci set      olsrd6.@olsrd[-1].TcRedundancy='2'
 uci set      olsrd6.@olsrd[-1].LinkQualityAlgorithm='etx_ffeth'
 uci set      olsrd6.@olsrd[-1].Pollrate='0.025'
 uci set      olsrd6.@olsrd[-1].RtTable='111'
 uci set      olsrd6.@olsrd[-1].RtTableDefault='112'
-uci set      olsrd6.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
 uci set      olsrd6.@olsrd[-1].RtTablePriority='1000'
-uci set      olsrd6.@olsrd[-1].TcRedundancy='2'
-uci set      olsrd6.@olsrd[-1].SmartGateway=yes
-uci set      olsrd6.@olsrd[-1].SmartGatewayThreshold=50
-uci set      olsrd6.@olsrd[-1].SmartGatewayUplink='none'
-uci set      olsrd6.@olsrd[-1].MainIp='2001:bf7:830:6600::1'
+uci set      olsrd6.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
+uci set      olsrd6.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
 uci commit   olsrd6.@olsrd[-1]
 
 uci add      olsrd  Interface
@@ -448,6 +510,7 @@ uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].interface='ffuplink'
 uci set      olsrd.@Interface[-1].Mode='mesh'
 uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
+uci set      olsrd.@Interface[-1].ignore='1'
 uci commit   olsrd.@Interface[-1]
 
 uci add      olsrd6  Interface
@@ -456,6 +519,7 @@ uci set      olsrd6.@Interface[-1].ignore='0'
 uci set      olsrd6.@Interface[-1].interface='ffuplink'
 uci set      olsrd6.@Interface[-1].Mode='mesh'
 uci set      olsrd6.@Interface[-1].IPv6Multicast='ff02::6d'
+uci set      olsrd6.@Interface[-1].ignore='1'
 uci commit   olsrd6.@Interface[-1]
 
 uci add      olsrd  Hna4
@@ -669,6 +733,12 @@ uci commit   firewall.@forwarding[-1]
 
 uci add      firewall  forwarding
 uci set      firewall.@forwarding[-1]=forwarding
+uci set      firewall.@forwarding[-1].src='lan'
+uci set      firewall.@forwarding[-1].dest='fflan'
+uci commit   firewall.@forwarding[-1]
+
+uci add      firewall  forwarding
+uci set      firewall.@forwarding[-1]=forwarding
 uci set      firewall.@forwarding[-1].src='fflan'
 uci set      firewall.@forwarding[-1].dest='fflan'
 uci commit   firewall.@forwarding[-1]
@@ -843,9 +913,10 @@ uci set      dhcp.fflan.domain='freifunk'
 uci set      dhcp.fflan.force='1'
 uci set      dhcp.fflan.leasetime='5m'
 uci set      dhcp.fflan.limit='100'
-uci set      dhcp.fflan.start='100'
+uci set      dhcp.fflan.start='3'
 uci add_list dhcp.fflan.dhcp_option='option:mtu, 1420'
 uci add_list dhcp.fflan.dhcp_option='option:ntp-server, 10.7.11.1'
+uci add_list dhcp.fflan.dhcp_option='3,10.36.189.1'
 uci commit   dhcp.fflan
 
 uci add      dhcp  host
@@ -861,6 +932,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.3'
 uci set      dhcp.@host[-1].name='switch01'
 uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.10.4'
+uci set      dhcp.@host[-1].name='freifunkgw'
+uci set      dhcp.@host[-1].mac='a0:f3:c1:5e:d0:36'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 

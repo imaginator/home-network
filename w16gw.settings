@@ -141,6 +141,7 @@ uci set      network.pyur4.ifname='eth0.4'
 uci set      network.pyur4.proto=dhcp
 uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.ip4table='pyur4'
 
 uci set      network.iot=interface
 uci set      network.iot.ifname='eth0.5'
@@ -156,6 +157,7 @@ uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='0'
+uci set      network.pyur6.ip6table='pyur6'
 
 uci set      network.ffvpn=interface
 uci set      network.ffvpn.proto=none
@@ -344,7 +346,7 @@ uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_address='0'
+uci set    prometheus-node-exporter-lua.main.listen_interface='trusted'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
@@ -1426,14 +1428,6 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.2'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.4'
 uci set      dhcp.@host[-1].name='win10'
 uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
@@ -1462,34 +1456,16 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.11'
+uci set      dhcp.@host[-1].ip='10.7.10.11'
 uci set      dhcp.@host[-1].name='repeater01'
 uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#picostationm2hp
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.12'
-uci set      dhcp.@host[-1].name='repeater02'
-uci set      dhcp.@host[-1].mac='00:15:6d:f4:1c:99'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-#picostationm2hp
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.13'
-uci set      dhcp.@host[-1].name='repeater03'
-uci set      dhcp.@host[-1].mac='00:15:6d:f4:1d:5f'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 #nanostation
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.14'
+uci set      dhcp.@host[-1].ip='10.7.10.14'
 uci set      dhcp.@host[-1].name='repeater04'
 uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
 uci set      dhcp.@host[-1].dns='1'
@@ -1498,7 +1474,7 @@ uci commit   dhcp.@host[-1]
 #nanostation
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.15'
+uci set      dhcp.@host[-1].ip='10.7.10.15'
 uci set      dhcp.@host[-1].name='repeater05'
 uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
 uci set      dhcp.@host[-1].dns='1'
@@ -1669,6 +1645,12 @@ uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.10.48'
 uci set      dhcp.@domain[-1].name='cca-terrace'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain 
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.3'
+uci set      dhcp.@domain[-1].name='switch01'
 uci commit   dhcp.@domain[-1]
 
 echo -e "All done with writing.\nRebooting..."
