@@ -10,7 +10,7 @@ EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].hostname='f17gw'
+uci set      system.@system[-1].hostname='w16gw'
 uci set      system.@system[-1].zonename='UTC'
 uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
@@ -103,22 +103,6 @@ uci add_list network.lan.ip6class='pyur6'
 uci set      network.lan.ip6assign='64'
 uci set      network.lan.igmp_snooping=1
 
-uci set network.ffuplink=interface
-uci set network.ffuplink.ifname='eth0.6'
-uci set network.ffuplink.disabled='0'
-uci set network.ffuplink.proto='none'
-#uci set network.ffuplink.ipaddr='10.31.14.84'
-#uci set network.ffuplink.netmask='255.255.255.255'
-
-uci set network.fflan=interface
-uci set network.fflan.ifname='eth0.3'
-uci set network.fflan.disabled='0'
-uci set network.fflan.defaultroute='0'
-uci set network.fflan.type='bridge'
-uci set network.fflan.proto='static'
-uci set network.fflan.ipaddr='10.36.189.2'
-uci set network.fflan.netmask='255.255.255.0'
-
 uci set network.pyur4=interface
 uci set network.pyur4.proto='dhcp'
 uci set network.pyur4.peerdns='0'
@@ -137,13 +121,12 @@ uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
 uci set      network.henet.peeraddr='216.66.86.114'
 uci set      network.henet.ip6addr='2001:470:6c:3f1::2/64'
-uci set      network.henet.tunnelid='${henet_f17_tunnelid}'
-uci set      network.henet.username='${henet_f17_username}'
+uci set      network.henet.tunnelid='${henet_w16_tunnelid}'
+uci set      network.henet.username='${henet_w16_username}'
 uci set      network.henet.ip6prefix='2001:470:51cd::/48'
-uci set      network.henet.password='${henet_f17_password}'
+uci set      network.henet.password='${henet_w16_password}'
 uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
-
 
 #Port 	Switch port
 #CPU 	0
@@ -166,13 +149,6 @@ uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='2'
 uci set network.@switch_vlan[-1].ports='0t 2t 3 4 5'
 
-# freifunk shared
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='3'
-uci set network.@switch_vlan[-1].ports='0t 2t'
-
 # wan
 uci add network switch_vlan
 uci set network.@switch_vlan[-1]=switch_vlan
@@ -180,46 +156,32 @@ uci set network.@switch_vlan[-1].device='switch0'
 uci set network.@switch_vlan[-1].vlan='4'
 uci set network.@switch_vlan[-1].ports='0t 1 2t'
 
-# iot
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='5'
-uci set network.@switch_vlan[-1].ports='0t 2t'
-
-# ffuplink
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='6'
-uci set network.@switch_vlan[-1].ports='0t 2t'
-
 uci set network.wg0=interface
 uci set network.wg0.proto='wireguard'
 uci set network.wg0.mtu=1420
 uci set network.wg0.listen_port='12321'
 uci set network.wg0.addresses='10.7.8.2/32'
-uci set network.wg0.private_key='${wg_f17gw_private_key}'
+uci set network.wg0.private_key='${wg_w16gw_private_key}'
 
-uci set network.wireguard_wg0=wireguard_wg0
+uci set      network.wg_f17_6=wireguard_wg0
+uci set      network.wg_f17_6.description='F17 gateway (ipv6)'
+uci set      network.wg_f17_6.public_key='${wg_vpn_public_key}'
+uci set      network.wg_f17_6.endpoint_host='f17gw6.imaginator.com'
+uci set      network.wg_f17_6.endpoint_port='12321'
+uci set      network.wg_f17_6.persistent_keepalive='15'
+uci set      network.wg_f17_6.route_allowed_ips='1'
+uci add_list network.wg_f17_6.allowed_ips='10.7.8.0/24'
+uci add_list network.wg_f17_6.allowed_ips='10.7.11.0/24'
 
-uci set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
-uci set network.wireguard_wg0.endpoint_host='w16gw6.imaginator.com'
-uci set network.wireguard_wg0.endpoint_port='12321'
-uci set network.wireguard_wg0.persistent_keepalive='15'
-uci set network.wireguard_wg0.description='wolliner gateway (ipv6)'
-uci set network.wireguard_wg0.route_allowed_ips='1'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
-
-uci set network.wireguard_wg0.public_key='${wg_vpn_public_key}'
-uci set network.wireguard_wg0.endpoint_host='w16gw.imaginator.com'
-uci set network.wireguard_wg0.endpoint_port='12321'
-uci set network.wireguard_wg0.persistent_keepalive='15'
-uci set network.wireguard_wg0.description='wolliner gateway (ipv4)'
-uci set network.wireguard_wg0.route_allowed_ips='1'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.8.0/24'
-uci add_list network.wireguard_wg0.allowed_ips='10.7.11.0/24'
+uci set      network.wg_f17_4=wireguard_wg0
+uci set      network.wg_f17_4.description='F17 gateway (ipv4)'
+uci set      network.wg_f17_4.public_key='${wg_vpn_public_key}'
+uci set      network.wg_f17_4.endpoint_host='f17gw.imaginator.com'
+uci set      network.wg_f17_4.endpoint_port='12321'
+uci set      network.wg_f17_4.persistent_keepalive='15'
+uci set      network.wg_f17_4.route_allowed_ips='1'
+uci add_list network.wg_f17_4.allowed_ips='10.7.8.0/24'
+uci add_list network.wg_f17_4.allowed_ips='10.7.11.0/24'
 
 # add routing tables
 
@@ -228,61 +190,6 @@ test -d /etc/iproute2/ || mkdir -p /etc/iproute2/
 grep -q "111 olsr" $tables || echo "111 olsr" >> $tables
 grep -q "112 olsr-default" $tables || echo "112 olsr-default" >> $tables
 grep -q "113 olsr-tunnel" $tables || echo "113 olsr-tunnel" >> $tables
-
-# freifunk routing rules
-
-uci set network.olsr_allif_ipv4=rule
-uci set network.olsr_allif_ipv4.lookup='olsr'
-uci set network.olsr_allif_ipv4.priority='1000'
-
-uci set network.localnets_allif_ipv4=rule
-uci set network.localnets_allif_ipv4.lookup='localnets'
-uci set network.localnets_allif_ipv4.priority='2000'
-
-uci set network.olsr_tunnel_tunl0_ipv4=rule
-uci set network.olsr_tunnel_tunl0_ipv4.lookup='olsr-tunnel'
-uci set network.olsr_tunnel_tunl0_ipv4.priority='19999'
-uci set network.olsr_tunnel_tunl0_ipv4.in='tunl0'
-
-uci set network.olsr_default_tunl0_ipv4=rule
-uci set network.olsr_default_tunl0_ipv4.lookup='olsr-default'
-uci set network.olsr_default_tunl0_ipv4.priority='20000'
-uci set network.olsr_default_tunl0_ipv4.in='tunl0'
-
-uci set network.olsr_default_unreachable_tunl0_ipv4=rule
-uci set network.olsr_default_unreachable_tunl0_ipv4.action='unreachable'
-uci set network.olsr_default_unreachable_tunl0_ipv4.priority='20001'
-uci set network.olsr_default_unreachable_tunl0_ipv4.in='tunl0'
-
-uci set network.olsr_tunnel_wireless0_ipv4=rule
-uci set network.olsr_tunnel_wireless0_ipv4.lookup='olsr-tunnel'
-uci set network.olsr_tunnel_wireless0_ipv4.priority='19999'
-uci set network.olsr_tunnel_wireless0_ipv4.in='wireless0'
-
-uci set network.olsr_default_wireless0_ipv4=rule
-uci set network.olsr_default_wireless0_ipv4.lookup='olsr-default'
-uci set network.olsr_default_wireless0_ipv4.priority='20000'
-uci set network.olsr_default_wireless0_ipv4.in='wireless0'
-
-uci set network.olsr_default_unreachable_wireless0_ipv4=rule
-uci set network.olsr_default_unreachable_wireless0_ipv4.action='unreachable'
-uci set network.olsr_default_unreachable_wireless0_ipv4.priority='20001'
-uci set network.olsr_default_unreachable_wireless0_ipv4.in='wireless0'
-
-uci set network.olsr_tunnel_dhcp_ipv4=rule
-uci set network.olsr_tunnel_dhcp_ipv4.lookup='olsr-tunnel'
-uci set network.olsr_tunnel_dhcp_ipv4.priority='19999'
-uci set network.olsr_tunnel_dhcp_ipv4.in='dhcp'
-
-uci set network.olsr_default_dhcp_ipv4=rule
-uci set network.olsr_default_dhcp_ipv4.lookup='olsr-default'
-uci set network.olsr_default_dhcp_ipv4.priority='20000'
-uci set network.olsr_default_dhcp_ipv4.in='dhcp'
-
-uci set network.olsr_default_unreachable_dhcp_ipv4=rule
-uci set network.olsr_default_unreachable_dhcp_ipv4.action='unreachable'
-uci set network.olsr_default_unreachable_dhcp_ipv4.priority='20001'
-uci set network.olsr_default_unreachable_dhcp_ipv4.in='dhcp'
 
 #uci add      network  route
 #uci set      network.@route[-1]=route
@@ -335,6 +242,7 @@ uci set wireless.@wifi-iface[-1].ssid='imagiFi'
 uci set wireless.@wifi-iface[-1].network='lan'
 uci set wireless.@wifi-iface[-1].encryption='psk2'
 uci set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
+uci set wireless.@wifi-iface[-1].disabled='1'
 
 uci add wireless  wifi-iface
 uci set wireless.@wifi-iface[-1]=wifi-iface
@@ -345,23 +253,6 @@ uci set wireless.@wifi-iface[-1].macaddr='70:b8:c3:6e:fb:94'
 uci set wireless.@wifi-iface[-1].network='lan'
 uci set wireless.@wifi-iface[-1].encryption='psk2'
 uci set wireless.@wifi-iface[-1].key='${trusted_wifikey}'
-
-uci add wireless  wifi-iface
-uci set wireless.@wifi-iface[-1]=wifi-iface
-uci set wireless.@wifi-iface[-1].device='radio0'
-uci set wireless.@wifi-iface[-1].mode='ap'
-uci set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-uci set wireless.@wifi-iface[-1].network='fflan'
-uci set wireless.@wifi-iface[-1].encryption='none'
-uci set wireless.@wifi-iface[-1].disabled='1'
-
-uci add wireless  wifi-iface
-uci set wireless.@wifi-iface[-1]=wifi-iface
-uci set wireless.@wifi-iface[-1].device='radio1'
-uci set wireless.@wifi-iface[-1].mode='ap'
-uci set wireless.@wifi-iface[-1].ssid='berlin.freifunk.net'
-uci set wireless.@wifi-iface[-1].network='fflan'
-uci set wireless.@wifi-iface[-1].encryption='none'
 uci set wireless.@wifi-iface[-1].disabled='1'
 
 uci commit wireless
@@ -384,9 +275,9 @@ uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].ip_source='web'
 uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
 uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
-uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
-uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
-uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
+uci set    ddns.@service[-1].domain='${w16gw_ddns4_domain}'
+uci set    ddns.@service[-1].username='${w16gw_ddns4_username}'
+uci set    ddns.@service[-1].password='${w16gw_ddns4_password}'
 uci set    ddns.@service[-1].use_syslog='1'
 uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
@@ -403,14 +294,14 @@ uci add    ddns  service
 uci set    ddns.@service[-1]=service
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
-uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
+uci set    ddns.@service[-1].domain='${w16gw_ddns6_domain}'
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='henet' # for hotplug events
 uci set    ddns.@service[-1].ip_source='network'
 uci set    ddns.@service[-1].ip_network='henet'
-uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
+uci set    ddns.@service[-1].password='${w16gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='google.com'
@@ -418,7 +309,7 @@ uci set    ddns.@service[-1].use_https='1'
 uci set    ddns.@service[-1].use_ipv6='1'
 uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
+uci set    ddns.@service[-1].username='${w16gw_ddns6_username}'
 uci commit ddns.@service[-1]
 
 /etc/init.d/ddns enable || true
@@ -434,220 +325,6 @@ uci commit prometheus-node-exporter-lua
 /etc/init.d/prometheus-node-exporter-lua enable || true
 
 
-uci import olsrd<<EOF
-EOF
-
-
-# Specifies the routing Table olsr uses
-# RtTable is for host routes, 
-# RtTableDefault for the route to the default internet gateway
-# RtTableTunnel is for routes to the ipip tunnels, 
-# valid values are 1 to 254
-# There is a special parameter "auto" (choose default below)
-# (with smartgw: default is 254/223/224)
-# (without smartgw: default is 254/254/254, linux main table)
-
-# Specifies the policy rule priorities for the three routing tables and
-# a special rule for smartgateway routing (see README-Olsr-Extensions)
-# Priorities can only be set if three different routing tables are set.
-# if set the values must obey to condition
-# RtTablePriority < RtTableDefaultOlsrPriority < RtTableTunnelPriority < RtTableDefaultPriority
-# There are two special parameters, "auto" (choose fitting to SmartGW
-# mode) and "none" (do not set policy rule)
-# (with smartgw: default is none/32776/32786/32796)
-# (without smartgw: default is none/none/none/none)
-
-# root@f17gw:~# ip rule show 
-# 0:      from all lookup local 
-# 32766:  from all lookup main 
-# 32767:  from all lookup default 
-# 90000:  from all lookup 111 
-# 100000: from all iif eth0.6 lookup 112 
-# 120000: from all lookup 113 
-# 120010: from all lookup 112
-
-uci add      olsrd  olsrd
-uci set      olsrd.@olsrd[-1]=olsrd
-uci set      olsrd.@olsrd[-1].DebugLevel=9
-uci set      olsrd.@olsrd[-1].AllowNoInt='yes'
-uci set      olsrd.@olsrd[-1].FIBMetric='flat'
-uci set      olsrd.@olsrd[-1].IpVersion='4'
-uci set      olsrd.@olsrd[-1].LinkQualityAlgorithm='etx_ff'
-uci set      olsrd.@olsrd[-1].NatThreshold='0.75'
-uci set      olsrd.@olsrd[-1].Pollrate='0.025'
-uci set      olsrd.@olsrd[-1].RtTable='111'
-uci set      olsrd.@olsrd[-1].RtTableDefault='112'
-uci set      olsrd.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
-uci set      olsrd.@olsrd[-1].RtTableTunnel='113'
-uci set      olsrd.@olsrd[-1].RtTableTunnelPriority='100000'
-uci set      olsrd.@olsrd[-1].SmartGateway='yes'
-uci set      olsrd.@olsrd[-1].SmartGatewayThreshold='50'
-uci set      olsrd.@olsrd[-1].TcRedundancy='2'
-uci set      olsrd.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
-uci commit   olsrd.@olsrd[-1]
-
-uci import olsrd6<<EOF
-EOF
-
-uci add      olsrd6  olsrd
-uci set      olsrd6.@olsrd[-1]=olsrd
-uci set      olsrd6.@olsrd[-1].IpVersion='6'
-uci set      olsrd6.@olsrd[-1].FIBMetric='flat'
-uci set      olsrd6.@olsrd[-1].AllowNoInt='yes'
-uci set      olsrd6.@olsrd[-1].TcRedundancy='2'
-uci set      olsrd6.@olsrd[-1].LinkQualityAlgorithm='etx_ffeth'
-uci set      olsrd6.@olsrd[-1].Pollrate='0.025'
-uci set      olsrd6.@olsrd[-1].RtTable='111'
-uci set      olsrd6.@olsrd[-1].RtTableDefault='112'
-uci set      olsrd6.@olsrd[-1].RtTablePriority='1000'
-uci set      olsrd6.@olsrd[-1].RtTableDefaultOlsrPriority='20000'
-uci set      olsrd6.@olsrd[-1].SmartGatewayUplink='none' # don't share internet from f17 yet.
-uci commit   olsrd6.@olsrd[-1]
-
-uci add      olsrd  Interface
-uci set      olsrd.@Interface[-1]=Interface
-uci set      olsrd.@Interface[-1].ignore='0'
-uci set      olsrd.@Interface[-1].interface='ffuplink'
-uci set      olsrd.@Interface[-1].Mode='mesh'
-uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
-uci set      olsrd.@Interface[-1].ignore='1'
-uci commit   olsrd.@Interface[-1]
-
-uci add      olsrd6  Interface
-uci set      olsrd6.@Interface[-1]=Interface
-uci set      olsrd6.@Interface[-1].ignore='0'
-uci set      olsrd6.@Interface[-1].interface='ffuplink'
-uci set      olsrd6.@Interface[-1].Mode='mesh'
-uci set      olsrd6.@Interface[-1].IPv6Multicast='ff02::6d'
-uci set      olsrd6.@Interface[-1].ignore='1'
-uci commit   olsrd6.@Interface[-1]
-
-uci add      olsrd  Hna4
-uci set      olsrd.@Hna4[-1]=Hna4
-uci set      olsrd.@Hna4[-1].netaddr='10.36.189.0'
-uci set      olsrd.@Hna4[-1].netmask='255.255.255.0'
-uci commit   olsrd.@Hna4[-1]
-
-uci add      olsrd6  Hna6
-uci set      olsrd6.@Hna6[-1]=Hna6
-uci set      olsrd6.@Hna6[-1].netaddr='2001:bf7:830:6600::'
-uci set      olsrd6.@Hna6[-1].prefix='56'
-uci commit   olsrd6.@Hna6[-1]
-
-# add txtinfo plugin - needed for collectd-mod-txtinfo
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].accept=0.0.0.0
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_txtinfo
-uci set      olsrd.@LoadPlugin[-1].port=2006
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_txtinfo'
-uci set      olsrd6.@LoadPlugin[-1].accept='::'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
-uci set      olsrd6.@LoadPlugin[-1].port='2007'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-# add arprefresh plugin
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_arprefresh
-uci commit   olsrd.@LoadPlugin[-1]
-
-# add nameservice plugin
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_nameservice
-uci set      olsrd.@LoadPlugin[-1].suffix=.olsr
-uci set      olsrd.@LoadPlugin[-1].hosts_file=/tmp/hosts/olsr
-uci set      olsrd.@LoadPlugin[-1].latlon_file=/var/run/latlon.js
-uci set      olsrd.@LoadPlugin[-1].services_file=/var/etc/services.olsr
-uci commit   olsrd.@LoadPlugin[-1]
-
-# add jsoninfo plugin (ipv4)
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].accept=0.0.0.0
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_jsoninfo
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-# add jsoninfo plugin (ipv6)
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_jsoninfo'
-uci set      olsrd6.@LoadPlugin[-1].ipv6only=true
-uci set      olsrd6.@LoadPlugin[-1].accept='0::'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci commit   olsrd6.@LoadPlugin[-1]
-
-
-# add watchdog plugin
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library=olsrd_watchdog
-uci set      olsrd.@LoadPlugin[-1].file=/var/run/olsrd.watchdog
-uci set      olsrd.@LoadPlugin[-1].interval=30
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_watchdog'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].file='/var/run/olsrd6.watchdog'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-# add dyngw plain plugin - it is ipv4 only
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_dyn_gw'
-uci add_list olsrd.@LoadPlugin[-1].Ping=1.1.1.1
-uci add_list olsrd.@LoadPlugin[-1].Ping=8.8.8.8
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_dot_draw'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_httpinfo'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci add_list olsrd.@LoadPlugin[-1].service='https://bunker.imaginator.com/grafana/ System Status'
-uci set      olsrd.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci set      olsrd.@LoadPlugin[-1].latlon_file='/var/run/latlon.js'
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_nameservice'
-uci set      olsrd.@LoadPlugin[-1].services_file='/var/etc/services.olsr'
-uci set      olsrd.@LoadPlugin[-1].suffix='.olsr'
-uci commit   olsrd.@LoadPlugin[-1]
-
-uci add      olsrd6  LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd6.@LoadPlugin[-1].hosts_file='/tmp/hosts/olsr.ipv6'
-uci set      olsrd6.@LoadPlugin[-1].ignore=0
-uci set      olsrd6.@LoadPlugin[-1].latlon_file='/var/run/latlon.js.ipv6'
-uci set      olsrd6.@LoadPlugin[-1].library='olsrd_nameservice'
-uci set      olsrd6.@LoadPlugin[-1].services_file='/var/etc/services.olsr.ipv6'
-uci set      olsrd6.@LoadPlugin[-1].suffix='.olsr'
-uci commit   olsrd6.@LoadPlugin[-1]
-
-uci add      olsrd  LoadPlugin
-uci set      olsrd.@LoadPlugin[-1]=LoadPlugin
-uci set      olsrd.@LoadPlugin[-1].library='olsrd_pgraph'
-uci set      olsrd.@LoadPlugin[-1].ignore=0
-uci commit   olsrd.@LoadPlugin[-1]
 
 uci import firewall<<EOF
 EOF
@@ -919,198 +596,7 @@ uci add_list dhcp.fflan.dhcp_option='option:ntp-server, 10.7.11.1'
 uci add_list dhcp.fflan.dhcp_option='3,10.36.189.1'
 uci commit   dhcp.fflan
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.2'
-uci set      dhcp.@host[-1].name='emmauskirche'
-uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.3'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.4'
-uci set      dhcp.@host[-1].name='freifunkgw'
-uci set      dhcp.@host[-1].mac='a0:f3:c1:5e:d0:36'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.11'
-uci set      dhcp.@host[-1].name='repeater01'
-uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.14'
-uci set      dhcp.@host[-1].name='repeater04'
-uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.15'
-uci set      dhcp.@host[-1].name='repeater05'
-uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.20'
-uci set      dhcp.@host[-1].name='camera01'
-uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.21'
-uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
-uci set      dhcp.@host[-1].name='simon-phone'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.104'
-uci set      dhcp.@host[-1].name='veluxgw'
-uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.105'
-uci set      dhcp.@host[-1].name='knxgw'
-uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.34'
-uci set      dhcp.@host[-1].name='ccmini-lounge'
-uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.35'
-uci set      dhcp.@host[-1].name='ccmini-bedroom1'
-uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.36'
-uci set      dhcp.@host[-1].name='ccmini-kitchen'
-uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.37'
-uci set      dhcp.@host[-1].name='ccmini-mainbath'
-uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.40'
-uci set      dhcp.@host[-1].name='cca-bedroom1'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:0d:f8'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.41'
-uci set      dhcp.@host[-1].name='cca-guestbath'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:6f:d4'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.42'
-uci set      dhcp.@host[-1].name='cca-kitchen'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:1a:d2'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.43'
-uci set      dhcp.@host[-1].name='cca-bedroom3'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:70:64'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.44'
-uci set      dhcp.@host[-1].name='cca-mainbath'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:0c:b4'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.45'
-uci set      dhcp.@host[-1].name='cca-bedroom2'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:19:44'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.46'
-uci set      dhcp.@host[-1].name='cca-workroom'
-uci set      dhcp.@host[-1].mac='54:60:09:d2:6b:bc'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.47'
-uci set      dhcp.@host[-1].name='cca-lounge'
-uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.48'
-uci set      dhcp.@host[-1].name='cca-terrace'
-uci set      dhcp.@host[-1].mac='54:60:09:dc:70:32'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.49'
-uci set      dhcp.@host[-1].name='onkyo-receiver'
-uci set      dhcp.@host[-1].mac='00:09:b0:b7:35:59'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 
 echo -e "All done with writing.\nRebooting..."
