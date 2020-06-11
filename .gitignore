@@ -1,3 +1,4 @@
 *.src/*
 network-secrets.env
 build/*
+freifunk-etc/
