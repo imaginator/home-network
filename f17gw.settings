@@ -1,10 +1,9 @@
 #!/bin/sh
 
+# Edgerouter X
+
 # stop after any errors
 set -xe
-
-# Edgerouter X
-# depends on build settings in edgerouterx.diffconfig
 
 uci import system <<EOF
 EOF
@@ -46,7 +45,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAADxTYX0f/RBMsEyObhp9xYFQ7cpMTaR+aEgXN+lGlbxEw/
 EOF
 chmod 0600 /etc/dropbear/authorized_keys
 
-uci import   network <<EOF
+uci import network <<EOF
 EOF
 
 # switch: Numbers 2-5 are Ports 1-4 as labeled on the unit, number 1 is the 
@@ -67,14 +66,6 @@ uci set      network.@switch[-1].name='switch0'
 uci set      network.@switch[-1].reset='1'
 uci set      network.@switch[-1].enable_vlan='1'
 uci commit   network.@switch[-1]
-            
-uci add      network  switch_vlan
-uci set      network.@switch_vlan[-1]=switch_vlan
-uci set      network.@switch_vlan[-1].device='switch0'
-uci set      network.@switch_vlan[-1].vid='1'
-uci set      network.@switch_vlan[-1].vlan='1'
-uci set      network.@switch_vlan[-1].ports='6t'
-uci commit   network.@switch_vlan[-1]
            
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
@@ -117,7 +108,6 @@ uci set      network.@switch_vlan[-1].ports='0t 6t'
 uci commit   network.@switch_vlan[-1]
 
 uci set      network.loopback=interface
-uci set      network.loopback.force_link='1'
 uci set      network.loopback.ifname='lo'
 uci set      network.loopback.proto='static'
 uci set      network.loopback.ipaddr='127.0.0.1'
@@ -126,14 +116,14 @@ uci set      network.loopback.netmask='255.0.0.0'
 uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
-uci set      network.trusted.proto='static'
-uci set      network.trusted.ipaddr='10.7.11.5'
-uci set      network.trusted.netmask='255.255.255.0'
-uci add_list network.trusted.ip6class='pyur6'
 uci add_list network.trusted.ip6class='henet'
+uci add_list network.trusted.ip6class='pyur6'
+uci set      network.trusted.igmp_snooping=1
 uci set      network.trusted.ip6assign='64'
 uci set      network.trusted.ip6ifaceid='::5'
-uci set      network.trusted.igmp_snooping=1
+uci set      network.trusted.ipaddr='10.7.11.5'
+uci set      network.trusted.netmask='255.255.255.0'
+uci set      network.trusted.proto='static'
            
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
@@ -146,21 +136,15 @@ uci set      network.notrust.delegate='0'
 # wan interface
 uci set      network.pyur4=interface
 uci set      network.pyur4.ifname='eth0.4'
-uci set      network.pyur4.proto=dhcp
+uci set      network.pyur4.proto='dhcp'
 uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.defaultroute=1
 #uci set      network.pyur4.ip4table='pyur4'
-
-uci set      network.iot=interface
-uci set      network.iot.ifname='eth0.5'
-uci set      network.iot.ipaddr='10.7.9.1'
-uci set      network.iot.netmask='255.255.255.0'
-uci set      network.iot.proto='static'
-uci set      network.iot.type='bridge'
 
 uci set      network.pyur6=interface
 uci set      network.pyur6.ifname='eth0.4'
-uci set      network.pyur6.proto=dhcpv6
+uci set      network.pyur6.proto='dhcpv6'
 uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns='0'
@@ -174,6 +158,14 @@ uci set      network.ffvpn.force_link='1'
 uci set      network.ffvpn.delegate='0'
 uci set      network.ffvpn.auto='1'
 
+
+uci set      network.iot=interface
+uci set      network.iot.ifname='eth0.5'
+uci set      network.iot.ipaddr='10.7.9.1'
+uci set      network.iot.netmask='255.255.255.0'
+uci set      network.iot.proto='static'
+uci set      network.iot.type='bridge'
+
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
 uci set      network.henet.peeraddr='216.66.86.114'
@@ -186,37 +178,32 @@ uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
 
 
-# when sending packets, the list of allowed IPs behaves as a sort of routing table, 
-# and when receiving packets, the list of allowed IPs behaves as a sort of access control list
-
-uci set      network.wg0="interface"
-uci set      network.wg0.proto="wireguard"
+uci set      network.wg0='interface'
+uci set      network.wg0.proto='wireguard'
 uci set      network.wg0.mtu=1420
-uci set      network.wg0.private_key='${wg_vpn_private_key}'
-uci set      network.wg0.listen_port="12321"
+uci set      network.wg0.listen_port='12321'
 uci add_list network.wg0.addresses='10.7.8.1/24'
-# /24 for this device. 
-# each client is represented by a /32
+uci set      network.wg0.private_key='${wg_f17gw_private_key}'
 
 uci set      network.wg_f17_6=wireguard_wg0
-uci set      network.wg_f17_6.description='F17 Gateway ipv6'
+uci set      network.wg_f17_6.description='W16 Gateway ipv6'
 uci set      network.wg_f17_6.public_key='${wg_w16gw_public_key}'
 uci set      network.wg_f17_6.endpoint_host='w16gw6.imaginator.com'
 uci set      network.wg_f17_6.endpoint_port='12321'
 uci set      network.wg_f17_6.persistent_keepalive='15'
+uci set      network.wg_f17_6.route_allowed_ips='1'
 uci add_list network.wg_f17_6.allowed_ips='10.7.8.2/32'
 uci add_list network.wg_f17_6.allowed_ips='10.7.10.0/24'
-uci set      network.wg_f17_6.route_allowed_ips='1'
 
 uci set      network.wg_f17_4=wireguard_wg0
-uci set      network.wg_f17_4.description='F17 Gateway ipv4'
+uci set      network.wg_f17_4.description='W16 Gateway ipv4'
 uci set      network.wg_f17_4.public_key='${wg_w16gw_public_key}'
 uci set      network.wg_f17_4.endpoint_host='w16gw.imaginator.com'
 uci set      network.wg_f17_4.endpoint_port='12321'
 uci set      network.wg_f17_4.persistent_keepalive='15'
+uci set      network.wg_f17_4.route_allowed_ips='1'
 uci add_list network.wg_f17_4.allowed_ips='10.7.8.2/32'
 uci add_list network.wg_f17_4.allowed_ips='10.7.10.0/24'
-uci set      network.wg_f17_4.route_allowed_ips='1'
 
 uci set      network.wg_simonphone=wireguard_wg0
 uci set      network.wg_simonphone.description='Simon Mobile'
@@ -249,28 +236,28 @@ uci set      network.wg_furrow.route_allowed_ips='1'
 uci commit   network
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
-uci add      network  rule
-uci set      network.@rule[-1]=rule
-uci set      network.@rule[-1].src='10.7.12.0/22'
-uci set      network.@rule[-1].lookup='100'
-uci commit   network.@rule[-1]
+#uci add      network  rule
+#uci set      network.@rule[-1]=rule
+#uci set      network.@rule[-1].src='10.7.12.0/22'
+#uci set      network.@rule[-1].lookup='100'
+#uci commit   network.@rule[-1]
             
 # due to a bug, these are now in '/etc/openvpn/up.sh'
-uci add      network  route
-uci set      network.@route[-1]=route
-uci set      network.@route[-1].table=100
-uci set      network.@route[-1].interface=br-trusted
-uci set      network.@route[-1].target=10.7.11.0
-uci set      network.@route[-1].netmask=255.255.255.0
-uci commit   network.@route[-1]
+#uci add      network  route
+#uci set      network.@route[-1]=route
+#uci set      network.@route[-1].table=100
+#uci set      network.@route[-1].interface=br-trusted
+#uci set      network.@route[-1].target=10.7.11.0
+#uci set      network.@route[-1].netmask=255.255.255.0
+#uci commit   network.@route[-1]
             
-uci add      network  route
-uci set      network.@route[-1]=route
-uci set      network.@route[-1].table=100
-uci set      network.@route[-1].interface=ffvpn
-uci set      network.@route[-1].target=0.0.0.0
-uci set      network.@route[-1].netmask=0.0.0.0
-uci commit   network.@route[-1]
+#uci add      network  route
+#uci set      network.@route[-1]=route
+#uci set      network.@route[-1].table=100
+#uci set      network.@route[-1].interface=ffvpn
+#uci set      network.@route[-1].target=0.0.0.0
+#uci set      network.@route[-1].netmask=0.0.0.0
+#uci commit   network.@route[-1]
 
 uci import olsrd<<EOF
 EOF
@@ -498,48 +485,47 @@ uci commit ddns.global
 
 uci add    ddns  service
 uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].enabled='1'
-uci set    ddns.@service[-1].use_ipv6='0'
-uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
-uci set    ddns.@service[-1].bind_network='pyur4'
-uci set    ddns.@service[-1].force_ipversion=1
-uci set    ddns.@service[-1].ip_source='web'
-uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
-uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
-uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
-uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
+uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
+uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
+uci set    ddns.@service[-1].ip_source='web'
+uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
+uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='google.com'
 uci set    ddns.@service[-1].use_https='1'
+uci set    ddns.@service[-1].use_ipv6='0'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
 uci commit ddns.@service[-1]
 
 uci add    ddns  service
 uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].enabled='1'
-uci set    ddns.@service[-1].use_ipv6='1'
-uci set    ddns.@service[-1].interface='henet' # for hotplug events
-uci set    ddns.@service[-1].ip_source='network'
-uci set    ddns.@service[-1].ip_network='henet'
-uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
-uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
-uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
+uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].interface='henet' # for hotplug events
+uci set    ddns.@service[-1].ip_network='henet'
+uci set    ddns.@service[-1].ip_source='network'
+uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='google.com'
 uci set    ddns.@service[-1].use_https='1'
+uci set    ddns.@service[-1].use_ipv6='1'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
 uci commit ddns.@service[-1]
 
 service ddns enable || true
@@ -715,9 +701,9 @@ EOF
 
 uci add    firewall defaults
 uci set    firewall.@defaults[-1]=defaults
-uci set    firewall.@defaults[-1].input='DROP'
-uci set    firewall.@defaults[-1].output='DROP'
-uci set    firewall.@defaults[-1].forward='DROP'
+uci set    firewall.@defaults[-1].input='REJECT'
+uci set    firewall.@defaults[-1].output='REJECT'
+uci set    firewall.@defaults[-1].forward='REJECT'
 uci set    firewall.@defaults[-1].flow_offloading=1
 uci set    firewall.@defaults[-1].flow_offloading_hw=1
 uci set    firewall.@defaults[-1].drop_invalid=1
@@ -1296,29 +1282,32 @@ EOF
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
-uci set      dhcp.@dnsmasq[-1].authoritative='1'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].boguspriv='1'
-uci set      dhcp.@dnsmasq[-1].loglevel='7'
-uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
-uci set      dhcp.@dnsmasq[-1].localise_queries='1'
-uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
-uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
 uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
-uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr.ipv6'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr'
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='/imagilan/'
+uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
+uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
+uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
+uci set      dhcp.@dnsmasq[-1].authoritative='1'
+uci set      dhcp.@dnsmasq[-1].boguspriv='1'
+uci set      dhcp.@dnsmasq[-1].cachesize='4096'
 uci set      dhcp.@dnsmasq[-1].domain='imagilan'
 uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
 uci set      dhcp.@dnsmasq[-1].expandhosts='1'
-uci set      dhcp.@dnsmasq[-1].nonegcache='0'
+uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
+uci set      dhcp.@dnsmasq[-1].local='/imagilan/'
+uci set      dhcp.@dnsmasq[-1].localise_queries='1'
 uci set      dhcp.@dnsmasq[-1].localservice='1'
+uci set      dhcp.@dnsmasq[-1].loglevel='7'
 uci set      dhcp.@dnsmasq[-1].logqueries='0'
-uci set      dhcp.@dnsmasq[-1].cachesize='4096'
+uci set      dhcp.@dnsmasq[-1].nonegcache='0'
 uci set      dhcp.@dnsmasq[-1].noresolv='1'              # don't reference /etc/resolv.conf
-uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
-uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
-uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
-uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
+uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
+uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
@@ -1385,47 +1374,9 @@ uci set      dhcp.@domain[-1].ip='10.7.8.4'
 uci set      dhcp.@domain[-1].name='android-vpn'
 uci commit   dhcp.@domain[-1]
 
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.2'
-uci set      dhcp.@domain[-1].name='emmauskirche'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.1'
-uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='salt.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='mqtt.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='openhab.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='transmission.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='vpn.imaginator.com'
-uci set      dhcp.@cname[-1].target='bunker.imaginator.com'
-uci commit   dhcp.@cname[-1]
+###############################################################################
+# IoT
+###############################################################################
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1469,9 +1420,33 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.7'
+uci set      dhcp.@host[-1].ip='10.7.9.9'
+uci set      dhcp.@host[-1].name='camera01'
+uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.10'
 uci set      dhcp.@host[-1].name='camera02'
 uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.11'
+uci set      dhcp.@host[-1].name='veluxgw'
+uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.12'
+uci set      dhcp.@host[-1].name='knxgw'
+uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1636,17 +1611,53 @@ uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.20'
-uci set      dhcp.@domain[-1].name='camera01'
-uci commit   dhcp.@domain[-1]
+###############################################################################
+# Trusted
+###############################################################################
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.104'
-uci set      dhcp.@domain[-1].name='veluxgw'
+uci set      dhcp.@domain[-1].ip='10.7.11.1'
+uci set      dhcp.@domain[-1].name='bunker'
 uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='salt.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='mqtt.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='openhab.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='transmission.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='vpn.imaginator.com'
+uci set      dhcp.@cname[-1].target='bunker.imaginator.com'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.2'
+uci set      dhcp.@host[-1].name='switch01'
+uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1678,13 +1689,28 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.8'
+uci set      dhcp.@host[-1].name='emmauskirche'
+uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.9'
+uci set      dhcp.@host[-1].name='freifunkgw'
+uci set      dhcp.@host[-1].mac='a0:f3:c1:5e:d0:36'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.11'
 uci set      dhcp.@host[-1].name='repeater01'
 uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-#nanostation
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.14'
@@ -1693,7 +1719,6 @@ uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-#nanostation
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.15'
@@ -1766,132 +1791,6 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.32'
 uci set      dhcp.@host[-1].name='pi02'
 uci set      dhcp.@host[-1].mac='b8:27:eb:98:32:62' #wireless
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.34'
-uci set      dhcp.@host[-1].name='ccmini-lounge'
-uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.35'
-uci set      dhcp.@host[-1].name='ccmini-bedroom1'
-uci set      dhcp.@host[-1].mac='20:df:b9:6a:ab:c5'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.36'
-uci set      dhcp.@host[-1].name='ccmini-kitchen'
-uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.37'
-uci set      dhcp.@host[-1].name='ccmini-mainbath'
-uci set      dhcp.@host[-1].mac='20:df:b9:60:ff:ad'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host 
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.49'
-uci set      dhcp.@host[-1].name='onkyo-receiver'
-uci set      dhcp.@host[-1].mac='00:09:b0:b7:35:59'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  domain 
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.5'
-uci set      dhcp.@domain[-1].name='f17gw'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.2'
-uci set      dhcp.@host[-1].name='emmauskirche'
-uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.3'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.4'
-uci set      dhcp.@host[-1].name='freifunkgw'
-uci set      dhcp.@host[-1].mac='a0:f3:c1:5e:d0:36'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.11'
-uci set      dhcp.@host[-1].name='repeater01'
-uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.14'
-uci set      dhcp.@host[-1].name='repeater04'
-uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.15'
-uci set      dhcp.@host[-1].name='repeater05'
-uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.20'
-uci set      dhcp.@host[-1].name='camera01'
-uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
-uci set      dhcp.@host[-1].name='simon-phone'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.104'
-uci set      dhcp.@host[-1].name='veluxgw'
-uci set      dhcp.@host[-1].mac='64:61:84:00:3B:E6'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.105'
-uci set      dhcp.@host[-1].name='knxgw'
-uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -2006,9 +1905,6 @@ uci set      dhcp.@host[-1].name='onkyo-receiver'
 uci set      dhcp.@host[-1].mac='00:09:b0:b7:35:59'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
-
-
-
 
 echo -e "All done with writing.\nRebooting..."
 reboot

@@ -192,6 +192,17 @@ uci set      wireless.imagifi5.network='trusted'
 uci set      wireless.imagifi5.ssid='imagiFi 5'
 uci commit   wireless.imagifi5
 
+uci set      wireless.f17free2=wifi-iface
+uci set      wireless.f17free2.ifname='f17free2'
+uci set      wireless.f17free2.device='radio0'
+uci set      wireless.f17free2.network='notrust'
+uci set      wireless.f17free2.mode='ap'
+uci set      wireless.f17free2.isolate='1'
+uci set      wireless.f17free2.encryption='none'
+uci set      wireless.f17free2.ssid='Falckensteinstr 17 free WiFi'
+uci set      wireless.f17free2.wpa_group_rekey='0'
+uci commit   wireless.f17free2
+
 uci set      wireless.ffunk2=wifi-iface
 uci set      wireless.ffunk2.ifname='ffunk2'
 uci set      wireless.ffunk2.device='radio0'

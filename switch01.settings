@@ -2,13 +2,11 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.1, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.1"
-!System Up Time          "11 days 18 hrs 0 mins 46 secs"
+!System Up Time          "8 days 22 hrs 58 mins 46 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
-!Current SNTP Synchronized Time: May 23 09:23:13 2020 UTC
+!Current SNTP Synchronized Time: Jun 11 09:14:47 2020 UTC
 ! 
 hostname "switch01"
-network protocol none
-network parms 10.7.10.3 255.255.255.0 10.7.10.1
 vlan database
 vlan 2-6
 vlan name 2 "trusted" 
@@ -37,15 +35,15 @@ vlan participation exclude 2-6
 exit 
 interface 0/2
 description 'knxgw'
-vlan pvid 2
-vlan participation exclude 1,3-6
-vlan participation include 2
+vlan pvid 5
+vlan participation exclude 1-4,6
+vlan participation include 5
 exit 
 interface 0/3
 description 'veluxgw'
-vlan pvid 2
-vlan participation exclude 1,3-6
-vlan participation include 2
+vlan pvid 5
+vlan participation exclude 1-4,6
+vlan participation include 5
 exit 
 interface 0/4
 description 'camera01'
@@ -54,7 +52,7 @@ vlan participation exclude 1,3-6
 vlan participation include 2
 exit 
 interface 0/5
-description 'repeater05 (terrace)'
+description 'repeater05 (courtyard)'
 vlan pvid 2
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
@@ -76,10 +74,20 @@ vlan tagging 2-3,5
 poe opmode passive24v
 exit 
 interface 0/8
-vlan participation exclude 1-6
+description 'bunker'
+vlan participation exclude 1,4-6
+vlan participation include 2-3
+vlan tagging 2-3
+poe opmode shutdown
 exit 
 interface 0/9
-vlan participation exclude 1-6
+no auto-negotiate
+speed 100 full-duplex
+description 'bunker iLO'
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
+poe opmode shutdown
 exit 
 interface 0/10
 vlan participation exclude 1-6
@@ -115,10 +123,15 @@ interface 0/20
 vlan participation exclude 1-6
 exit 
 interface 0/21
-vlan participation exclude 1-6
+vlan participation exclude 1
+vlan participation include 2-6
+vlan tagging 2-6
 exit 
 interface 0/22
-vlan participation exclude 1-6
+description 'freifunk router'
+vlan participation exclude 1,4-5
+vlan participation include 2-3,6
+vlan tagging 2-3,6
 exit 
 interface 0/23
 description 'emmauskirche'
@@ -132,6 +145,7 @@ description 'f17gw'
 vlan participation exclude 1
 vlan participation include 2-6
 vlan tagging 2-6
+poe opmode passive24v
 exit 
 interface 0/25
 vlan participation exclude 1-6

@@ -6,59 +6,58 @@ set -x
 case $1 in
   w16gw)
     envsubst \ '
-    $w16gw_ddns4_domain \
-    $w16gw_ddns4_username \
-    $w16gw_ddns4_password \
-    $w16gw_ddns6_domain \
-    $w16gw_ddns6_username \
-    $w16gw_ddns6_password \
+    $dh2048_pem \
+    $henet_w16_password \
     $henet_w16_tunnelid \
     $henet_w16_username \
-    $henet_w16_password \
-    $freifunk_ca_crt \
-    $freifunk_client_crt \
-    $freifunk_client_key \
-    $imagivpn_key \
-    $wg_vpn_public_key \
-    $wg_vpn_private_key \
-    $wg_furrow_public_key \
-    $wg_furrow_private_key \
-    $wg_simonphone_public_key \
-    $wg_simonphone_private_key \
-    $wg_w16gw_public_key \
+    $w16gw_ddns4_domain \
+    $w16gw_ddns4_password \
+    $w16gw_ddns4_username \
+    $w16gw_ddns6_domain \
+    $w16gw_ddns6_password \
+    $w16gw_ddns6_username \
+    $wg_f17gw_public_key \
     $wg_w16gw_private_key \
-    $wg_tablet_public_key \
-    $wg_tablet_private_key \
-    $wg_windows_public_key \
-    $wg_windows_private_key \
-    $dh2048_pem \
+    $wg_w16gw_public_key \
     ' < w16gw.settings  | ssh root@10.7.10.1
     ;;
 
   f17gw)
     envsubst \ '
+    $dh2048_pem \
+    $f17gw_ddns4_domain \
+    $f17gw_ddns4_password \
+    $f17gw_ddns4_username \
+    $f17gw_ddns6_domain \
+    $f17gw_ddns6_password \
+    $f17gw_ddns6_username \
+    $freifunk_ca_crt \
+    $freifunk_client_crt \
+    $freifunk_client_key \
+    $henet_f17_password \
     $henet_f17_tunnelid \
     $henet_f17_username \
-    $henet_f17_password \
     $trusted_wifikey \
-    $trusted_wifikey_baustelle \
-    $f17gw_ddns4_domain \
-    $f17gw_ddns4_username \
-    $f17gw_ddns4_password \
-    $f17gw_ddns6_domain \
-    $f17gw_ddns6_username \
-    $f17gw_ddns6_password \
-    $wg_vpn_public_key \
-    $wg_vpn_private_key \
-    $wg_furrow_public_key \
-    $wg_furrow_private_key \
-    $wg_simonphone_public_key \
-    $wg_simonphone_private_key \
-    $wg_f17gw_public_key \
     $wg_f17gw_private_key \
-    $pyur_community_username \
-    $pyur_community_password \
-    ' < f17gw.settings | ssh root@10.7.11.5
+    $wg_f17gw_private_key \
+    $wg_f17gw_public_key \
+    $wg_f17gw_public_key \
+    $wg_furrow_private_key \
+    $wg_furrow_private_key \
+    $wg_furrow_public_key \
+    $wg_furrow_public_key \
+    $wg_simonphone_private_key \
+    $wg_simonphone_private_key \
+    $wg_simonphone_public_key \
+    $wg_simonphone_public_key \
+    $wg_tablet_private_key \
+    $wg_tablet_public_key \
+    $wg_vpn_private_key \
+    $wg_vpn_public_key \
+    $wg_windows_private_key \
+    $wg_windows_public_key \
+    $wg_w16gw_public_key \
+    ' < f17gw.settings | ssh root@37.120.42.149
     ;;
 
   repeater0[1-6])

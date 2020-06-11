@@ -86,36 +86,71 @@ chmod 0600 /etc/dropbear/authorized_keys
 uci import network <<EOF
 EOF
 
-uci set network.loopback=interface
-uci set network.loopback.ifname='lo'
-uci set network.loopback.proto='static'
-uci set network.loopback.ipaddr='127.0.0.1'
-uci set network.loopback.netmask='255.0.0.0'
+#Port 	Switch port
+#CPU 	0
+#(WAN) 	1
+#LAN 1 	2
+#LAN 2 	3
+#LAN 3 	4
+#LAN 4 	5
+
+uci add      network  switch
+uci set      network.@switch[-1]=switch
+uci set      network.@switch[-1].name='switch0'
+uci set      network.@switch[-1].reset='1'
+uci set      network.@switch[-1].enable_vlan='1'
+uci commit   network.@switch[-1]
+
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='2'
+uci set      network.@switch_vlan[-1].vlan='2'
+uci set      network.@switch_vlan[-1].ports='0t 2t 3 4 5'
+uci commit   network.@switch_vlan[-1]
+
+uci add      network  switch_vlan
+uci set      network.@switch_vlan[-1]=switch_vlan
+uci set      network.@switch_vlan[-1].device='switch0'
+uci set      network.@switch_vlan[-1].vid='4'
+uci set      network.@switch_vlan[-1].vlan='4'
+uci set      network.@switch_vlan[-1].ports='0t 1 2t'
+uci commit   network.@switch_vlan[-1]
+
+
+uci set      network.loopback=interface
+uci set      network.loopback.ifname='lo'
+uci set      network.loopback.proto='static'
+uci set      network.loopback.ipaddr='127.0.0.1'
+uci set      network.loopback.netmask='255.0.0.0'
 
 uci set      network.lan=interface
 uci set      network.lan.type='bridge'
-uci set      network.lan.ifname='eth0.2'
-uci set      network.lan.proto='static'
-uci set      network.lan.netmask='255.255.255.0'
-uci set      network.lan.ipaddr='10.7.10.1'
 uci add_list network.lan.ip6class='henet'
 uci add_list network.lan.ip6class='pyur6'
-uci set      network.lan.ip6assign='64'
+uci set      network.lan.ifname='eth0.2'
 uci set      network.lan.igmp_snooping=1
+uci set      network.lan.ip6assign='64'
+uci set      network.lan.ipaddr='10.7.10.1'
+uci set      network.lan.netmask='255.255.255.0'
+uci set      network.lan.proto='static'
 
-uci set network.pyur4=interface
-uci set network.pyur4.proto='dhcp'
-uci set network.pyur4.peerdns='0'
-uci set network.pyur4.ifname='eth0.4'
-uci set network.pyur4.defaultroute='1'
+uci set      network.pyur4=interface
+uci set      network.pyur4.ifname='eth0.4'
+uci set      network.pyur4.proto='dhcp'
+uci set      network.pyur4.broadcast=1
+uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.defaultroute=1
+#uci set      network.pyur4.ip4table='pyur4'
 
 uci set      network.pyur6=interface
-uci set      network.pyur6.proto='dhcpv6'
 uci set      network.pyur6.ifname='eth0.4'
+uci set      network.pyur6.proto='dhcpv6'
 uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='0'
+#uci set      network.pyur6.ip6table='pyur6'
 
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
@@ -128,44 +163,17 @@ uci set      network.henet.password='${henet_w16_password}'
 uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
 
-#Port 	Switch port
-#CPU 	0
-#(WAN) 	1
-#LAN 1 	2
-#LAN 2 	3
-#LAN 3 	4
-#LAN 4 	5
 
-uci add network switch
-uci set network.@switch[-1]=switch
-uci set network.@switch[-1].name='switch0'
-uci set network.@switch[-1].reset='1'
-uci set network.@switch[-1].enable_vlan='1'
-
-# lan
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='2'
-uci set network.@switch_vlan[-1].ports='0t 2t 3 4 5'
-
-# wan
-uci add network switch_vlan
-uci set network.@switch_vlan[-1]=switch_vlan
-uci set network.@switch_vlan[-1].device='switch0'
-uci set network.@switch_vlan[-1].vlan='4'
-uci set network.@switch_vlan[-1].ports='0t 1 2t'
-
-uci set network.wg0=interface
-uci set network.wg0.proto='wireguard'
-uci set network.wg0.mtu=1420
-uci set network.wg0.listen_port='12321'
-uci set network.wg0.addresses='10.7.8.2/32'
-uci set network.wg0.private_key='${wg_w16gw_private_key}'
+uci set      network.wg0='interface'
+uci set      network.wg0.proto='wireguard'
+uci set      network.wg0.mtu=1420
+uci set      network.wg0.listen_port='12321'
+uci add_list network.wg0.addresses='10.7.8.2/32'
+uci set      network.wg0.private_key='${wg_w16gw_private_key}'
 
 uci set      network.wg_f17_6=wireguard_wg0
 uci set      network.wg_f17_6.description='F17 gateway (ipv6)'
-uci set      network.wg_f17_6.public_key='${wg_vpn_public_key}'
+uci set      network.wg_f17_6.public_key='${wg_f17gw_public_key}'
 uci set      network.wg_f17_6.endpoint_host='f17gw6.imaginator.com'
 uci set      network.wg_f17_6.endpoint_port='12321'
 uci set      network.wg_f17_6.persistent_keepalive='15'
@@ -175,7 +183,7 @@ uci add_list network.wg_f17_6.allowed_ips='10.7.11.0/24'
 
 uci set      network.wg_f17_4=wireguard_wg0
 uci set      network.wg_f17_4.description='F17 gateway (ipv4)'
-uci set      network.wg_f17_4.public_key='${wg_vpn_public_key}'
+uci set      network.wg_f17_4.public_key='${wg_f17gw_public_key}'
 uci set      network.wg_f17_4.endpoint_host='f17gw.imaginator.com'
 uci set      network.wg_f17_4.endpoint_port='12321'
 uci set      network.wg_f17_4.persistent_keepalive='15'
@@ -269,25 +277,25 @@ uci commit ddns.global
 
 uci add    ddns  service
 uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].enabled='1'
-uci set    ddns.@service[-1].use_ipv6='0'
-uci set    ddns.@service[-1].force_ipversion=1
-uci set    ddns.@service[-1].ip_source='web'
-uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
-uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
-uci set    ddns.@service[-1].domain='${w16gw_ddns4_domain}'
-uci set    ddns.@service[-1].username='${w16gw_ddns4_username}'
-uci set    ddns.@service[-1].password='${w16gw_ddns4_password}'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].use_logfile='0'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
+uci set    ddns.@service[-1].domain='${w16gw_ddns4_domain}'
+uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
+uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].force_unit='minutes'
+uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
+uci set    ddns.@service[-1].ip_source='web'
+uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
+uci set    ddns.@service[-1].password='${w16gw_ddns4_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='google.com'
 uci set    ddns.@service[-1].use_https='1'
+uci set    ddns.@service[-1].use_ipv6='0'
+uci set    ddns.@service[-1].use_logfile='0'
+uci set    ddns.@service[-1].use_syslog='1'
+uci set    ddns.@service[-1].username='${w16gw_ddns4_username}'
 uci commit ddns.@service[-1]
 
 uci add    ddns  service
@@ -299,8 +307,8 @@ uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='henet' # for hotplug events
-uci set    ddns.@service[-1].ip_source='network'
 uci set    ddns.@service[-1].ip_network='henet'
+uci set    ddns.@service[-1].ip_source='network'
 uci set    ddns.@service[-1].password='${w16gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
@@ -312,7 +320,27 @@ uci set    ddns.@service[-1].use_syslog='1'
 uci set    ddns.@service[-1].username='${w16gw_ddns6_username}'
 uci commit ddns.@service[-1]
 
-/etc/init.d/ddns enable || true
+service ddns enable || true
+
+uci import softflowd<<EOF
+EOF
+
+uci add    softflowd  softflowd
+uci set    softflowd.@softflowd[-1]=softflowd
+uci set    softflowd.@softflowd[-1].enabled='1'
+uci set    softflowd.@softflowd[-1].interface='eth0.4'
+uci set    softflowd.@softflowd[-1].timeout='maxlife=60'
+uci set    softflowd.@softflowd[-1].max_flows='8192'
+uci set    softflowd.@softflowd[-1].host_port='10.7.11.1:2055'
+uci set    softflowd.@softflowd[-1].pid_file='/var/run/softflowd.pid'
+uci set    softflowd.@softflowd[-1].control_socket='/var/run/softflowd.ctl'
+uci set    softflowd.@softflowd[-1].export_version='9'
+uci set    softflowd.@softflowd[-1].tracking_level='full'
+uci set    softflowd.@softflowd[-1].track_ipv6='1'
+uci set    softflowd.@softflowd[-1].sampling_rate='1'
+uci commit softflowd.@softflowd[-1]
+
+service softflowd enable || true
 
 uci import prometheus-node-exporter-lua<<EOF
 EOF
@@ -322,9 +350,74 @@ uci set    prometheus-node-exporter-lua.main.listen_interface='lan'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
-/etc/init.d/prometheus-node-exporter-lua enable || true
+service prometheus-node-exporter-lua enable || true
 
 
+cat <<'EOF' > /etc/adblock/adblock.blacklist
+# domains to block
+# the neighbour streams an inordinate amount of TV from here.
+zattoo.de
+zattoo.com
+reddit.com
+youtube.com
+EOF
+
+uci import adblock <<EOF
+EOF
+
+uci set    adblock.global=adblock
+uci set    adblock.global.adb_backup='0'
+uci set    adblock.global.adb_backupdir='/mnt'
+uci set    adblock.global.adb_debug='1'
+uci set    adblock.global.adb_dns='dnsmasq'
+uci set    adblock.global.adb_enabled='1'
+uci set    adblock.global.adb_forcedns='0'
+uci set    adblock.global.adb_forcesrt='0'
+uci set    adblock.global.adb_manmode='0'
+uci set    adblock.global.adb_rtfile='/tmp/adb_runtime.json'
+uci set    adblock.global.adb_trigger='pyur4'
+uci set    adblock.global.adb_triggerdelay='5' # gives us the chance to log in and change this if using too much memory.
+uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
+uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
+uci commit adblock.global
+
+uci add    adblock source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=blacklist
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='/etc/adblock/adblock.blacklist'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='static local domain blacklist (always deny these domains)'
+uci commit adblock.@source[-1]
+
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=adway
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='https://adaway.org/hosts.txt'
+uci set    adblock.@source[-1].adb_src_rset='\$0 ~/^127\.0\.0\.1[ \t]+([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$2)}'
+uci set    adblock.@source[-1].adb_src_desc='focus on mobile ads, infrequent updates, approx. 400 entries'
+uci commit adblock.@source[-1]
+
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=yoyo
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='https://pgl.yoyo.org/adservers/serverlist.php?hostformat=nohtml&showintro=0&mimetype=plaintext'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='focus on ad related domains, weekly updates, approx. 2.500 entries'
+uci commit adblock.@source[-1]
+
+uci add    adblock  source
+uci set    adblock.@source[-1]=source
+uci rename adblock.@source[-1]=malvertising
+uci set    adblock.@source[-1].enabled='1'
+uci set    adblock.@source[-1].adb_src='https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt'
+uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
+uci set    adblock.@source[-1].adb_src_desc='mozilla driven blocklist, numerous updates on the same day, approx. 6.500 entries'
+uci commit adblock.@source[-1]
+
+service adblock enable || true
 
 uci import firewall<<EOF
 EOF
@@ -550,6 +643,15 @@ EOF
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr.ipv6'
+uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr'
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='/imagilan/'
+uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
+uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
+uci add_list dhcp.@dnsmasq[-1].server="/imagilan/10.7.11.5"
 uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
 uci set      dhcp.@dnsmasq[-1].authoritative='1'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
@@ -563,12 +665,6 @@ uci set      dhcp.@dnsmasq[-1].loglevel='7'
 uci set      dhcp.@dnsmasq[-1].logqueries='0'
 uci set      dhcp.@dnsmasq[-1].nonwildcard='1'
 uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
-uci add_list dhcp.@dnsmasq[-1].server="/imagilan/10.7.11.5"
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='/imagilan/'
-uci add_list dhcp.@dnsmasq[-1].server='8.8.4.4'
-uci add_list dhcp.@dnsmasq[-1].server='8.8.8.8'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr.ipv6'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
