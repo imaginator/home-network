@@ -19,7 +19,7 @@ case $1 in
     $wg_f17gw_public_key \
     $wg_w16gw_private_key \
     $wg_w16gw_public_key \
-    ' < w16gw.settings  | ssh root@10.7.10.1
+    ' < w16gw.settings  | ssh root@w16gw6.imaginator.com
     ;;
 
   f17gw)
@@ -57,7 +57,7 @@ case $1 in
     $wg_windows_private_key \
     $wg_windows_public_key \
     $wg_w16gw_public_key \
-    ' < f17gw.settings | ssh root@37.120.42.149
+    ' < f17gw.settings | ssh root@f17gw6.imaginator.com
     ;;
 
   repeater0[1-6])

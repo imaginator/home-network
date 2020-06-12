@@ -51,6 +51,8 @@ case $MODEL in
     luci-proto-ipv6 \
     luci-proto-wireguard \
     luci-theme-bootstrap \
+    odhcp6c \
+    odhcpd \
     qrencode \
     uhttpd \
     watchcat \
@@ -122,6 +124,7 @@ case $MODEL in
     luci-proto-wireguard \
     luci-theme-bootstrap \
     odhcp6c \
+    odhcpd \
     olsrd \
     olsrd-mod-arprefresh \
     olsrd-mod-bmf \

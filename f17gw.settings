@@ -560,6 +560,7 @@ uci commit prometheus-node-exporter-lua
 
 service prometheus-node-exporter-lua enable || true
 
+test -d /etc/adblock || mkdir -p /etc/adblock
 cat <<'EOF' > /etc/adblock/adblock.blacklist
 # domains to block
 # the neighbour streams an inordinate amount of TV from here.
@@ -1316,7 +1317,7 @@ uci add_list dhcp.trusted.domain='imagilan'
 uci add_list dhcp.trusted.domain='imaginaor.com'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.interface='trusted'
-uci set      dhcp.trusted.leasetime='24h'
+uci set      dhcp.trusted.leasetime='13h'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.ra_default='1'
 uci set      dhcp.trusted.ra='server'
@@ -1329,7 +1330,7 @@ uci set      dhcp.notrust.interface='notrust'
 uci set      dhcp.notrust.dhcpv4='server'
 uci set      dhcp.notrust.start='22'
 uci set      dhcp.notrust.limit='1000'
-uci set      dhcp.notrust.leasetime='23h'
+uci set      dhcp.notrust.leasetime='10m'
 uci set      dhcp.notrust.dns='10.7.12.5'
 uci add_list dhcp.notrust.dhcp_option='option:log-server, 10.7.11.1'
 uci commit   dhcp.notrust
@@ -1378,29 +1379,6 @@ uci commit   dhcp.@domain[-1]
 # IoT
 ###############################################################################
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.2'
-uci set      dhcp.@host[-1].name='hue'
-uci set      dhcp.@host[-1].mac='00:17:88:23:8a:64'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.3'
-uci set      dhcp.@host[-1].name='homematic'
-uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.4'
-uci set      dhcp.@host[-1].name='imagisuck'
-uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1426,13 +1404,6 @@ uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.10'
-uci set      dhcp.@host[-1].name='camera02'
-uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1611,8 +1582,49 @@ uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+
 ###############################################################################
-# Trusted
+# Trusted w16
+###############################################################################
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.1'
+uci set      dhcp.@domain[-1].name='w16gw'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.2'
+uci set      dhcp.@domain[-1].name='repeater06'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.3'
+uci set      dhcp.@domain[-1].name='hue'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.4'
+uci set      dhcp.@domain[-1].name='homematic'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.5'
+uci set      dhcp.@domain[-1].name='imagisuck'
+uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.10.6'
+uci set      dhcp.@domain[-1].name='camera02'
+uci commit   dhcp.@domain[-1]
+
+###########################################
+# Trusted f17
 ###############################################################################
 
 uci add      dhcp  domain
@@ -1728,13 +1740,13 @@ uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 #AP Pro
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.16'
-uci set      dhcp.@host[-1].name='repeater06'
-uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
+#uci add      dhcp host
+#uci set      dhcp.@host[-1]=host
+#uci set      dhcp.@host[-1].ip='10.7.11.16'
+#uci set      dhcp.@host[-1].name='repeater06'
+#uci set      dhcp.@host[-1].mac='dc:9f:db:1a:ce:8e'
+#uci set      dhcp.@host[-1].dns='1'
+#uci commit   dhcp.@host[-1]
 
 #mr33
 uci add      dhcp host
