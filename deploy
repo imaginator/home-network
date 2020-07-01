@@ -19,7 +19,7 @@ case $1 in
     $wg_f17gw_public_key \
     $wg_w16gw_private_key \
     $wg_w16gw_public_key \
-    ' < w16gw.settings  | ssh root@w16gw6.imaginator.com
+    ' < w16gw.settings  | ssh root@192.168.1.1
     ;;
 
   f17gw)
@@ -35,7 +35,7 @@ case $1 in
     $freifunk_client_crt \
     $freifunk_client_key \
     $henet_f17_password \
-    $henet_f17_tunnelid \
+    $henet_f17_tunnelid \ 
     $henet_f17_username \
     $trusted_wifikey \
     $wg_f17gw_private_key \
@@ -60,7 +60,7 @@ case $1 in
     ' < f17gw.settings | ssh root@f17gw6.imaginator.com
     ;;
 
-  repeater0[1-6])
+  repeater0[1-7])
     envsubst \ '
     $trusted_wifikey \
     $iot_wifikey \
@@ -69,7 +69,7 @@ case $1 in
     ' < nanostationm2.settings  | ssh root@$1.imagilan
     ;;
 
-  repeater07)
+  repeater08)
     envsubst \ '
     $trusted_wifikey \
     $dual2_roaming_key \
