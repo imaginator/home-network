@@ -27,9 +27,6 @@ uci set      system.ntp.enabled=1
 uci add_list system.ntp.server='0.de.pool.ntp.org'
 uci add_list system.ntp.server='1.de.pool.ntp.org'
 uci add_list system.ntp.server='2.de.pool.ntp.org'
-uci set      system.@system[-1].location='Falckensteinstraße'
-uci set      system.@system[-1].latitude='52.497618743398135'
-uci set      system.@system[-1].longitude='13.441156148912176'
 
 uci add      system  led
 uci set      system.@led[-1]=led
@@ -56,14 +53,6 @@ uci set      system.@led[-1].default='0'
 uci set      system.@led[-1].trigger='netdev'
 uci set      system.@led[-1].dev='wlan0'
 uci set      system.@led[-1].mode='link tx rx'
-
-uci add      system  watchcat
-uci set      system.@watchcat[-1]=watchcat
-uci set      system.@watchcat[-1].mode='ping'
-uci set      system.@watchcat[-1].forcedelay='300'
-uci set      system.@watchcat[-1].period='30m'
-uci set      system.@watchcat[-1].pingperiod='5m'
-uci set      system.@watchcat[-1].pinghosts='1.1.1.1'
 
 uci commit   system
 
@@ -116,7 +105,6 @@ uci set      network.@switch_vlan[-1].vid='4'
 uci set      network.@switch_vlan[-1].vlan='4'
 uci set      network.@switch_vlan[-1].ports='0t 1 2t'
 uci commit   network.@switch_vlan[-1]
-
 
 uci set      network.loopback=interface
 uci set      network.loopback.ifname='lo'
@@ -171,25 +159,25 @@ uci set      network.wg0.listen_port='12321'
 uci add_list network.wg0.addresses='10.7.8.2/32'
 uci set      network.wg0.private_key='${wg_w16gw_private_key}'
 
-uci set      network.wg_f17_6=wireguard_wg0
-uci set      network.wg_f17_6.description='F17 gateway (ipv6)'
-uci set      network.wg_f17_6.public_key='${wg_f17gw_public_key}'
-uci set      network.wg_f17_6.endpoint_host='f17gw6.imaginator.com'
-uci set      network.wg_f17_6.endpoint_port='12321'
-uci set      network.wg_f17_6.persistent_keepalive='15'
-uci set      network.wg_f17_6.route_allowed_ips='1'
-uci add_list network.wg_f17_6.allowed_ips='10.7.8.0/24'
-uci add_list network.wg_f17_6.allowed_ips='10.7.11.0/24'
+uci set      network.wgf17gw6=wireguard_wg0
+uci set      network.wgf17gw6.description='F17 gateway (ipv6)'
+uci set      network.wgf17gw6.public_key='${wg_f17gw_public_key}'
+uci set      network.wgf17gw6.endpoint_host='f17gw6.imaginator.com'
+uci set      network.wgf17gw6.endpoint_port='12321'
+uci set      network.wgf17gw6.persistent_keepalive='15'
+uci set      network.wgf17gw6.route_allowed_ips='1'
+uci add_list network.wgf17gw6.allowed_ips='10.7.8.0/24'
+uci add_list network.wgf17gw6.allowed_ips='10.7.11.0/24'
 
-uci set      network.wg_f17_4=wireguard_wg0
-uci set      network.wg_f17_4.description='F17 gateway (ipv4)'
-uci set      network.wg_f17_4.public_key='${wg_f17gw_public_key}'
-uci set      network.wg_f17_4.endpoint_host='f17gw.imaginator.com'
-uci set      network.wg_f17_4.endpoint_port='12321'
-uci set      network.wg_f17_4.persistent_keepalive='15'
-uci set      network.wg_f17_4.route_allowed_ips='1'
-uci add_list network.wg_f17_4.allowed_ips='10.7.8.0/24'
-uci add_list network.wg_f17_4.allowed_ips='10.7.11.0/24'
+uci set      network.wgf17gw4=wireguard_wg0
+uci set      network.wgf17gw4.description='F17 gateway (ipv4)'
+uci set      network.wgf17gw4.public_key='${wg_f17gw_public_key}'
+uci set      network.wgf17gw4.endpoint_host='f17gw.imaginator.com'
+uci set      network.wgf17gw4.endpoint_port='12321'
+uci set      network.wgf17gw4.persistent_keepalive='15'
+uci set      network.wgf17gw4.route_allowed_ips='1'
+uci add_list network.wgf17gw4.allowed_ips='10.7.8.0/24'
+uci add_list network.wgf17gw4.allowed_ips='10.7.11.0/24'
 
 # add routing tables
 
@@ -419,7 +407,7 @@ uci commit adblock.@source[-1]
 
 service adblock enable || true
 
-uci import firewall<<EOF
+uci import firewall <<EOF
 EOF
 
 uci add    firewall defaults 
@@ -715,14 +703,6 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.10.4'
 uci set      dhcp.@host[-1].name='homematic'
 uci set      dhcp.@host[-1].mac='00:1a:22:07:e0:96'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.10.5'
-uci set      dhcp.@host[-1].name='imagisuck'
-uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
