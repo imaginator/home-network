@@ -133,6 +133,7 @@ uci set      wireless.radio0.legacy_rates=0
 uci set      wireless.radio0.log_level=0 # 0=verbose
 uci set      wireless.radio0.path='pci0000:00/0000:00:00.0'
 uci set      wireless.radio0.type='mac80211'
+uci set      wireless.radio0.txpower='15'
 uci commit   wireless.radio0
 
 uci set      wireless.radio1=wifi-device
@@ -146,6 +147,7 @@ uci set      wireless.radio1.legacy_rates=0
 uci set      wireless.radio1.log_level=0 # 0=verbose
 uci set      wireless.radio1.path='platform/ar934x_wmac'
 uci set      wireless.radio1.type='mac80211'
+uci set      wireless.radio1.txpower='15'
 uci commit   wireless.radio1
 
 uci set      wireless.imagifi2=wifi-iface
