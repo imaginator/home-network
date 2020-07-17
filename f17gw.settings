@@ -131,7 +131,7 @@ uci set      network.loopback.netmask='255.0.0.0'
 uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
-uci add_list network.trusted.ip6class='henet'
+#uci add_list network.trusted.ip6class='henet'
 uci add_list network.trusted.ip6class='pyur6'
 uci set      network.trusted.igmp_snooping=1
 uci set      network.trusted.ip6assign='64'
@@ -1469,6 +1469,13 @@ uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.10'
+uci set      dhcp.@host[-1].name='camera02'
+uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1647,7 +1654,6 @@ uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-
 ###############################################################################
 # Trusted w16
 ###############################################################################
@@ -1674,12 +1680,6 @@ uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.10.4'
 uci set      dhcp.@domain[-1].name='homematic'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.10.6'
-uci set      dhcp.@domain[-1].name='camera02'
 uci commit   dhcp.@domain[-1]
 
 ###############################################################################
