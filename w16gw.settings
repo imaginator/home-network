@@ -167,6 +167,7 @@ uci set      network.wgf17gw6.endpoint_port='12321'
 uci set      network.wgf17gw6.persistent_keepalive='15'
 uci set      network.wgf17gw6.route_allowed_ips='1'
 uci add_list network.wgf17gw6.allowed_ips='10.7.8.0/24'
+uci add_list network.wgf17gw6.allowed_ips='10.7.9.0/24'
 uci add_list network.wgf17gw6.allowed_ips='10.7.11.0/24'
 
 uci set      network.wgf17gw4=wireguard_wg0
@@ -177,6 +178,7 @@ uci set      network.wgf17gw4.endpoint_port='12321'
 uci set      network.wgf17gw4.persistent_keepalive='15'
 uci set      network.wgf17gw4.route_allowed_ips='1'
 uci add_list network.wgf17gw4.allowed_ips='10.7.8.0/24'
+uci add_list network.wgf17gw4.allowed_ips='10.7.9.0/24'
 uci add_list network.wgf17gw4.allowed_ips='10.7.11.0/24'
 
 # add routing tables
