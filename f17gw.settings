@@ -195,7 +195,7 @@ uci set      network.henet.mtu='1480'
 
 uci set      network.wg0='interface'
 uci set      network.wg0.proto='wireguard'
-uci set      network.wg0.mtu=1420
+uci set      network.wg0.mtu=1460 #  Overhead: 40 bytes 
 uci set      network.wg0.listen_port='12321'
 uci add_list network.wg0.addresses='10.7.8.1/24'
 uci set      network.wg0.private_key='${wg_f17gw_private_key}'
@@ -1490,6 +1490,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.12'
 uci set      dhcp.@host[-1].name='knxgw'
 uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.21'
+uci set      dhcp.@host[-1].name='projector01'
+uci set      dhcp.@host[-1].mac='73:3a:65:5f:a8:08'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 

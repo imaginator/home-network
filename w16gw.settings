@@ -154,7 +154,7 @@ uci set      network.henet.mtu='1480'
 
 uci set      network.wg0='interface'
 uci set      network.wg0.proto='wireguard'
-uci set      network.wg0.mtu=1420
+uci set      network.wg0.mtu=1460 #  Overhead: 40 bytes 
 uci set      network.wg0.listen_port='12321'
 uci add_list network.wg0.addresses='10.7.8.2/32'
 uci set      network.wg0.private_key='${wg_w16gw_private_key}'
