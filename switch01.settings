@@ -2,11 +2,12 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.1, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.1"
-!System Up Time          "8 days 22 hrs 58 mins 46 secs"
+!System Up Time          "66 days 2 hrs 21 mins 25 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
-!Current SNTP Synchronized Time: Jun 11 09:14:47 2020 UTC
+!Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
 ! 
 hostname "switch01"
+network ipv6 address autoconfig
 vlan database
 vlan 2-6
 vlan name 2 "trusted" 
@@ -28,6 +29,7 @@ line telnet
 exit 
 line ssh
 exit 
+no spanning-tree
 snmp-server sysname "switch01"
 ! 
 interface 0/1
@@ -90,19 +92,35 @@ vlan participation include 2
 poe opmode shutdown
 exit 
 interface 0/10
-vlan participation exclude 1-6
+description 'repeater07 (kitchen)'
+vlan pvid 2
+vlan participation exclude 1,4,6
+vlan participation include 2-3,5
+vlan tagging 2-3,5
 exit 
 interface 0/11
-vlan participation exclude 1-6
+description 'chromecast Ultra (beamer)'
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
 exit 
 interface 0/12
-vlan participation exclude 1-6
+description 'projector01'
+vlan pvid 5
+vlan participation exclude 1-4,6
+vlan participation include 5
 exit 
 interface 0/13
-vlan participation exclude 1-6
+description 'repeater06 (cat genie room)'
+vlan participation exclude 1,4,6
+vlan participation include 2-3,5
+vlan tagging 2-3,5
 exit 
 interface 0/14
-vlan participation exclude 1-6
+description 'laptop in Arbeit zimmer'
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
 exit 
 interface 0/15
 vlan participation exclude 1-6
@@ -171,4 +189,5 @@ exit
 interface lag 6 
 vlan participation exclude 1-6
 exit 
+service ubnt-discovery-active-scan
 exit 
