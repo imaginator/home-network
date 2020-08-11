@@ -84,27 +84,6 @@ uci set system.@led[-1].mode='tx'
 uci set system.@led[-1].default='0'
 uci commit system.@led[-1]
 
-# UniFi Pro
-uci add system led
-uci set system.@led[-1]=led
-uci set system.@led[-1].sysfs='ubnt:white:dome'
-uci set system.@led[-1].trigger='netdev'
-uci set system.@led[-1].name='freifunk-tx'
-uci set system.@led[-1].dev='imagifi5'
-uci set system.@led[-1].mode='tx rx'
-uci set system.@led[-1].default='0'
-uci commit system.@led[-1]
-
-uci add system led
-uci set system.@led[-1]=led
-uci set system.@led[-1].sysfs='ubnt:blue:dome'
-uci set system.@led[-1].trigger='netdev'
-uci set system.@led[-1].name='freifunk-tx'
-uci set system.@led[-1].dev='imagifi2'
-uci set system.@led[-1].mode='tx rx'
-uci set system.@led[-1].default='0'
-uci commit system.@led[-1]
-
 uci import dropbear <<EOF
 EOF
 
