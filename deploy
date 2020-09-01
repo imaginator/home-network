@@ -60,13 +60,22 @@ case $1 in
     ' < f17gw.settings | ssh root@10.7.11.5
     ;;
 
-  repeater0[1-7])
+  repeater-lounge|repeater-bedroom1|repeater-street-north|repeater-street-south|repeater-hof-north)
     envsubst \ '
     $trusted_wifikey \
     $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
     ' < nanostationm2.settings  | ssh root@$1.imagilan
+    ;;
+
+first-time)
+    envsubst \ '
+    $trusted_wifikey \
+    $iot_wifikey \
+    $dual2_roaming_key \
+    $freifunk_roaming_key \
+    ' < nanostationm2.settings  | ssh root@192.168.1.1
     ;;
 
   repeater08)
@@ -78,7 +87,7 @@ case $1 in
     ;;
 
   *)
-    echo "useage: $0 <repeater0X|edgerouterx>"
+    echo "useage: $0 <repeater0X|edgerouterx|first-time>"
   ;;
 esac
 
