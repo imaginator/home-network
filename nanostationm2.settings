@@ -2,7 +2,7 @@
 set -xe
 # Setup a Nanostation M2 Loco
 
-# curl -o code.bin https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/openwrt-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin 
+# curl -o code.bin https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/openwrt-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin
 # Turn on device and keep reset button pressed for ~10 seconds: LEDs start flashing differently.
 # echo -e "binary\nrexmt 1\ntimeout 60\ntrace\nput code.bin flash_update\n" | tftp 192.168.1.20
 # flashing takes a while...
@@ -139,6 +139,7 @@ uci commit   wireless.radio1
 
 uci set      wireless.imagifi2=wifi-iface
 uci set      wireless.imagifi2.device='radio0'
+uci set      wireless.imagifi2.disassoc_low_ack=0
 uci set      wireless.imagifi2.encryption='sae-mixed'
 uci set      wireless.imagifi2.ieee80211r='1'
 uci set      wireless.imagifi2.ieee80211w='1'
@@ -151,6 +152,7 @@ uci commit   wireless.imagifi2
 
 uci set      wireless.imagifi25=wifi-iface
 uci set      wireless.imagifi25.device='radio1'
+uci set      wireless.imagifi25.disassoc_low_ack=0
 uci set      wireless.imagifi25.encryption='sae-mixed'
 uci set      wireless.imagifi25.ieee80211r='1'
 uci set      wireless.imagifi25.ieee80211w='1'
@@ -163,6 +165,7 @@ uci commit   wireless.imagifi25
 
 uci set      wireless.imagifi5=wifi-iface
 uci set      wireless.imagifi5.device='radio1'
+uci set      wireless.imagifi5.disassoc_low_ack=0
 uci set      wireless.imagifi5.encryption='sae-mixed'
 uci set      wireless.imagifi5.ieee80211r='1'
 uci set      wireless.imagifi5.ieee80211w='1'
@@ -175,6 +178,7 @@ uci commit   wireless.imagifi5
 
 uci set      wireless.f17free2=wifi-iface
 uci set      wireless.f17free2.device='radio0'
+uci set      wireless.f17free2.disassoc_low_ack=0
 uci set      wireless.f17free2.encryption='none'
 uci set      wireless.f17free2.ieee80211r='1'
 uci set      wireless.f17free2.ieee80211w='1'
@@ -188,6 +192,7 @@ uci commit   wireless.f17free2
 
 uci set      wireless.ffunk2=wifi-iface
 uci set      wireless.ffunk2.device='radio0'
+uci set      wireless.ffunk2.disassoc_low_ack=0
 uci set      wireless.ffunk2.encryption='none'
 uci set      wireless.ffunk2.ieee80211r='1'
 uci set      wireless.ffunk2.ieee80211w='1'
@@ -201,6 +206,7 @@ uci commit   wireless.ffunk2
 
 uci set      wireless.ffunk5=wifi-iface
 uci set      wireless.ffunk5.device='radio1'
+uci set      wireless.ffunk5.disassoc_low_ack=0
 uci set      wireless.ffunk5.encryption='none'
 uci set      wireless.ffunk5.ieee80211r='1'
 uci set      wireless.ffunk5.ieee80211w='1'
@@ -214,6 +220,7 @@ uci commit   wireless.ffunk5
 
 uci set      wireless.iot2=wifi-iface
 uci set      wireless.iot2.device='radio0'
+uci set      wireless.iot2.disassoc_low_ack=0
 uci set      wireless.iot2.encryption='psk2+ccmp'
 uci set      wireless.iot2.ieee80211r='1'
 uci set      wireless.iot2.ieee80211w='1'
@@ -227,6 +234,7 @@ uci commit   wireless.iot2
 
 uci set      wireless.iot5=wifi-iface
 uci set      wireless.iot5.device='radio1'
+uci set      wireless.iot5.disassoc_low_ack=0
 uci set      wireless.iot5.encryption='psk2+ccmp'
 uci set      wireless.iot5.ieee80211r='1'
 uci set      wireless.iot5.ieee80211w='1'
@@ -273,7 +281,7 @@ uci commit   network
 uci import firewall <<EOF
 EOF
 
-uci add      firewall defaults 
+uci add      firewall defaults
 uci set      firewall.@defaults[-1]=defaults
 uci set      firewall.@defaults[-1].input=ACCEPT
 uci set      firewall.@defaults[-1].output=ACCEPT
