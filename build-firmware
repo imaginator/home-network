@@ -97,6 +97,7 @@ case $MODEL in
     iptables-mod-tee \
     kmod-gpio-pca953x \
     kmod-i2c-gpio-custom \
+    kmod-ipip \
     kmod-tun \
     kmod-wireguard \
     libatomic \
@@ -168,7 +169,7 @@ case $MODEL in
   REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
-"ubnt-uap-pro") 
+"ubnt-uap-pro")
   PLATFORM=ar71xx
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
@@ -180,11 +181,11 @@ case $MODEL in
     luci luci-base \
     luci-theme-bootstrap \
     odhcp6c \
-    " 
+    "
   REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
-"ubnt-uap-ac-lite") 
+"ubnt-uap-ac-lite")
   PLATFORM=ar71xx
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
@@ -196,11 +197,11 @@ case $MODEL in
     luci luci-base \
     luci-theme-bootstrap \
     odhcp6c \
-    " 
+    "
   REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
-"nanobridge-m5") 
+"nanobridge-m5")
   PLATFORM=ar71xx
   TYPE=generic
   TARGET_DEVICE=ar71xx-generic
@@ -212,11 +213,11 @@ case $MODEL in
     luci luci-base \
     luci-theme-bootstrap \
     odhcp6c \
-    " 
+    "
   REMOVED_PACKAGES="-wpad-mini"
 ;;
 
-"mr33") 
+"mr33")
   PLATFORM=ipq40xx
   TYPE=generic
   TARGET_DEVICE=ipq40xx
@@ -229,7 +230,7 @@ case $MODEL in
     luci-base \
     luci-theme-bootstrap \
     odhcp6c \
-    " 
+    "
   REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
@@ -249,12 +250,12 @@ fi
 
 if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 ] ; then
   if [ ! -f ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz ]; then
-   (cd ${BUILDDIR} && curl -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )  
+   (cd ${BUILDDIR} && curl -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )
   fi
   tar xfJ ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz -C ${BUILDDIR}/
 fi
 
-COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${BASE_PACKAGES}` `echo ${EXTRA_PACKAGES}`" 
+COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${BASE_PACKAGES}` `echo ${EXTRA_PACKAGES}`"
 echo "Combined package list ${COMBINED_PACKAGE_LIST}"
 
 echo "Building ${VERSION}..."
