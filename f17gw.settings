@@ -63,7 +63,7 @@ chmod 0600 /etc/dropbear/authorized_keys
 uci import network <<EOF
 EOF
 
-# switch: Numbers 2-5 are Ports 1-4 as labeled on the unit, number 1 is the 
+# switch: Numbers 2-5 are Ports 1-4 as labeled on the unit, number 1 is the
 # Internet (WAN) on the unit, 0 is the internal connection to the router itself.
 #
 # Port   Switch port
@@ -71,9 +71,9 @@ EOF
 # CPU       6 (all vlans are tagged to CPU)
 # ETH0      5 (vlan trunks to switch01.imagilan)
 # ETH1      5 ( )
-# ETH2      0 ( ) 
-# ETH3      2 ( ) 
-# ETH4      4 ( ) untagged WAN       
+# ETH2      0 ( )
+# ETH3      2 ( )
+# ETH4      4 ( ) untagged WAN
 
 uci add      network  switch
 uci set      network.@switch[-1]=switch
@@ -81,7 +81,7 @@ uci set      network.@switch[-1].name='switch0'
 uci set      network.@switch[-1].reset='1'
 uci set      network.@switch[-1].enable_vlan='1'
 uci commit   network.@switch[-1]
-           
+
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
@@ -89,7 +89,7 @@ uci set      network.@switch_vlan[-1].vid='2'
 uci set      network.@switch_vlan[-1].vlan='2'
 uci set      network.@switch_vlan[-1].ports='0t 2 3 4 6t'
 uci commit   network.@switch_vlan[-1]
-           
+
 uci add      network  switch_vlan
 uci set      network.@switch_vlan[-1]=switch_vlan
 uci set      network.@switch_vlan[-1].device='switch0'
@@ -139,7 +139,7 @@ uci set      network.trusted.ip6ifaceid='::5'
 uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.netmask='255.255.255.0'
 uci set      network.trusted.proto='static'
-           
+
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
 uci add_list network.notrust.ifname='eth0.3'
@@ -173,13 +173,19 @@ uci set      network.ffvpn.force_link='1'
 uci set      network.ffvpn.delegate='0'
 uci set      network.ffvpn.auto='1'
 
-
 uci set      network.iot=interface
 uci set      network.iot.ifname='eth0.5'
 uci set      network.iot.ipaddr='10.7.9.1'
 uci set      network.iot.netmask='255.255.255.0'
 uci set      network.iot.proto='static'
 uci set      network.iot.type='bridge'
+
+uci set      network.ffuplink=interface
+uci set      network.ffuplink.ifname='eth0.6'
+uci set      network.ffuplink.ipaddr='10.31.14.84'
+uci set      network.ffuplink.netmask='255.255.255.255'
+uci set      network.ffuplink.proto='static'
+uci set      network.ffuplink.type='bridge'
 
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
@@ -195,7 +201,7 @@ uci set      network.henet.mtu='1480'
 
 uci set      network.wg0='interface'
 uci set      network.wg0.proto='wireguard'
-uci set      network.wg0.mtu=1460 #  Overhead: 40 bytes 
+uci set      network.wg0.mtu=1460 #  Overhead: 40 bytes
 uci set      network.wg0.listen_port='12321'
 uci add_list network.wg0.addresses='10.7.8.1/24'
 uci set      network.wg0.private_key='${wg_f17gw_private_key}'
@@ -256,7 +262,7 @@ uci commit   network
 #uci set      network.@rule[-1].src='10.7.12.0/22'
 #uci set      network.@rule[-1].lookup='100'
 #uci commit   network.@rule[-1]
-            
+
 # due to a bug, these are now in '/etc/openvpn/up.sh'
 #uci add      network  route
 #uci set      network.@route[-1]=route
@@ -265,7 +271,7 @@ uci commit   network
 #uci set      network.@route[-1].target=10.7.11.0
 #uci set      network.@route[-1].netmask=255.255.255.0
 #uci commit   network.@route[-1]
-            
+
 #uci add      network  route
 #uci set      network.@route[-1]=route
 #uci set      network.@route[-1].table=100
@@ -278,9 +284,9 @@ uci import olsrd<<EOF
 EOF
 
 # Specifies the routing Table olsr uses
-# RtTable is for host routes, 
+# RtTable is for host routes,
 # RtTableDefault for the route to the default internet gateway
-# RtTableTunnel is for routes to the ipip tunnels, 
+# RtTableTunnel is for routes to the ipip tunnels,
 # valid values are 1 to 254
 # There is a special parameter "auto" (choose default below)
 # (with smartgw: default is 254/223/224)
@@ -296,13 +302,13 @@ EOF
 # (with smartgw: default is none/32776/32786/32796)
 # (without smartgw: default is none/none/none/none)
 
-# root@w16gw:~# ip rule show 
-# 0:      from all lookup local 
-# 32766:  from all lookup main 
-# 32767:  from all lookup default 
-# 90000:  from all lookup 111 
-# 100000: from all iif eth0.6 lookup 112 
-# 120000: from all lookup 113 
+# root@w16gw:~# ip rule show
+# 0:      from all lookup local
+# 32766:  from all lookup main
+# 32767:  from all lookup default
+# 90000:  from all lookup 111
+# 100000: from all iif eth0.6 lookup 112
+# 120000: from all lookup 113
 # 120010: from all lookup 112
 
 uci add      olsrd  olsrd
@@ -347,18 +353,16 @@ uci add      olsrd  Interface
 uci set      olsrd.@Interface[-1]=Interface
 uci set      olsrd.@Interface[-1].ignore='0'
 uci set      olsrd.@Interface[-1].interface='ffuplink'
-uci set      olsrd.@Interface[-1].Mode='mesh'
 uci set      olsrd.@Interface[-1].Ip4Broadcast='255.255.255.255'
-uci set      olsrd.@Interface[-1].ignore='1'
+uci set      olsrd.@Interface[-1].Mode='mesh'
 uci commit   olsrd.@Interface[-1]
 
 uci add      olsrd6  Interface
 uci set      olsrd6.@Interface[-1]=Interface
 uci set      olsrd6.@Interface[-1].ignore='0'
 uci set      olsrd6.@Interface[-1].interface='ffuplink'
-uci set      olsrd6.@Interface[-1].Mode='mesh'
 uci set      olsrd6.@Interface[-1].IPv6Multicast='ff02::6d'
-uci set      olsrd6.@Interface[-1].ignore='1'
+uci set      olsrd6.@Interface[-1].Mode='mesh'
 uci commit   olsrd6.@Interface[-1]
 
 uci add      olsrd  Hna4
@@ -736,8 +740,8 @@ uci set    firewall.@defaults[-1].flow_offloading_hw=1
 uci set    firewall.@defaults[-1].drop_invalid=1
 uci commit firewall.@defaults[-1]
 
-# A zone section groups one or more interfaces and serves as a source or destination for forwardings, 
-# rules and redirects. Masquerading (NAT) of outgoing traffic is controlled on a per-zone basis. 
+# A zone section groups one or more interfaces and serves as a source or destination for forwardings,
+# rules and redirects. Masquerading (NAT) of outgoing traffic is controlled on a per-zone basis.
 # Note that masquerading is defined on the outgoing interface.
 
 # INPUT   rules for a zone describe what happens to traffic trying to reach the router itself through an interface in that zone.
@@ -812,7 +816,7 @@ uci set    firewall.@forwarding[-1].src='wan_trusted'
 uci set    firewall.@forwarding[-1].dest='wan_trusted'
 uci commit firewall.@forwarding[-1]
 
-# Port forwardings (DNAT) are defined by redirect sections. 
+# Port forwardings (DNAT) are defined by redirect sections.
 # All incoming traffic on the specified source zone which matches the given rules will be directed to the specified internal host.
 # Redirects are also commonly known as “port forwarding”, and “virtual servers”.
 # Port ranges are specified as start:stop, for instance 6666:6670. This is similar to the iptables syntax.
@@ -868,7 +872,7 @@ uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
-    
+
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].name='443 on bunker'
@@ -906,7 +910,7 @@ uci set    firewall.@redirect[-1].dest_port='514'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].target='DNAT'
 uci commit firewall.@redirect[-1]
-    
+
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
@@ -920,7 +924,7 @@ uci set    firewall.@redirect[-1].dest_port='32400'
 uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
 
-# fix to stop vpn traffic leaving and entering home network    
+# fix to stop vpn traffic leaving and entering home network
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
@@ -1002,7 +1006,7 @@ uci set      firewall.@rule[-1].limit='1000/sec'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-        
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IPv6 input from WAN'
@@ -1273,7 +1277,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT DHCP outbound'
 uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].dest='iot' 
+uci set      firewall.@rule[-1].dest='iot'
 uci set      firewall.@rule[-1].src_port='67'
 uci set      firewall.@rule[-1].dest_port='68'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -1760,7 +1764,7 @@ uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  domain 
+uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.5'
 uci set      dhcp.@domain[-1].name='f17gw'
@@ -2004,6 +2008,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.50'
 uci set      dhcp.@host[-1].name='imagisuck'
 uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.51'
+uci set      dhcp.@host[-1].name='nvidia-shield'
+uci set      dhcp.@host[-1].mac='48:b0:2d:14:fb:40'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
