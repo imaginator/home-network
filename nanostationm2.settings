@@ -139,7 +139,14 @@ uci set      wireless.radio1.htmode='VHT80'
 uci set      wireless.radio1.hwmode='11a'
 uci set      wireless.radio1.legacy_rates=0
 uci set      wireless.radio1.log_level=0 # 0=verbose
-uci set      wireless.radio1.path='pci0000:00/0000:00:00.0'
+case "$system_hostname" in
+    repeater-lounge|repeater-bedroom1)
+        uci set      wireless.radio1.path='pci0000:00/0000:00:00.0'
+    ;;
+    *)
+    uci set      wireless.radio1.path='dummy'
+    ;;
+esac
 uci set      wireless.radio1.type='mac80211'
 # uci set      wireless.radio1.txpower='15'
 uci commit   wireless.radio1
