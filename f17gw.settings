@@ -1863,7 +1863,9 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.25'
 uci set      dhcp.@host[-1].hostid='25'
 uci set      dhcp.@host[-1].name='furrow'
-uci set      dhcp.@host[-1].mac='34:E1:2D:78:F5:D7 00:E0:4C:68:00:0B'
+# 48:d7:05:e9:d3:07 = Apple USB
+# 34:e1:2d:78:f5:d7 = WiFi
+uci set      dhcp.@host[-1].mac='34:E1:2D:78:F5:D7 00:E0:4C:68:00:0B 48:d7:05:e9:d3:07'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -2015,7 +2017,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.51'
 uci set      dhcp.@host[-1].name='nvidia-shield'
-uci set      dhcp.@host[-1].mac='48:b0:2d:14:fb:40'
+uci set      dhcp.@host[-1].mac='48:b0:2d:14:fb:40 48:B0:2D:13:5D:30' # wireless interface is 48:B0:2D:13:5D:30
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
