@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=19.07.3
+VERSION=19.07.4
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
