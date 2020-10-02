@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e # fail if we can't source the file
-. ./network-secrets.env 
+. ./network-secrets.env
 set -x
 
 case $1 in
@@ -35,7 +35,7 @@ case $1 in
     $freifunk_client_crt \
     $freifunk_client_key \
     $henet_f17_password \
-    $henet_f17_tunnelid \ 
+    $henet_f17_tunnelid \
     $henet_f17_username \
     $trusted_wifikey \
     $wg_f17gw_private_key \
@@ -69,7 +69,7 @@ case $1 in
     ' < nanostationm2.settings  | ssh root@$1.imagilan
     ;;
 
-first-time)
+  first-time)
     envsubst \ '
     $trusted_wifikey \
     $iot_wifikey \
