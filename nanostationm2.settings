@@ -161,6 +161,7 @@ uci set      wireless.imagifi2.ifname='imagifi2'
 uci set      wireless.imagifi2.key='${trusted_wifikey}'
 uci set      wireless.imagifi2.mode='ap'
 uci set      wireless.imagifi2.network='trusted'
+uci set      wireless.imagifi2.skip_inactivity_poll=1
 uci set      wireless.imagifi2.ssid='imagiFi'
 uci commit   wireless.imagifi2
 
@@ -174,6 +175,7 @@ uci set      wireless.imagifi25.ifname='imagifi25'
 uci set      wireless.imagifi25.key='${trusted_wifikey}'
 uci set      wireless.imagifi25.mode='ap'
 uci set      wireless.imagifi25.network='trusted'
+uci set      wireless.imagifi25.skip_inactivity_poll=1
 uci set      wireless.imagifi25.ssid='imagiFi'
 uci commit   wireless.imagifi25
 
@@ -187,6 +189,7 @@ uci set      wireless.imagifi5.ifname='imagifi5'
 uci set      wireless.imagifi5.key='${trusted_wifikey}'
 uci set      wireless.imagifi5.mode='ap'
 uci set      wireless.imagifi5.network='trusted'
+uci set      wireless.imagifi5.skip_inactivity_poll=1
 uci set      wireless.imagifi5.ssid='imagiFi 5'
 uci commit   wireless.imagifi5
 
@@ -200,6 +203,7 @@ uci set      wireless.f17free2.ifname='f17free2'
 uci set      wireless.f17free2.isolate='1'
 uci set      wireless.f17free2.mode='ap'
 uci set      wireless.f17free2.network='notrust'
+uci set      wireless.f17free2.skip_inactivity_poll=1
 uci set      wireless.f17free2.ssid='Falckensteinstr 17 Free WiFi'
 uci set      wireless.f17free2.wpa_group_rekey='0'
 uci commit   wireless.f17free2
@@ -214,6 +218,7 @@ uci set      wireless.ffunk2.ifname='ffunk2'
 uci set      wireless.ffunk2.isolate='1'
 uci set      wireless.ffunk2.mode='ap'
 uci set      wireless.ffunk2.network='notrust'
+uci set      wireless.ffunk2.skip_inactivity_poll=1
 uci set      wireless.ffunk2.ssid='berlin.freifunk.net'
 uci set      wireless.ffunk2.wpa_group_rekey='0'
 uci commit   wireless.ffunk2
@@ -228,6 +233,7 @@ uci set      wireless.ffunk5.ifname='ffunk5'
 uci set      wireless.ffunk5.isolate='1'
 uci set      wireless.ffunk5.mode='ap'
 uci set      wireless.ffunk5.network='notrust'
+uci set      wireless.ffunk2.skip_inactivity_poll=1
 uci set      wireless.ffunk5.ssid='berlin.freifunk.net'
 uci set      wireless.ffunk5.wpa_group_rekey='0'
 uci commit   wireless.ffunk5
@@ -243,6 +249,7 @@ uci set      wireless.iot2.isolate='1'
 uci set      wireless.iot2.key='${iot_wifikey}'
 uci set      wireless.iot2.mode='ap'
 uci set      wireless.iot2.network='iot'
+uci set      wireless.iot2.skip_inactivity_poll=1
 uci set      wireless.iot2.ssid='imagiFi IoT'
 uci commit   wireless.iot2
 
@@ -257,6 +264,7 @@ uci set      wireless.iot5.isolate='1'
 uci set      wireless.iot5.key='${iot_wifikey}'
 uci set      wireless.iot5.mode='ap'
 uci set      wireless.iot5.network='iot'
+uci set      wireless.iot5.skip_inactivity_poll=1
 uci set      wireless.iot5.ssid='imagiFi IoT'
 uci commit   wireless.iot5
 
