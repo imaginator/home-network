@@ -1537,6 +1537,14 @@ uci set      dhcp.@host[-1].mac='00:1d:63:27:bc:da'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.26'
+uci set      dhcp.@host[-1].name='vallox'
+uci set      dhcp.@host[-1].mac='b0:57:a6:33:c2:7e'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 # HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
