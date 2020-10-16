@@ -162,7 +162,7 @@ case "$system_hostname" in
     ;;
 esac
 uci set      wireless.radio1.type='mac80211'
-# uci set      wireless.radio1.txpower='15'
+uci set      wireless.radio1.txpower='11'
 uci commit   wireless.radio1
 
 uci set      wireless.imagifi2=wifi-iface
@@ -170,6 +170,7 @@ uci set      wireless.imagifi2.device='radio0'
 uci set      wireless.imagifi2.disassoc_low_ack=0
 uci set      wireless.imagifi2.encryption='sae-mixed'
 uci set      wireless.imagifi2.ieee80211r='1'
+uci set      wireless.imagifi2.ft_psk_generate_local='1'
 uci set      wireless.imagifi2.ieee80211w='1'
 uci set      wireless.imagifi2.ifname='imagifi2'
 uci set      wireless.imagifi2.key='${trusted_wifikey}'
@@ -184,6 +185,7 @@ uci set      wireless.imagifi25.device='radio1'
 uci set      wireless.imagifi25.disassoc_low_ack=0
 uci set      wireless.imagifi25.encryption='sae-mixed'
 uci set      wireless.imagifi25.ieee80211r='1'
+uci set      wireless.imagifi25.ft_psk_generate_local='1'
 uci set      wireless.imagifi25.ieee80211w='1'
 uci set      wireless.imagifi25.ifname='imagifi25'
 uci set      wireless.imagifi25.key='${trusted_wifikey}'
@@ -198,6 +200,7 @@ uci set      wireless.imagifi5.device='radio1'
 uci set      wireless.imagifi5.disassoc_low_ack=0
 uci set      wireless.imagifi5.encryption='sae-mixed'
 uci set      wireless.imagifi5.ieee80211r='1'
+uci set      wireless.imagifi5.ft_psk_generate_local='1'
 uci set      wireless.imagifi5.ieee80211w='1'
 uci set      wireless.imagifi5.ifname='imagifi5'
 uci set      wireless.imagifi5.key='${trusted_wifikey}'
@@ -207,56 +210,12 @@ uci set      wireless.imagifi5.skip_inactivity_poll=1
 uci set      wireless.imagifi5.ssid='imagiFi 5'
 uci commit   wireless.imagifi5
 
-uci set      wireless.f17free2=wifi-iface
-uci set      wireless.f17free2.device='radio0'
-uci set      wireless.f17free2.disassoc_low_ack=0
-uci set      wireless.f17free2.encryption='none'
-uci set      wireless.f17free2.ieee80211r='1'
-uci set      wireless.f17free2.ieee80211w='1'
-uci set      wireless.f17free2.ifname='f17free2'
-uci set      wireless.f17free2.isolate='1'
-uci set      wireless.f17free2.mode='ap'
-uci set      wireless.f17free2.network='notrust'
-uci set      wireless.f17free2.skip_inactivity_poll=1
-uci set      wireless.f17free2.ssid='Falckensteinstr 17 Free WiFi'
-uci set      wireless.f17free2.wpa_group_rekey='0'
-uci commit   wireless.f17free2
-
-uci set      wireless.ffunk2=wifi-iface
-uci set      wireless.ffunk2.device='radio0'
-uci set      wireless.ffunk2.disassoc_low_ack=0
-uci set      wireless.ffunk2.encryption='none'
-uci set      wireless.ffunk2.ieee80211r='1'
-uci set      wireless.ffunk2.ieee80211w='1'
-uci set      wireless.ffunk2.ifname='ffunk2'
-uci set      wireless.ffunk2.isolate='1'
-uci set      wireless.ffunk2.mode='ap'
-uci set      wireless.ffunk2.network='notrust'
-uci set      wireless.ffunk2.skip_inactivity_poll=1
-uci set      wireless.ffunk2.ssid='berlin.freifunk.net'
-uci set      wireless.ffunk2.wpa_group_rekey='0'
-uci commit   wireless.ffunk2
-
-uci set      wireless.ffunk5=wifi-iface
-uci set      wireless.ffunk5.device='radio1'
-uci set      wireless.ffunk5.disassoc_low_ack=0
-uci set      wireless.ffunk5.encryption='none'
-uci set      wireless.ffunk5.ieee80211r='1'
-uci set      wireless.ffunk5.ieee80211w='1'
-uci set      wireless.ffunk5.ifname='ffunk5'
-uci set      wireless.ffunk5.isolate='1'
-uci set      wireless.ffunk5.mode='ap'
-uci set      wireless.ffunk5.network='notrust'
-uci set      wireless.ffunk2.skip_inactivity_poll=1
-uci set      wireless.ffunk5.ssid='berlin.freifunk.net'
-uci set      wireless.ffunk5.wpa_group_rekey='0'
-uci commit   wireless.ffunk5
-
 uci set      wireless.iot2=wifi-iface
 uci set      wireless.iot2.device='radio0'
 uci set      wireless.iot2.disassoc_low_ack=0
 uci set      wireless.iot2.encryption='psk2+ccmp'
 uci set      wireless.iot2.ieee80211r='1'
+uci set      wireless.iot2.ft_psk_generate_local='1'
 uci set      wireless.iot2.ieee80211w='1'
 uci set      wireless.iot2.ifname='iot2'
 uci set      wireless.iot2.isolate='1'
@@ -272,6 +231,7 @@ uci set      wireless.iot5.device='radio1'
 uci set      wireless.iot5.disassoc_low_ack=0
 uci set      wireless.iot5.encryption='psk2+ccmp'
 uci set      wireless.iot5.ieee80211r='1'
+uci set      wireless.iot5.ft_psk_generate_local='1'
 uci set      wireless.iot5.ieee80211w='1'
 uci set      wireless.iot5.ifname='iot5'
 uci set      wireless.iot5.isolate='1'
@@ -281,6 +241,51 @@ uci set      wireless.iot5.network='iot'
 uci set      wireless.iot5.skip_inactivity_poll=1
 uci set      wireless.iot5.ssid='imagiFi IoT'
 uci commit   wireless.iot5
+
+# open APs below (no roaming possible)
+uci set      wireless.f17free2=wifi-iface
+uci set      wireless.f17free2.device='radio0'
+uci set      wireless.f17free2.disassoc_low_ack=0
+uci set      wireless.f17free2.encryption='none'
+uci set      wireless.f17free2.ieee80211w='1'
+uci set      wireless.f17free2.ifname='f17free2'
+uci set      wireless.f17free2.isolate='1'
+uci set      wireless.f17free2.mode='ap'
+uci set      wireless.f17free2.network='notrust'
+uci set      wireless.f17free2.skip_inactivity_poll=1
+uci set      wireless.f17free2.ssid='Falckensteinstr 17 Free WiFi'
+uci set      wireless.f17free2.wpa_group_rekey='0'
+uci commit   wireless.f17free2
+
+uci set      wireless.ffunk2=wifi-iface
+uci set      wireless.ffunk2.device='radio0'
+uci set      wireless.ffunk2.disassoc_low_ack=0
+uci set      wireless.ffunk2.encryption='none'
+uci set      wireless.ffunk2.ieee80211w='1'
+uci set      wireless.ffunk2.ifname='ffunk2'
+uci set      wireless.ffunk2.isolate='1'
+uci set      wireless.ffunk2.mode='ap'
+uci set      wireless.ffunk2.network='notrust'
+uci set      wireless.ffunk2.skip_inactivity_poll=1
+uci set      wireless.ffunk2.ssid='berlin.freifunk.net'
+uci set      wireless.ffunk2.wpa_group_rekey='0'
+uci commit   wireless.ffunk2
+
+uci set      wireless.ffunk5=wifi-iface
+uci set      wireless.ffunk5.device='radio1'
+uci set      wireless.ffunk5.disassoc_low_ack=0
+uci set      wireless.ffunk5.encryption='none'
+uci set      wireless.ffunk5.ieee80211w='1'
+uci set      wireless.ffunk5.ifname='ffunk5'
+uci set      wireless.ffunk5.isolate='1'
+uci set      wireless.ffunk5.mode='ap'
+uci set      wireless.ffunk5.network='notrust'
+uci set      wireless.ffunk2.skip_inactivity_poll=1
+uci set      wireless.ffunk5.ssid='berlin.freifunk.net'
+uci set      wireless.ffunk5.wpa_group_rekey='0'
+uci commit   wireless.ffunk5
+
+
 
 uci import   network <<EOF
 EOF
