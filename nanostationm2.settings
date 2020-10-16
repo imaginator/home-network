@@ -89,12 +89,14 @@ uci set system.@led[-1].trigger='none'
 uci set system.@led[-1].sysfs='ubnt:blue:dome'
 uci set system.@led[-1].name='disable blue'
 uci set system.@led[-1].default='0'
+uci commit system.@led[-1]
 
 uci add system led
 uci set system.@led[-1].trigger='none'
 uci set system.@led[-1].sysfs='ubnt:white:dome'
 uci set system.@led[-1].name='disable white'
 uci set system.@led[-1].default='0'
+uci commit system.@led[-1]
 
 uci import dropbear <<EOF
 EOF
