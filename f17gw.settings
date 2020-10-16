@@ -1545,6 +1545,14 @@ uci set      dhcp.@host[-1].mac='b0:57:a6:33:c2:7e'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.27'
+uci set      dhcp.@host[-1].name='gruenbeck'
+uci set      dhcp.@host[-1].mac='D8:86:0B:70:C5:DC'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 # HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
