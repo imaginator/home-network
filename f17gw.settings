@@ -924,6 +924,19 @@ uci set    firewall.@redirect[-1].dest_port='32400'
 uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
 
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='plex on nvidia shield'
+uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].src_dport='32401'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.51'
+uci set    firewall.@redirect[-1].dest_port='32400'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
 # fix to stop vpn traffic leaving and entering home network
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
@@ -1182,6 +1195,26 @@ uci set      firewall.@rule[-1].dest_port='67-68'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Samba browse udp'
+uci set      firewall.@rule[-1].dest_port='137 138'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci add_list firewall.@rule[-1].proto='udp'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].dest_port='139 445'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='samba browse tcp'
+uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci add_list firewall.@rule[-1].proto='tcp'
 uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
@@ -1869,7 +1902,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
 uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
-uci set      dhcp.@host[-1].name='simon-phone' # same hostname irregardless of upgrades (for @home presense)
+uci set      dhcp.@host[-1].name='simon-phone'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1882,14 +1915,6 @@ uci set      dhcp.@host[-1].name='furrow'
 # 48:d7:05:e9:d3:07 = Apple USB
 # 34:e1:2d:78:f5:d7 = WiFi
 uci set      dhcp.@host[-1].mac='34:E1:2D:78:F5:D7 00:E0:4C:68:00:0B 48:d7:05:e9:d3:07'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.27'
-uci set      dhcp.@host[-1].name='ccultra-lounge'
-uci set      dhcp.@host[-1].mac='20:df:b9:8a:44:30 44:09:b8:13:10:7d' # wireless interface is 20:df:b9:8a:44:30
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1912,7 +1937,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.34'
-uci set      dhcp.@host[-1].name='ccmini-lounge'
+uci set      dhcp.@host[-1].name='ccmini-study'
 uci set      dhcp.@host[-1].mac='20:df:b9:2e:2a:83'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1992,16 +2017,8 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.46'
-uci set      dhcp.@host[-1].name='cca-workroom'
+uci set      dhcp.@host[-1].name='cca-study'
 uci set      dhcp.@host[-1].mac='54:60:09:d2:6b:bc'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.47'
-uci set      dhcp.@host[-1].name='cca-lounge'
-uci set      dhcp.@host[-1].mac='54:60:09:f6:60:10'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
