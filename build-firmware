@@ -6,6 +6,7 @@ VERSION=19.07.4
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
+  lldpd \
   prometheus-node-exporter-lua \
   prometheus-node-exporter-lua-nat_traffic \
   prometheus-node-exporter-lua-netstat \
