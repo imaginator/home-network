@@ -1400,11 +1400,12 @@ uci add_list dhcp.trusted.domain='imagilan'
 uci add_list dhcp.trusted.domain='imaginaor.com'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.interface='trusted'
+uci set      dhcp.trusted.ip6class='pyur6'
 uci set      dhcp.trusted.leasetime='13h'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.ra_default='1'
+uci set      dhcp.trusted.ra_management='1'
 uci set      dhcp.trusted.ra='server'
-uci set      dhcp.trusted.ip6class='pyur6'
 uci set      dhcp.trusted.start='100'
 uci commit   dhcp.trusted
 
