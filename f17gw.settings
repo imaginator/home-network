@@ -1969,6 +1969,22 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.38'
+uci set      dhcp.@host[-1].name='ccmini-lounge'
+uci set      dhcp.@host[-1].mac='14:C1:4E:4F:94:60'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.39'
+uci set      dhcp.@host[-1].name='ccmini-guestbath'
+uci set      dhcp.@host[-1].mac='14:C1:4E:72:67:41'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.40'
 uci set      dhcp.@host[-1].name='cca-bedroom1'
 uci set      dhcp.@host[-1].mac='54:60:09:d2:0d:f8'
