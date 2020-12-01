@@ -131,6 +131,7 @@ uci set      network.loopback.netmask='255.0.0.0'
 uci set      network.trusted=interface
 uci set      network.trusted.type='bridge'
 uci add_list network.trusted.ifname='eth0.2'
+uci set      network.trusted.macaddr='aa:aa:aa:aa:0f:17'
 #uci add_list network.trusted.ip6class='henet'
 uci add_list network.trusted.ip6class='pyur6'
 uci set      network.trusted.igmp_snooping=1
@@ -1396,8 +1397,10 @@ uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.trusted=dhcp
 uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.trusted.dns='fe80::a8aa:aaff:feaa:0f17'
 uci add_list dhcp.trusted.domain='imagilan'
-uci add_list dhcp.trusted.domain='imaginaor.com'
+uci add_list dhcp.trusted.domain='imaginator.com'
+uci set      dhcp.trusted.dhcpv6='server'
 uci set      dhcp.trusted.force='1'
 uci set      dhcp.trusted.interface='trusted'
 uci set      dhcp.trusted.ip6class='pyur6'
