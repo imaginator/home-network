@@ -207,26 +207,6 @@ uci set      network.wg0.listen_port='12321'
 uci add_list network.wg0.addresses='10.7.8.1/24'
 uci set      network.wg0.private_key='${wg_f17gw_private_key}'
 
-uci set      network.wg_f17_6=wireguard_wg0
-uci set      network.wg_f17_6.description='W16 Gateway ipv6'
-uci set      network.wg_f17_6.public_key='${wg_w16gw_public_key}'
-uci set      network.wg_f17_6.endpoint_host='w16gw6.imaginator.com'
-uci set      network.wg_f17_6.endpoint_port='12321'
-uci set      network.wg_f17_6.persistent_keepalive='15'
-uci set      network.wg_f17_6.route_allowed_ips='1'
-uci add_list network.wg_f17_6.allowed_ips='10.7.8.2/32'
-uci add_list network.wg_f17_6.allowed_ips='10.7.10.0/24'
-
-uci set      network.wg_f17_4=wireguard_wg0
-uci set      network.wg_f17_4.description='W16 Gateway ipv4'
-uci set      network.wg_f17_4.public_key='${wg_w16gw_public_key}'
-uci set      network.wg_f17_4.endpoint_host='w16gw.imaginator.com'
-uci set      network.wg_f17_4.endpoint_port='12321'
-uci set      network.wg_f17_4.persistent_keepalive='15'
-uci set      network.wg_f17_4.route_allowed_ips='1'
-uci add_list network.wg_f17_4.allowed_ips='10.7.8.2/32'
-uci add_list network.wg_f17_4.allowed_ips='10.7.10.0/24'
-
 uci set      network.wg_simonphone=wireguard_wg0
 uci set      network.wg_simonphone.description='Simon Mobile'
 uci set      network.wg_simonphone.public_key='${wg_simonphone_public_key}'
@@ -239,13 +219,6 @@ uci set      network.wg_tablet.description='OpenHAB Tablet'
 uci set      network.wg_tablet.public_key='${wg_tablet_public_key}'
 uci set      network.wg_tablet.persistent_keepalive='25'
 uci add_list network.wg_tablet.allowed_ips='10.7.8.5/32'
-uci set      network.wg_tablet.route_allowed_ips='1'
-
-uci set      network.wg_tablet=wireguard_wg0
-uci set      network.wg_tablet.description='Windows on Laptop'
-uci set      network.wg_tablet.public_key='${wg_windows_public_key}'
-uci set      network.wg_tablet.persistent_keepalive='25'
-uci add_list network.wg_tablet.allowed_ips='10.7.8.6/32'
 uci set      network.wg_tablet.route_allowed_ips='1'
 
 uci set      network.wg_furrow=wireguard_wg0
@@ -1002,28 +975,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IPv6 input from LAN'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].proto='icmp'
-uci add_list firewall.@rule[-1].icmp_type='echo-request'
-uci add_list firewall.@rule[-1].icmp_type='echo-reply'
-uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
-uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
-uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
-uci add_list firewall.@rule[-1].icmp_type='bad-header'
-uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
-uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
-uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
-uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
-uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
-uci set      firewall.@rule[-1].limit='1000/sec'
-uci set      firewall.@rule[-1].family='ipv6'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IPv6 input from WAN'
+uci set      firewall.@rule[-1].name='WAN IPv6 input from WAN'
 uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
@@ -1044,7 +996,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Forward ICMPv6 from wan to lan'
+uci set      firewall.@rule[-1].name='WAN Forward ICMPv6 from wan to lan'
 uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].dest='*'
 uci set      firewall.@rule[-1].proto='icmp'
@@ -1062,7 +1014,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow-ICMPv6-LAN-output'
+uci set      firewall.@rule[-1].name='WAN Allow-ICMPv6-LAN-output'
 uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest='wan_trusted'
 uci set      firewall.@rule[-1].proto='icmp'
@@ -1078,9 +1030,10 @@ uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
+## Remove if now traffic
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='dns'
+uci set      firewall.@rule[-1].name='WAN DNS'
 uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest_port='53'
 uci set      firewall.@rule[-1].proto='tcpudp'
@@ -1090,7 +1043,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='DHCPv6 requests'
+uci set      firewall.@rule[-1].name='WAN DHCPv6 requests'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
 uci set      firewall.@rule[-1].src_port='546'
 uci set      firewall.@rule[-1].dest='wan_trusted'
@@ -1103,7 +1056,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='DHCPv6 replies'
+uci set      firewall.@rule[-1].name='WAN DHCPv6 replies'
 uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
 uci set      firewall.@rule[-1].src_port='547'
@@ -1116,7 +1069,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow ICMP Input'
+uci set      firewall.@rule[-1].name='WAN ICMP Input'
 uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='icmp'
@@ -1136,7 +1089,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Allow ICMP Forward'
+uci set      firewall.@rule[-1].name='WAN ICMP6 Forward'
 uci set      firewall.@rule[-1].src='wan_trusted'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='icmp'
@@ -1188,9 +1141,31 @@ uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='trust dhcp'
+uci set      firewall.@rule[-1].name='WAN IPv6 input from LAN'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='icmp'
+uci add_list firewall.@rule[-1].icmp_type='echo-request'
+uci add_list firewall.@rule[-1].icmp_type='echo-reply'
+uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
+uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
+uci add_list firewall.@rule[-1].icmp_type='bad-header'
+uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
+uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
+uci set      firewall.@rule[-1].limit='1000/sec'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Trusted  DHCPv4 requests'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].dest_port='67-68'
 uci set      firewall.@rule[-1].proto='udp'
@@ -1200,7 +1175,20 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Samba browse udp'
+uci set      firewall.@rule[-1].name='Trusted DHCPv6 requests'
+uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].src_ip='fe80::/10'
+uci set      firewall.@rule[-1].src_port='546'
+uci set      firewall.@rule[-1].dest_ip='ff02::1:2'
+uci set      firewall.@rule[-1].dest_port='547'
+uci set      firewall.@rule[-1].family='ipv6'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Trusted Samba browse udp'
 uci set      firewall.@rule[-1].dest_port='137 138'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].dest='trusted'
@@ -1212,7 +1200,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].dest_port='139 445'
 uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].name='samba browse tcp'
+uci set      firewall.@rule[-1].name='Trusted samba browse tcp'
 uci set      firewall.@rule[-1].dest='trusted'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci add_list firewall.@rule[-1].proto='tcp'
@@ -1220,7 +1208,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='prometheus'
+uci set      firewall.@rule[-1].name='Trusted prometheus'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].dest_port='9100'
 uci set      firewall.@rule[-1].proto='tcp'
@@ -1230,7 +1218,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IGMP from trusted'
+uci set      firewall.@rule[-1].name='Trusted IGMP from trusted'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].proto='igmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -1238,7 +1226,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Multicast to LAN'
+uci set      firewall.@rule[-1].name='Trusted Multicast to LAN'
 uci set      firewall.@rule[-1].src='trusted'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
@@ -1274,7 +1262,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='freifunk DNS'
+uci set      firewall.@rule[-1].name='notrust freifunk DNS'
 uci set      firewall.@rule[-1].enabled='1'
 uci set      firewall.@rule[-1].src='fflan'
 uci set      firewall.@rule[-1].proto='udp'
@@ -1285,7 +1273,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='olsr updates'
+uci set      firewall.@rule[-1].name='notrust olsr updates'
 uci set      firewall.@rule[-1].enabled='1'
 uci set      firewall.@rule[-1].src='ffuplink'
 uci set      firewall.@rule[-1].proto='udp'
@@ -1329,7 +1317,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='habpanel from tablets'
+uci set      firewall.@rule[-1].name='IoT habpanel from tablets'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='trusted'
 uci set      firewall.@rule[-1].dest_port='80'
@@ -1765,12 +1753,6 @@ uci commit   dhcp.@domain[-1]
 # Trusted f17
 ###############################################################################
 
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.1'
-uci set      dhcp.@domain[-1].name='bunker'
-uci commit   dhcp.@domain[-1]
-
 uci add      dhcp  cname
 uci set      dhcp.@cname[-1]=cname
 uci set      dhcp.@cname[-1].cname='salt.imagilan'
@@ -1795,11 +1777,14 @@ uci set      dhcp.@cname[-1].cname='transmission.imagilan'
 uci set      dhcp.@cname[-1].target='bunker.imagilan'
 uci commit   dhcp.@cname[-1]
 
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='vpn.imaginator.com'
-uci set      dhcp.@cname[-1].target='bunker.imaginator.com'
-uci commit   dhcp.@cname[-1]
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.1'
+uci set      dhcp.@host[-1].name='bunker'
+uci set      dhcp.@host[-1].mac='b0:5a:da:87:ff:3c'
+uci set      dhcp.@host[-1].dns='1'
+uci set      dhcp.@host[-1].hostid='31' # can only be 8 characters
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
