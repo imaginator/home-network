@@ -194,10 +194,11 @@ uci set      network.henet.peeraddr='216.66.86.114'
 uci set      network.henet.ip6addr='2001:470:6c:20a::2/64'
 uci set      network.henet.tunnelid='${henet_f17_tunnelid}'
 uci set      network.henet.username='${henet_f17_username}'
-uci set      network.henet.ip6prefix='2001:470:5155::/48'
+uci add_list network.henet.ip6prefix='2001:470:5155::/48'
 uci set      network.henet.password='${henet_f17_password}'
 uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
+uci set      network.henet.auto='0'
 
 
 uci set      network.wg0='interface'
@@ -487,11 +488,11 @@ uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='pyur4' # for hotplug events
 uci set    ddns.@service[-1].ip_source='web'
-uci set    ddns.@service[-1].ip_url='https://domains.google.com/checkip'
+uci set    ddns.@service[-1].ip_url='http://checkip.dns.he.net/'
 uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
-uci set    ddns.@service[-1].service_name='google.com'
+uci set    ddns.@service[-1].service_name='he.net'
 uci set    ddns.@service[-1].use_https='1'
 uci set    ddns.@service[-1].use_ipv6='0'
 uci set    ddns.@service[-1].use_logfile='0'
@@ -505,15 +506,16 @@ uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
 uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].enabled='1'
+uci set    ddns.@service[-1].force_ipversion=1
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='henet' # for hotplug events
-uci set    ddns.@service[-1].ip_network='henet'
+uci set    ddns.@service[-1].interface='pyur6' # for hotplug events
 uci set    ddns.@service[-1].ip_source='network'
+uci set    ddns.@service[-1].ip_network='pyur6'
 uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_interval='1'
 uci set    ddns.@service[-1].retry_unit='minutes'
-uci set    ddns.@service[-1].service_name='google.com'
+uci set    ddns.@service[-1].service_name='he.net'
 uci set    ddns.@service[-1].use_https='1'
 uci set    ddns.@service[-1].use_ipv6='1'
 uci set    ddns.@service[-1].use_logfile='0'
@@ -1395,7 +1397,7 @@ uci set      dhcp.trusted.ip6class='pyur6'
 uci set      dhcp.trusted.leasetime='13h'
 uci set      dhcp.trusted.limit='100'
 uci set      dhcp.trusted.ra_default='1'
-uci set      dhcp.trusted.ra_management='1'
+uci set      dhcp.trusted.ra_management='4' # https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=package/network/services/dnsmasq/files/dnsmasq.init;h=1054f7a12a15618a869f2f68b97276f50eebc5a4;hb=4fc0a61ed3da96330d30703a2a039a6a06dc0b2f#l592
 uci set      dhcp.trusted.ra='server'
 uci set      dhcp.trusted.start='100'
 uci commit   dhcp.trusted
@@ -1435,7 +1437,7 @@ uci set      dhcp.iot.domain='imagilan'
 uci set      dhcp.iot.interface='iot'
 uci set      dhcp.iot.dhcpv4='server'
 uci set      dhcp.iot.force='1'
-uci set      dhcp.iot.leasetime='11h'
+uci set      dhcp.iot.leasetime='13h'
 uci set      dhcp.iot.start='100'
 uci set      dhcp.iot.limit='150'
 uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
@@ -1474,13 +1476,11 @@ uci commit   dhcp.@domain[-1]
 # IoT
 ###############################################################################
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.5'
-uci set      dhcp.@host[-1].name='knx-gw'
-uci set      dhcp.@host[-1].mac='00:0c:de:61:50:0b'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.9.2'
+uci set      dhcp.@domain[-1].name='bunker-iot'
+uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1516,9 +1516,9 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.12'
-uci set      dhcp.@host[-1].name='knxgw'
-uci set      dhcp.@host[-1].mac='CC:1B:E0:80:3F:38'
+uci set      dhcp.@host[-1].ip='10.7.9.13'
+uci set      dhcp.@host[-1].name='knxrouter'
+uci set      dhcp.@host[-1].mac='00:0e:8c:01:54:c4'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1841,7 +1841,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.11'
-uci set      dhcp.@host[-1].name='repeater-street-north'
+uci set      dhcp.@host[-1].name='repeater-hof-north'
 uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1857,7 +1857,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.15'
-uci set      dhcp.@host[-1].name='repeater-hof-north'
+uci set      dhcp.@host[-1].name='repeater-street-north'
 uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1942,7 +1942,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.36'
-uci set      dhcp.@host[-1].name='ccmini-kitchen'
+uci set      dhcp.@host[-1].name='ccmini-guestbath'
 uci set      dhcp.@host[-1].mac='20:df:b9:49:c4:af'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1966,7 +1966,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.39'
-uci set      dhcp.@host[-1].name='ccmini-guestbath'
+uci set      dhcp.@host[-1].name='ccmini-kitchen'
 uci set      dhcp.@host[-1].mac='14:C1:4E:72:67:41'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -2041,6 +2041,7 @@ uci set      dhcp.@host[-1].ip='10.7.11.49'
 uci set      dhcp.@host[-1].name='onkyo-receiver'
 uci set      dhcp.@host[-1].mac='00:09:b0:4d:a2:a8'
 uci set      dhcp.@host[-1].dns='1'
+uci set      dhcp.@host[-1].leasetime='infinite' # firmware problem with infinite renewing
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host

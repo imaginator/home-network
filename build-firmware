@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=19.07.4
+VERSION=21.02-SNAPSHOT
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -20,9 +20,9 @@ BASE_PACKAGES=" \
 
 case $MODEL in
 "w16gw")
-  PLATFORM=ar71xx
+  PLATFORM=ath79
   TYPE=generic
-  TARGET_DEVICE=ar71xx-generic
+  TARGET_DEVICE=ath79-generic
   PROFILE=tl-wdr4300-v1
   EXTRA_PACKAGES="\
     6in4 \
@@ -126,7 +126,6 @@ case $MODEL in
     luci-proto-wireguard \
     luci-theme-bootstrap \
     odhcp6c \
-    odhcpd \
     olsrd \
     olsrd-mod-arprefresh \
     olsrd-mod-bmf \
@@ -150,14 +149,14 @@ case $MODEL in
     wireguard \
     wireguard-tools \
   "
-  REMOVED_PACKAGES="-dnsmasq -odhcpd"
+  REMOVED_PACKAGES="-dnsmasq -odhcpd -odhcpd-ipv6only " #dhcpv6 stuff provided by dnsmasq-full
 ;;
 
 "nanostationm2")
-  PLATFORM=ar71xx
+  PLATFORM=ath79
   TYPE=generic
-  TARGET_DEVICE=ar71xx-generic
-  PROFILE=ubnt-nano-m
+  TARGET_DEVICE=ath79-generic
+  PROFILE=ubnt_nanostation-m
   EXTRA_PACKAGES="\
     curl \
     hostapd-openssl \
@@ -167,14 +166,14 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpad-basic-wolfssl -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "ubnt-uap-pro")
-  PLATFORM=ar71xx
+  PLATFORM=ath79
   TYPE=generic
-  TARGET_DEVICE=ar71xx-generic
-  PROFILE=ubnt-uap-pro
+  TARGET_DEVICE=ath79-generic
+  PROFILE=ubnt_uap-pro
   EXTRA_PACKAGES="\
     curl \
     hostapd-openssl \
@@ -183,14 +182,14 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpad-basic-wolfssl -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "ubnt-uap-ac-lite")
-  PLATFORM=ar71xx
+  PLATFORM=ath79
   TYPE=generic
-  TARGET_DEVICE=ar71xx-generic
-  PROFILE=ubnt-unifiac-lite
+  TARGET_DEVICE=ath79-generic
+  PROFILE=ubnt_unifiac-lite
   EXTRA_PACKAGES="\
     curl \
     hostapd-openssl \
@@ -199,14 +198,14 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic-wolfssl -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "nanobridge-m5")
-  PLATFORM=ar71xx
+  PLATFORM=ath79
   TYPE=generic
-  TARGET_DEVICE=ar71xx-generic
-  PROFILE=ubnt-nano-m
+  TARGET_DEVICE=ath79-generic
+  PROFILE=ubnt_nano-m
   EXTRA_PACKAGES="\
     curl \
     hostapd-openssl \
@@ -246,7 +245,7 @@ if [ ! -d ${BUILDDIR} ] ; then
 fi
 
 # the need for $TYPE and $TARGET_DEVICE seems dumb but it helps get aroudn the problem of downloads        ↓↓↓↓↓↓↓
-# http://downloads.openwrt.org/releases/18.06.1/targets/ar71xx/generic/openwrt-imagebuilder-18.06.1-ar71xx-generic.Linux-x86_64.tar.xz
+# http://downloads.openwrt.org/releases/18.06.1/targets/ath79/generic/openwrt-imagebuilder-18.06.1-ath79-generic.Linux-x86_64.tar.xz
 #http://downloads.openwrt.org/releases/18.06.1/targets/ipq40xx/generic/openwrt-imagebuilder-18.06.1-ipq40xx.Linux-x86_64.tar.xz
 
 if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 ] ; then
