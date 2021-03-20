@@ -1842,7 +1842,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.11'
 uci set      dhcp.@host[-1].name='repeater-hof-north'
-uci set      dhcp.@host[-1].mac='68:72:51:1b:74:89'
+uci set      dhcp.@host[-1].mac='6a:72:51:1b:74:89'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
