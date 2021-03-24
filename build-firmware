@@ -6,7 +6,6 @@ VERSION=21.02-SNAPSHOT
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
-  lldpd \
   prometheus-node-exporter-lua \
   prometheus-node-exporter-lua-nat_traffic \
   prometheus-node-exporter-lua-netstat \
@@ -14,7 +13,6 @@ BASE_PACKAGES=" \
   prometheus-node-exporter-lua-wifi \
   prometheus-node-exporter-lua-wifi_stations \
   prometheus-node-exporter-lua-textfile \
-  softflowd \
   tcpdump-mini \
   "
 
@@ -143,13 +141,17 @@ case $MODEL in
     olsrd-mod-watchdog \
     openvpn-openssl \
     qrencode \
+    softflowd \
     sqm-scripts \
     sqm-scripts-extra \
     uboot-envtools \
     wireguard \
     wireguard-tools \
   "
-  REMOVED_PACKAGES="-dnsmasq -odhcpd -odhcpd-ipv6only " #dhcpv6 stuff provided by dnsmasq-full
+  REMOVED_PACKAGES="-dnsmasq \
+    -odhcpd \
+    -odhcpd-ipv6only \
+    " # dhcpv6 stuff provided by dnsmasq-full
 ;;
 
 "nanostationm2")
@@ -158,31 +160,21 @@ case $MODEL in
   TARGET_DEVICE=ath79-generic
   PROFILE=ubnt_nanostation-m
   EXTRA_PACKAGES="\
-    curl \
-    hostapd-openssl \
-    ip-tiny \
-    luci \
-    luci-base \
-    luci-theme-bootstrap \
-    odhcp6c \
+    dawn \
+    wpad \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpad-basic-wolfssl -wpa-supplicant -wpa-supplicant-mini"
-;;
-
-"ubnt-uap-pro")
-  PLATFORM=ath79
-  TYPE=generic
-  TARGET_DEVICE=ath79-generic
-  PROFILE=ubnt_uap-pro
-  EXTRA_PACKAGES="\
-    curl \
-    hostapd-openssl \
-    ip-tiny \
-    luci luci-base \
-    luci-theme-bootstrap \
-    odhcp6c \
+  REMOVED_PACKAGES="\
+    -dnsmasq \
+    -hostapd-openssl \
+    -luci-proto-ppp \
+    -ppp \
+    -ppp-mod-pppoe \
+    -wpa-supplicant \
+    -wpa-supplicant-mini \
+    -wpad-basic \
+    -wpad-basic-wolfssl \
+    -wpad-mini \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpad-basic-wolfssl -wpa-supplicant -wpa-supplicant-mini"
 ;;
 
 "ubnt-uap-ac-lite")
@@ -191,14 +183,23 @@ case $MODEL in
   TARGET_DEVICE=ath79-generic
   PROFILE=ubnt_unifiac-lite
   EXTRA_PACKAGES="\
-    curl \
-    hostapd-openssl \
-    ip-tiny \
-    luci luci-base \
-    luci-theme-bootstrap \
-    odhcp6c \
+    dawn \
+    luci-app-dawn \
+    luci \
+    wpad \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic-wolfssl -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES="\
+    -dnsmasq \
+    -hostapd-openssl \
+    -luci-proto-ppp \
+    -ppp \
+    -ppp-mod-pppoe \
+    -wpa-supplicant \
+    -wpa-supplicant-mini \
+    -wpad-basic \
+    -wpad-basic-wolfssl \
+    -wpad-mini \
+    "
 ;;
 
 "nanobridge-m5")

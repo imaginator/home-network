@@ -1850,7 +1850,7 @@ uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.14'
 uci set      dhcp.@host[-1].name='repeater-street-south'
-uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20'
+uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20 02:27:22:cb:ff:20'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1858,7 +1858,7 @@ uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.15'
 uci set      dhcp.@host[-1].name='repeater-street-north'
-uci set      dhcp.@host[-1].mac='dc:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].mac='de:9f:db:59:ca:a2'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
