@@ -426,7 +426,9 @@ uci set      umdns.@umdns[-1].jail='1'
 uci add_list umdns.@umdns[-1].network='trusted'
 uci commit   umdns
 
-rm /etc/seccomp/umdns.json || true
+
+/etc/init.d/dawn disable
+/etc/init.d/umdns disable
 
 echo "all done with writing"
 
