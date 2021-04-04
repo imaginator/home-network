@@ -167,6 +167,13 @@ uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='0'
 #uci set      network.pyur6.ip6table='pyur6'
 
+uci set      network.cable=interface
+uci set      network.cable.ifname='eth0.4'
+uci set      network.cable.proto='static'
+uci add_list network.cable.ipaddr='192.168.0.5/24'
+uci add_list network.cable.ipaddr='192.168.100.5/24'
+uci set      network.cable.delegate='0'
+
 uci set      network.ffvpn=interface
 uci set      network.ffvpn.proto=none
 uci set      network.ffvpn.ifname=ffvpn
@@ -199,7 +206,6 @@ uci set      network.henet.password='${henet_f17_password}'
 uci set      network.henet.metric='1'
 uci set      network.henet.mtu='1480'
 uci set      network.henet.auto='0'
-
 
 uci set      network.wg0='interface'
 uci set      network.wg0.proto='wireguard'
@@ -766,6 +772,7 @@ uci set      firewall.@zone[-1].name='wan_trusted'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci add_list firewall.@zone[-1].network='henet'
+uci add_list firewall.@zone[-1].network='cable'
 uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
