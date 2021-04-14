@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<CpeConfig version="3.0">
+  <Device>
+    <DeviceInfo>
+      <FirstUseDate>2018-04-09T18:39:36+01:00</FirstUseDate>
+      <VendorConfigFileNumberOfEntries>0</VendorConfigFileNumberOfEntries>
+      <SupportedDataModel instance="1">
+        <Alias>cpe-data-model-1</Alias>
+      </SupportedDataModel>
+      <SupportedDataModel nextInstance="2" ></SupportedDataModel>
+    </DeviceInfo>
+    <X_BROADCOM_COM_SyslogCfg>
+      <Status>Enabled</Status>
+      <Option>local&#32;buffer&#32;and&#32;remote</Option>
+      <ServerIPAddress>192.168.100.5</ServerIPAddress>
+    </X_BROADCOM_COM_SyslogCfg>
+    <X_BROADCOM_COM_LoginCfg>
+      <AdminPassword>KG51bGwpAA==</AdminPassword>
+      <SupportPassword>KG51bGwpAA==</SupportPassword>
+    </X_BROADCOM_COM_LoginCfg>
+    <X_BROADCOM_COM_eRouter>
+      <esafeInitModeControl>1</esafeInitModeControl>
+      <esafeAdminMode>1</esafeAdminMode>
+      <FactoryMib>
+        <WanIpMacAddress>60:3d:26:15:a0:4e</WanIpMacAddress>
+        <LanIpMacAddress>00:10:95:ff:ff:fd</LanIpMacAddress>
+      </FactoryMib>
+    </X_BROADCOM_COM_eRouter>
+    <Time>
+      <LocalTimeZone>-00:00</LocalTimeZone>
+      <X_BROADCOM_COM_LocalTimeZoneName>Casablanca,&#32;Monrovia</X_BROADCOM_COM_LocalTimeZoneName>
+      <X_BROADCOM_COM_DaylightSavingsStart>1970-01-01T00:03:58-00:00</X_BROADCOM_COM_DaylightSavingsStart>
+      <X_BROADCOM_COM_DaylightSavingsEnd>1970-01-01T00:03:58-00:00</X_BROADCOM_COM_DaylightSavingsEnd>
+    </Time>
+    <InterfaceStack nextInstance="781" ></InterfaceStack>
+    <Ethernet>
+      <InterfaceNumberOfEntries>5</InterfaceNumberOfEntries>
+      <LinkNumberOfEntries>2</LinkNumberOfEntries>
+      <VLANTerminationNumberOfEntries>0</VLANTerminationNumberOfEntries>
+      <RMONStatsNumberOfEntries>0</RMONStatsNumberOfEntries>
+      <Interface instance="1">
+        <Enable>TRUE</Enable>
+        <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+        <Alias>cpe-ethernet-interface-lan-eth0</Alias>
+        <Name>eth0</Name>
+        <Upstream>FALSE</Upstream>
+        <MaxBitRate>100</MaxBitRate>
+        <DuplexMode>Full</DuplexMode>
+      </Interface>
+      <Interface instance="2">
+        <Enable>TRUE</Enable>
+        <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+        <Alias>cpe-ethernet-interface-lan-eth1</Alias>
+        <Name>eth1</Name>
+        <Upstream>FALSE</Upstream>
+        <MaxBitRate>100</MaxBitRate>
+        <DuplexMode>Full</DuplexMode>
+      </Interface>
+      <Interface instance="3">
+        <Enable>TRUE</Enable>
+        <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+        <Alias>cpe-ethernet-interface-lan-eth2</Alias>
+        <Name>eth2</Name>
+        <Upstream>FALSE</Upstream>
+        <MaxBitRate>100</MaxBitRate>
+        <DuplexMode>Full</DuplexMode>
+      </Interface>
+      <Interface instance="4">
+        <Enable>TRUE</Enable>
+        <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+        <Alias>cpe-ethernet-interface-lan-eth3</Alias>
+        <Name>eth3</Name>
+        <Upstream>FALSE</Upstream>
+        <MaxBitRate>100</MaxBitRate>
+        <DuplexMode>Full</DuplexMode>
+      </Interface>
+      <Interface instance="5">
+        <Enable>TRUE</Enable>
+        <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+        <Alias>cpe-ethernet-interface-wan-cm0</Alias>
+        <Name>cm0</Name>
+        <Upstream>TRUE</Upstream>
+        <MaxBitRate>100</MaxBitRate>
+        <DuplexMode>Full</DuplexMode>
+      </Interface>
+      <Interface nextInstance="6" ></Interface>
+      <Link instance="1">
+        <Enable>TRUE</Enable>
+        <Alias>cpe-etherlink-wanbridge</Alias>
+        <Name>wanbridge</Name>
+        <LowerLayers>Device.Bridging.Bridge.1.Port.2</LowerLayers>
+        <MACAddress>60:3d:26:15:a0:4e</MACAddress>
+      </Link>
+      <Link instance="2">
+        <Enable>TRUE</Enable>
+        <Alias>cpe-etherlink-br0</Alias>
+        <Name>br0</Name>
+        <LowerLayers>Device.Bridging.Bridge.2.Port.5</LowerLayers>
+        <MACAddress>00:10:95:ff:ff:fd</MACAddress>
+      </Link>
+      <Link nextInstance="3" ></Link>
+    </Ethernet>
+    <Bridging>
+      <BridgeNumberOfEntries>2</BridgeNumberOfEntries>
+      <FilterNumberOfEntries>0</FilterNumberOfEntries>
+      <Bridge instance="1">
+        <Enable>TRUE</Enable>
+        <Alias>cpe-bridge-1</Alias>
+        <X_BROADCOM_COM_IfName>wanbridge</X_BROADCOM_COM_IfName>
+        <X_BROADCOM_COM_Index>1</X_BROADCOM_COM_Index>
+        <PortNumberOfEntries>6</PortNumberOfEntries>
+        <VLANNumberOfEntries>0</VLANNumberOfEntries>
+        <VLANPortNumberOfEntries>0</VLANPortNumberOfEntries>
+        <X_BROADCOM_COM_WlIfname>(null)</X_BROADCOM_COM_WlIfname>
+        <Port instance="1">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-1</Alias>
+          <Name>cm0</Name>
+          <LowerLayers>Device.Ethernet.Interface.5</LowerLayers>
+        </Port>
+        <Port instance="2">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-2</Alias>
+          <Name>wanbridge</Name>
+          <LowerLayers>Device.Bridging.Bridge.1.Port.1</LowerLayers>
+          <ManagementPort>TRUE</ManagementPort>
+        </Port>
+        <Port instance="3">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-3</Alias>
+          <Name>eth0</Name>
+          <LowerLayers>Device.Ethernet.Interface.1</LowerLayers>
+        </Port>
+        <Port instance="4">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-4</Alias>
+          <Name>eth1</Name>
+          <LowerLayers>Device.Ethernet.Interface.2</LowerLayers>
+        </Port>
+        <Port instance="5">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-5</Alias>
+          <Name>eth2</Name>
+          <LowerLayers>Device.Ethernet.Interface.3</LowerLayers>
+        </Port>
+        <Port instance="6">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-6</Alias>
+          <Name>eth3</Name>
+          <LowerLayers>Device.Ethernet.Interface.4</LowerLayers>
+        </Port>
+        <Port nextInstance="7" ></Port>
+      </Bridge>
+      <Bridge instance="2">
+        <Enable>TRUE</Enable>
+        <Alias>cpe-default-lan-bridge-br0</Alias>
+        <X_BROADCOM_COM_IfName>br0</X_BROADCOM_COM_IfName>
+        <X_BROADCOM_COM_Index>200</X_BROADCOM_COM_Index>
+        <PortNumberOfEntries>5</PortNumberOfEntries>
+        <VLANNumberOfEntries>0</VLANNumberOfEntries>
+        <VLANPortNumberOfEntries>0</VLANPortNumberOfEntries>
+        <X_BROADCOM_COM_WlIfname>(null)</X_BROADCOM_COM_WlIfname>
+        <Port instance="1">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-1</Alias>
+          <Name>eth0</Name>
+          <LowerLayers>Device.Ethernet.Interface.1</LowerLayers>
+        </Port>
+        <Port instance="2">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-2</Alias>
+          <Name>eth1</Name>
+          <LowerLayers>Device.Ethernet.Interface.2</LowerLayers>
+        </Port>
+        <Port instance="3">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-3</Alias>
+          <Name>eth2</Name>
+          <LowerLayers>Device.Ethernet.Interface.3</LowerLayers>
+        </Port>
+        <Port instance="4">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridgeport-4</Alias>
+          <Name>eth3</Name>
+          <LowerLayers>Device.Ethernet.Interface.4</LowerLayers>
+        </Port>
+        <Port instance="5">
+          <Enable>TRUE</Enable>
+          <X_BROADCOM_COM_Enable>TRUE</X_BROADCOM_COM_Enable>
+          <Alias>cpe-bridge-port-br0.5</Alias>
+          <Name>br0</Name>
+          <LowerLayers>Device.Bridging.Bridge.2.Port.1,Device.Bridging.Bridge.2.Port.2,Device.Bridging.Bridge.2.Port.3,Device.Bridging.Bridge.2.Port.4</LowerLayers>
+          <ManagementPort>TRUE</ManagementPort>
+        </Port>
+        <Port nextInstance="6" ></Port>
+      </Bridge>
+      <Bridge nextInstance="3" ></Bridge>
+    </Bridging>
+    <IP>
+      <InterfaceNumberOfEntries>0</InterfaceNumberOfEntries>
+    </IP>
+    <Routing>
+      <RouterNumberOfEntries>0</RouterNumberOfEntries>
+      <RIP>
+        <X_BROADCOM_COM_Disabled>FALSE</X_BROADCOM_COM_Disabled>
+        <InterfaceSettingNumberOfEntries>0</InterfaceSettingNumberOfEntries>
+      </RIP>
+    </Routing>
+    <NeighborDiscovery>
+      <InterfaceSettingNumberOfEntries>0</InterfaceSettingNumberOfEntries>
+    </NeighborDiscovery>
+    <RouterAdvertisement>
+      <InterfaceSettingNumberOfEntries>0</InterfaceSettingNumberOfEntries>
+    </RouterAdvertisement>
+    <DNS>
+      <Client>
+        <ServerNumberOfEntries>0</ServerNumberOfEntries>
+      </Client>
+    </DNS>
+    <NAT>
+      <InterfaceSettingNumberOfEntries>0</InterfaceSettingNumberOfEntries>
+      <PortMappingNumberOfEntries>0</PortMappingNumberOfEntries>
+    </NAT>
+    <DHCPv6>
+      <ClientNumberOfEntries>0</ClientNumberOfEntries>
+      <Server>
+        <X_BROADCOM_COM_Disabled>FALSE</X_BROADCOM_COM_Disabled>
+        <PoolNumberOfEntries>0</PoolNumberOfEntries>
+      </Server>
+    </DHCPv6>
+    <Firewall>
+      <Enable>TRUE</Enable>
+    </Firewall>
+    <X_84D32A_IEEE1905>
+      <AL>
+        <Alias>cpe-ieee1905al-0</Alias>
+        <Interface nextInstance="157" ></Interface>
+      </AL>
+    </X_84D32A_IEEE1905>
+    <X_BROADCOM_COM_Bfd>
+      <SessionNumberOfEntries>0</SessionNumberOfEntries>
+    </X_BROADCOM_COM_Bfd>
+    <X_BROADCOM_COM_Pmip>
+      <InterfaceSettingNumberOfEntries>0</InterfaceSettingNumberOfEntries>
+    </X_BROADCOM_COM_Pmip>
+  </Device>
+</CpeConfig>
