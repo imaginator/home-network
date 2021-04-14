@@ -71,7 +71,7 @@ case $MODEL in
   PLATFORM=ramips
   TYPE=mt7621
   TARGET_DEVICE=ramips-mt7621
-  PROFILE=ubnt-erx
+  PROFILE=ubnt_edgerouter-x
   EXTRA_PACKAGES="\
     6in4 \
     bind-host \
@@ -94,8 +94,6 @@ case $MODEL in
     ip-bridge \
     ip-full \
     iptables-mod-tee \
-    kmod-gpio-pca953x \
-    kmod-i2c-gpio-custom \
     kmod-ipip \
     kmod-tun \
     kmod-wireguard \
@@ -106,7 +104,6 @@ case $MODEL in
     libnl-nf \
     libnl-route \
     libstdcpp \
-    libustream-openssl \
     lldpd \
     luci \
     luci-app-adblock \
@@ -122,7 +119,6 @@ case $MODEL in
     luci-mod-admin-full \
     luci-proto-ipv6 \
     luci-proto-wireguard \
-    luci-theme-bootstrap \
     odhcp6c \
     olsrd \
     olsrd-mod-arprefresh \
@@ -139,7 +135,6 @@ case $MODEL in
     olsrd-mod-pgraph \
     olsrd-mod-txtinfo \
     olsrd-mod-watchdog \
-    openvpn-openssl \
     qrencode \
     softflowd \
     sqm-scripts \
