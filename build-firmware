@@ -119,6 +119,7 @@ case $MODEL in
     luci-mod-admin-full \
     luci-proto-ipv6 \
     luci-proto-wireguard \
+    luci-app-watchcat \
     odhcp6c \
     olsrd \
     olsrd-mod-arprefresh \
@@ -140,7 +141,7 @@ case $MODEL in
     sqm-scripts \
     sqm-scripts-extra \
     uboot-envtools \
-    wireguard \
+    watchcat \
     wireguard-tools \
   "
   REMOVED_PACKAGES="-dnsmasq \
@@ -246,7 +247,7 @@ fi
 
 if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 ] ; then
   if [ ! -f ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz ]; then
-   (cd ${BUILDDIR} && curl -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )
+   (cd ${BUILDDIR} && curl -C - -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )
   fi
   tar xfJ ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz -C ${BUILDDIR}/
 fi
