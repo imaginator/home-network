@@ -197,7 +197,7 @@ case "$system_hostname" in
     ;;
 esac
 uci set      wireless.radio1.type='mac80211'
-uci set      wireless.radio1.txpower='11'
+#uci set      wireless.radio1.txpower='11'
 uci commit   wireless.radio1
 
 uci set      wireless.imagifi2=wifi-iface
