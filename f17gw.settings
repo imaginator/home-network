@@ -202,6 +202,9 @@ uci commit   network
 #uci set      network.@route[-1].netmask=0.0.0.0
 #uci commit   network.@route[-1]
 
+uci set     luci.sauth.sessiontime="36000000"
+uci commit  luci
+
 uci import olsrd<<EOF
 EOF
 
