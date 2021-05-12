@@ -67,6 +67,26 @@ case $MODEL in
     "
 ;;
 
+"travelrouter")
+  PLATFORM=ramips
+  TYPE=mt76x8
+  TARGET_DEVICE=ramips-mt76x8
+  PROFILE=wavlink_wl-wn577a2
+  EXTRA_PACKAGES="\
+    dnsmasq \
+    iwinfo \
+    luci \
+    curl \
+    luci-app-travelmate \
+    luci-proto-wireguard \
+    qrencode \
+    travelmate \
+    wireguard-tools \
+  "
+  REMOVED_PACKAGES=""
+;;
+
+
 "f17gw")
   PLATFORM=ramips
   TYPE=mt7621
