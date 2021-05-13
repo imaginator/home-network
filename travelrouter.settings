@@ -1,9 +1,13 @@
 #!/bin/sh
+set -xe
 
-source /etc/secrets/env
+cat >> /etc/dropbear/authorized_keys <<-_KEY_
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCnAqd49QrBxYj73kAw+YKChDgc8KEOKhUqYtoP1pI9FPYV5tegMVtwhvPfovc6NoquzsViRzvFXsdw3Sp/aUCzOLknbthohBG+HtqxTICxVE76DtplwvoHnfF94wHC1Fl6OlvDkQRaCySgGhk7JWaVJAytaBMSZpPaAg+wlisCXpHAn36glpJv5Z9yHpK2XZ6NduYO7SqB0kYwKkLjBAjRjvQDhLdKtutVp00hHnefnTJlY8Q44UMqMomW/WL4XtjerttD59UCsPlnvtbKCWpOGAHLQlfpeqVnCpZp4eVpIRE7j/3E2CaNFc0qTK0mqnaH1Yk/6fQXQl1sgdYvq9Y8I8462irZrPuRrkgNAV6YKaUqven19nNLuybhq0cRG4K9lOZwTvvTyiMlRwo8uXawOwYoBAK+UiuCtoVvOo/+HkwCOFAU78LO8DyFGi3dLyZ6yy1jYSSuKOiSO2CuqHTszc0XE5E1bYWlua6hZoWa+agK4/zcvn6H+hy13xVOgcAMtjD4bVzYj2Wxqa4jSL0ye2m2FDE5LaEOyJLIYQ23hobrE2KvqRB/ALWLhvqJe5qUKDSWGkZvCyVArreaaLfUabcVZfdzmajt86suJJbfFQp9Dg5VHwIW6SssPL5NUNtHbfgoW7JCBXc64+nxmQqzHkcvBjahgEE+84/9zPKOqQ== router-key@imaginator.com
+_KEY_
+
+sed -i 's;^root.*;${root_shadow};' /etc/shadow
 
 uci -q batch <<-EOF >/dev/null
-
     set dhcp.@dnsmasq[0]=dnsmasq
     set dhcp.@dnsmasq[0].domainneeded='1'
     set dhcp.@dnsmasq[0].boguspriv='1'
@@ -89,6 +93,7 @@ uci -q batch <<-EOF >/dev/null
 EOF
 
 uci -q batch <<-EOF >/dev/null
+    delete wireless
     set wireless.radio0=wifi-device
     set wireless.radio0.type='mac80211'
     set wireless.radio0.hwmode='11g'
@@ -102,7 +107,7 @@ uci -q batch <<-EOF >/dev/null
     set wireless.default_radio0.mode='ap'
     set wireless.default_radio0.ssid='imagiTravel'
     set wireless.default_radio0.encryption='psk2'
-    set wireless.default_radio0.key='xxxxxxxx'
+    set wireless.default_radio0.key='${trusted_wifikey}'
     set wireless.radio1=wifi-device
     set wireless.radio1.type='mac80211'
     set wireless.radio1.hwmode='11a'
@@ -116,31 +121,12 @@ uci -q batch <<-EOF >/dev/null
     set wireless.default_radio1.mode='ap'
     set wireless.default_radio1.ssid='imagiTravel'
     set wireless.default_radio1.encryption='psk2'
-    set wireless.default_radio1.key='xxxxxxxx'
-    set wireless.trm_uplink3=wifi-iface
-    set wireless.trm_uplink3.device='radio0'
-    set wireless.trm_uplink3.mode='sta'
-    set wireless.trm_uplink3.network='trm_wwan'
-    set wireless.trm_uplink3.ssid='Falckensteinstr 17 Free WiFi'
-    set wireless.trm_uplink3.encryption='none'
-    set wireless.trm_uplink3.disabled='1'
-    set wireless.trm_uplink5=wifi-iface
-    set wireless.trm_uplink5.device='radio0'
-    set wireless.trm_uplink5.mode='sta'
-    set wireless.trm_uplink5.network='tr_wwan'
-    set wireless.trm_uplink5.ssid='berlin.freifunk.net'
-    set wireless.trm_uplink5.encryption='none'
-    set wireless.trm_uplink5.disabled='0'
-    set wireless.trm_uplink4=wifi-iface
-    set wireless.trm_uplink4.device='radio1'
-    set wireless.trm_uplink4.mode='sta'
-    set wireless.trm_uplink4.ssid='Falckensteinstr 17 Free WiFi'
-    set wireless.trm_uplink4.encryption='none'
-    set wireless.trm_uplink4.network='tr_wwan'
-    set wireless.trm_uplink4.disabled='1'
-commit wireless
+    set wireless.default_radio1.key='${trusted_wifikey}'
+    commit wireless
+EOF
 
 uci -q batch <<-EOF >/dev/null
+    delete travelmate
     set travelmate.global=travelmate
     set travelmate.global.trm_captive='1'
     set travelmate.global.trm_proactive='1'
@@ -173,7 +159,8 @@ uci -q batch <<-EOF >/dev/null
     set travelmate.@uplink[2].con_start_expiry='0'
     set travelmate.@uplink[2].con_end_expiry='0'
     set travelmate.@uplink[2].con_start='2021.05.12-16:52:26'
-commt travelmate
+    commt travelmate
+EOF
 
 uci -q batch <<-EOF >/dev/null
     set firewall.@defaults[0]=defaults

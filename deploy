@@ -69,6 +69,13 @@ case $1 in
     ' < nanostationm2.settings  | ssh root@$1.imagilan
     ;;
 
+  travelrouter)
+    envsubst \ '
+    $trusted_wifikey \
+    $root_shadow \
+    ' < travelrouter.settings  | ssh root@192.168.1.1
+    ;;
+
   first-time)
     envsubst \ '
     $trusted_wifikey \
