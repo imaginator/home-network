@@ -1516,6 +1516,14 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.12'
+uci set      dhcp.@host[-1].name='waterlogger'
+uci set      dhcp.@host[-1].mac='48:3F:DA:0F:54:24'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.13'
 uci set      dhcp.@host[-1].name='knxrouter'
 uci set      dhcp.@host[-1].mac='00:0e:8c:01:54:c4'
