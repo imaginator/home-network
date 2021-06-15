@@ -1307,6 +1307,27 @@ uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
+uci set      firewall.@rule[-1].name='syslog'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci add_list firewall.@rule[-1].proto='udp'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='trusted'
+uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
+uci set      firewall.@rule[-1].dest_port='514'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1].name='mqtt.imagilan'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='trusted'
+uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
+uci set      firewall.@rule[-1].dest_port='1883'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT habpanel from tablets'
 uci set      firewall.@rule[-1].src='iot'
@@ -1527,6 +1548,14 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.13'
 uci set      dhcp.@host[-1].name='knxrouter'
 uci set      dhcp.@host[-1].mac='00:0e:8c:01:54:c4'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.13'
+uci set      dhcp.@host[-1].name='irrigation'
+uci set      dhcp.@host[-1].mac='C8:2B:96:CF:76:72'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
