@@ -1553,7 +1553,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.13'
+uci set      dhcp.@host[-1].ip='10.7.9.14'
 uci set      dhcp.@host[-1].name='irrigation'
 uci set      dhcp.@host[-1].mac='C8:2B:96:CF:76:72'
 uci set      dhcp.@host[-1].dns='1'
