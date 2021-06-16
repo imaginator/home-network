@@ -1707,8 +1707,8 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.101'
-uci set      dhcp.@host[-1].name='tablet-arbeit'
-uci set      dhcp.@host[-1].mac='68:37:e9:ee:f8:e5'
+uci set      dhcp.@host[-1].name='tablet-study'
+uci set      dhcp.@host[-1].mac='aa:bb:cc:dd:ee:ff'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1764,7 +1764,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.108'
 uci set      dhcp.@host[-1].name='tablet-kitchen'
-uci set      dhcp.@host[-1].mac='aa:bb:cc:dd:ee:ff'
+uci set      dhcp.@host[-1].mac='68:37:e9:ee:f8:e5'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
