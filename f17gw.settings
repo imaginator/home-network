@@ -176,6 +176,13 @@ uci set      network.wg_furrow.persistent_keepalive='25'
 uci add_list network.wg_furrow.allowed_ips='10.7.8.7/32'
 uci set      network.wg_furrow.route_allowed_ips='1'
 
+uci set      network.wg_windows=wireguard_wg0
+uci set      network.wg_windows.description='windows'
+uci set      network.wg_windows.public_key='${wg_windows_public_key}'
+uci set      network.wg_windows.persistent_keepalive='25'
+uci add_list network.wg_windows.allowed_ips='10.7.8.8/32'
+uci set      network.wg_windows.route_allowed_ips='1'
+
 uci commit   network
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
@@ -1699,7 +1706,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.100'
-uci set      dhcp.@host[-1].name='tablet-hallway'
+uci set      dhcp.@host[-1].name='tablet-hallwaylarge'
 uci set      dhcp.@host[-1].mac='fc:a6:67:dd:89:2a'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1708,7 +1715,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.101'
 uci set      dhcp.@host[-1].name='tablet-study'
-uci set      dhcp.@host[-1].mac='aa:bb:cc:dd:ee:ff'
+uci set      dhcp.@host[-1].mac='00:71:47:5d:46:43'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1716,7 +1723,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.102'
 uci set      dhcp.@host[-1].name='tablet-lounge'
-uci set      dhcp.@host[-1].mac='00:71:47:5d:46:43'
+uci set      dhcp.@host[-1].mac='68:37:e9:ee:f8:e5'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1747,7 +1754,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.106'
-uci set      dhcp.@host[-1].name='tablet-guestbath'
+uci set      dhcp.@host[-1].name='tablet-bathroomguest'
 uci set      dhcp.@host[-1].mac='38:f7:3d:82:42:18'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1755,7 +1762,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.107'
-uci set      dhcp.@host[-1].name='tablet-mainbath'
+uci set      dhcp.@host[-1].name='tablet-bathroommain'
 uci set      dhcp.@host[-1].mac='6c:56:97:43:a3:42'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1764,14 +1771,6 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.108'
 uci set      dhcp.@host[-1].name='tablet-kitchen'
-uci set      dhcp.@host[-1].mac='68:37:e9:ee:f8:e5'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.109'
-uci set      dhcp.@host[-1].name='tablet-hd10'
 uci set      dhcp.@host[-1].mac='6c:56:97:38:d5:24'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
