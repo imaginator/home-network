@@ -2104,5 +2104,13 @@ uci set      dhcp.@host[-1].mac='48:b0:2d:14:fb:40 48:B0:2D:13:5D:30' # wireless
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.52'
+uci set      dhcp.@host[-1].name='ln'
+uci set      dhcp.@host[-1].mac='e4:5f:01:22:a2:e0'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 echo -e "All done with writing.\nRebooting..."
 reboot
