@@ -85,7 +85,7 @@ uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
 uci commit dropbear
 
 cat <<'EOF' > /etc/dropbear/authorized_keys
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCnAqd49QrBxYj73kAw+YKChDgc8KEOKhUqYtoP1pI9FPYV5tegMVtwhvPfovc6NoquzsViRzvFXsdw3Sp/aUCzOLknbthohBG+HtqxTICxVE76DtplwvoHnfF94wHC1Fl6OlvDkQRaCySgGhk7JWaVJAytaBMSZpPaAg+wlisCXpHAn36glpJv5Z9yHpK2XZ6NduYO7SqB0kYwKkLjBAjRjvQDhLdKtutVp00hHnefnTJlY8Q44UMqMomW/WL4XtjerttD59UCsPlnvtbKCWpOGAHLQlfpeqVnCpZp4eVpIRE7j/3E2CaNFc0qTK0mqnaH1Yk/6fQXQl1sgdYvq9Y8I8462irZrPuRrkgNAV6YKaUqven19nNLuybhq0cRG4K9lOZwTvvTyiMlRwo8uXawOwYoBAK+UiuCtoVvOo/+HkwCOFAU78LO8DyFGi3dLyZ6yy1jYSSuKOiSO2CuqHTszc0XE5E1bYWlua6hZoWa+agK4/zcvn6H+hy13xVOgcAMtjD4bVzYj2Wxqa4jSL0ye2m2FDE5LaEOyJLIYQ23hobrE2KvqRB/ALWLhvqJe5qUKDSWGkZvCyVArreaaLfUabcVZfdzmajt86suJJbfFQp9Dg5VHwIW6SssPL5NUNtHbfgoW7JCBXc64+nxmQqzHkcvBjahgEE+84/9zPKOqQ== router-key@imaginator.com
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHwK3f7YB4qmDKgnZ6yKaQlLEdDAFaVbNREiE2gyHwSN simon@imaginator.com
 EOF
 chmod 0600 /etc/dropbear/authorized_keys
 
@@ -148,7 +148,7 @@ uci commit   network
 uci import firewall <<EOF
 EOF
 
-uci add      firewall defaults 
+uci add      firewall defaults
 uci set      firewall.@defaults[-1]=defaults
 uci set      firewall.@defaults[-1].input=ACCEPT
 uci set      firewall.@defaults[-1].output=ACCEPT
