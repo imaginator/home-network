@@ -1633,7 +1633,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.51'
-uci set      dhcp.@host[-1].name='plugswitch01'
+uci set      dhcp.@host[-1].name='plugswitch-ventilation'
 uci set      dhcp.@host[-1].mac='50:C7:BF:01:F8:2C'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1642,7 +1642,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.52'
-uci set      dhcp.@host[-1].name='plugswitch02'
+uci set      dhcp.@host[-1].name='plugswitch-laptop'
 uci set      dhcp.@host[-1].mac='50:C7:BF:01:7C:90'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1651,7 +1651,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.53'
-uci set      dhcp.@host[-1].name='plugswitch03'
+uci set      dhcp.@host[-1].name='plugswitch-hifi'
 uci set      dhcp.@host[-1].mac='ac:84:c6:29:18:14'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
