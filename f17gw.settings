@@ -1638,6 +1638,14 @@ uci set      dhcp.@host[-1].mac='1c:ca:e3:78:ad:e1'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.50'
+uci set      dhcp.@host[-1].name='imagisuck'
+uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 # HS110
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -2103,14 +2111,6 @@ uci set      dhcp.@host[-1].name='onkyo-receiver'
 uci set      dhcp.@host[-1].mac='00:09:b0:4d:a2:a8'
 uci set      dhcp.@host[-1].dns='1'
 uci set      dhcp.@host[-1].leasetime='infinite' # firmware problem with infinite renewing
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.50'
-uci set      dhcp.@host[-1].name='imagisuck'
-uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
-uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
