@@ -2007,11 +2007,10 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='40:4e:36:d1:95:ef'
+uci set      dhcp.@host[-1].mac='dc:e5:5b:01:50:a9'
 uci set      dhcp.@host[-1].name='simon-phone'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
-
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
