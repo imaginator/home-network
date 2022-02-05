@@ -17,6 +17,22 @@ BASE_PACKAGES=" \
   "
 
 case $MODEL in
+"switch02")
+  PLATFORM=realtek
+  TYPE=generic
+  TARGET_DEVICE=realtek-generic
+  PROFILE=d-link_dgs-1210-28
+  EXTRA_PACKAGES="\
+    dnsmasq \
+    iwinfo \
+    luci \
+    odhcp6c \
+    ca-certificates \
+    luci-mod-admin-full \
+    curl \
+  "
+;;
+
 "w16gw")
   PLATFORM=ath79
   TYPE=generic
