@@ -23,14 +23,69 @@ case $MODEL in
   TARGET_DEVICE=realtek-generic
   PROFILE=d-link_dgs-1210-28
   EXTRA_PACKAGES="\
-    dnsmasq \
-    iwinfo \
-    luci \
-    odhcp6c \
+    6in4 \
+    bind-host \
+    ca-bundle \
     ca-certificates \
-    luci-mod-admin-full \
     curl \
+    ddns-scripts \
+    dnsmasq-full \
+    ip-bridge \
+    ip-full \
+    iptables-mod-tee \
+    kmod-ipip \
+    kmod-tun \
+    kmod-wireguard \
+    libatomic \
+    libnl \
+    libnl-core \
+    libnl-genl \
+    libnl-nf \
+    libnl-route \
+    libstdcpp \
+    lldpd \
+    luci \
+    luci-app-adblock \
+    luci-app-ddns \
+    luci-app-firewall \
+    luci-app-olsr \
+    luci-app-olsr-services \
+    luci-app-olsr-viz \
+    luci-app-watchcat \
+    luci-app-wireguard \
+    luci-base \
+    luci-base adblock \
+    luci-mod-admin-full \
+    luci-proto-ipv6 \
+    luci-proto-wireguard \
+    luci-app-watchcat \
+    odhcp6c \
+    olsrd \
+    olsrd-mod-arprefresh \
+    olsrd-mod-bmf \
+    olsrd-mod-dot-draw \
+    olsrd-mod-dyn-gw \
+    olsrd-mod-dyn-gw-plain \
+    olsrd-mod-httpinfo \
+    olsrd-mod-jsoninfo \
+    olsrd-mod-mdns \
+    olsrd-mod-nameservice \
+    olsrd-mod-netjson \
+    olsrd-mod-p2pd \
+    olsrd-mod-pgraph \
+    olsrd-mod-txtinfo \
+    olsrd-mod-watchdog \
+    qrencode \
+    softflowd \
+    uboot-envtools \
+    watchcat \
+    wireguard-tools \
   "
+  REMOVED_PACKAGES="\
+    -dnsmasq \
+    -odhcpd \
+    -odhcpd-ipv6only \
+    " # dhcpv6 stuff provided by dnsmasq-full
 ;;
 
 "w16gw")
