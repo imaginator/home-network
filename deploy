@@ -60,6 +60,44 @@ case $1 in
     ' < f17gw.settings | ssh root@10.7.11.5
     ;;
 
+  switch02)
+    envsubst \ '
+    $dh2048_pem \
+    $f17gw_ddns4_domain \
+    $f17gw_ddns4_password \
+    $f17gw_ddns4_username \
+    $f17gw_ddns6_domain \
+    $f17gw_ddns6_password \
+    $f17gw_ddns6_username \
+    $freifunk_ca_crt \
+    $freifunk_client_crt \
+    $freifunk_client_key \
+    $henet_f17_password \
+    $henet_f17_tunnelid \
+    $henet_f17_username \
+    $trusted_wifikey \
+    $wg_f17gw_private_key \
+    $wg_f17gw_private_key \
+    $wg_f17gw_public_key \
+    $wg_f17gw_public_key \
+    $wg_furrow_private_key \
+    $wg_furrow_private_key \
+    $wg_furrow_public_key \
+    $wg_furrow_public_key \
+    $wg_simonphone_private_key \
+    $wg_simonphone_private_key \
+    $wg_simonphone_public_key \
+    $wg_simonphone_public_key \
+    $wg_tablet_private_key \
+    $wg_tablet_public_key \
+    $wg_vpn_private_key \
+    $wg_vpn_public_key \
+    $wg_windows_private_key \
+    $wg_windows_public_key \
+    $wg_w16gw_public_key \
+    ' < switch02.settings | ssh root@192.168.1.1
+    ;;
+
   repeater-lounge|repeater-bedroom1|repeater-street-north|repeater-street-south|repeater-hof-north)
     envsubst \ '
     $trusted_wifikey \
