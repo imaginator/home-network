@@ -28,14 +28,9 @@ case $MODEL in
     ca-bundle \
     ca-certificates \
     curl \
-    ddns-scripts \
-    dnsmasq-full \
     ip-bridge \
     ip-full \
-    iptables-mod-tee \
-    kmod-ipip \
     kmod-tun \
-    kmod-wireguard \
     libatomic \
     libnl \
     libnl-core \
@@ -45,41 +40,14 @@ case $MODEL in
     libstdcpp \
     lldpd \
     luci \
-    luci-app-adblock \
-    luci-app-ddns \
     luci-app-firewall \
-    luci-app-olsr \
-    luci-app-olsr-services \
-    luci-app-olsr-viz \
     luci-app-watchcat \
-    luci-app-wireguard \
     luci-base \
-    luci-base adblock \
     luci-mod-admin-full \
     luci-proto-ipv6 \
-    luci-proto-wireguard \
-    luci-app-watchcat \
     odhcp6c \
-    olsrd \
-    olsrd-mod-arprefresh \
-    olsrd-mod-bmf \
-    olsrd-mod-dot-draw \
-    olsrd-mod-dyn-gw \
-    olsrd-mod-dyn-gw-plain \
-    olsrd-mod-httpinfo \
-    olsrd-mod-jsoninfo \
-    olsrd-mod-mdns \
-    olsrd-mod-nameservice \
-    olsrd-mod-netjson \
-    olsrd-mod-p2pd \
-    olsrd-mod-pgraph \
-    olsrd-mod-txtinfo \
-    olsrd-mod-watchdog \
-    qrencode \
-    softflowd \
     uboot-envtools \
     watchcat \
-    wireguard-tools \
   "
   REMOVED_PACKAGES="\
     -dnsmasq \

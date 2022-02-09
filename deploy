@@ -95,7 +95,7 @@ case $1 in
     $wg_windows_private_key \
     $wg_windows_public_key \
     $wg_w16gw_public_key \
-    ' < switch02.settings | ssh root@192.168.1.1
+    ' < switch02.settings | ssh root@10.7.11.10
     ;;
 
   repeater-lounge|repeater-bedroom1|repeater-street-north|repeater-street-south|repeater-hof-north)
