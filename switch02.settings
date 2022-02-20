@@ -10,7 +10,6 @@ EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].compat_version=1.1
 uci set      system.@system[-1].hostname='switch02'
 uci set      system.@system[-1].zonename='UTC'
 uci set      system.@system[-1].timezone='UTC'
@@ -28,12 +27,14 @@ uci set      system.ntp.enabled=1
 uci add_list system.ntp.server='0.de.pool.ntp.org'
 uci add_list system.ntp.server='1.de.pool.ntp.org'
 uci add_list system.ntp.server='2.de.pool.ntp.org'
-uci set      system.@system[-1].location='Falckensteinstraße'
+uci set      system.@system[-1].location='Falckensteinstrasse 17'
 uci set      system.@system[-1].latitude='52.497618743398135'
 uci set      system.@system[-1].longitude='13.441156148912176'
 
 uci commit   system
 
+uci import system.watchcat <<EOF
+EOF
 
 uci add      system  watchcat
 uci set      system.@watchcat[-1]=watchcat
@@ -64,7 +65,7 @@ uci import network <<EOF
 EOF
 
 uci set      network.loopback=interface
-uci set      network.loopback.ifname='lo'
+uci set      network.loopback.device='lo'
 uci set      network.loopback.proto='static'
 uci set      network.loopback.ipaddr='127.0.0.1'
 uci set      network.loopback.netmask='255.0.0.0'
@@ -77,10 +78,11 @@ uci set network.lan.ipaddr='192.168.1.1'
 uci set network.lan.netmask='255.255.255.0'
 # end Default access
 
+
 uci add      network device
 uci set      network.@device[-1].type='bridge'
 uci set      network.@device[-1].name='switch'
-uci add_list network.@device[-1].ports='lan2'
+uci add_list network.@device[-1].ports='lan2' # lan1 left for emergency access
 uci add_list network.@device[-1].ports='lan3'
 uci add_list network.@device[-1].ports='lan4'
 uci add_list network.@device[-1].ports='lan5'
@@ -108,42 +110,50 @@ uci add_list network.@device[-1].ports='lan26'
 uci add_list network.@device[-1].ports='lan27'
 uci add_list network.@device[-1].ports='lan28'
 
+# vlan: trusted
 uci add      network bridge-vlan
 uci set      network.@bridge-vlan[-1].device='switch'
 uci set      network.@bridge-vlan[-1].vlan='2'
-uci add_list network.@bridge-vlan[-1].ports='lan2'
-uci add_list network.@bridge-vlan[-1].ports='lan3'
-uci add_list network.@bridge-vlan[-1].ports='lan4'
-uci add_list network.@bridge-vlan[-1].ports='lan5'
-uci add_list network.@bridge-vlan[-1].ports='lan6'
-uci add_list network.@bridge-vlan[-1].ports='lan7'
-uci add_list network.@bridge-vlan[-1].ports='lan8'
+uci add_list network.@bridge-vlan[-1].ports='lan2*'
+uci add_list network.@bridge-vlan[-1].ports='lan3*'
+uci add_list network.@bridge-vlan[-1].ports='lan4*'
+uci add_list network.@bridge-vlan[-1].ports='lan5*'
+uci add_list network.@bridge-vlan[-1].ports='lan6*'
+uci add_list network.@bridge-vlan[-1].ports='lan7*'
+uci add_list network.@bridge-vlan[-1].ports='lan8*'
+uci add_list network.@bridge-vlan[-1].ports='lan27:t'
 uci add_list network.@bridge-vlan[-1].ports='lan28:t'
 
+# vlan: notrust
 uci add network bridge-vlan
 uci set network.@bridge-vlan[-1].device='switch'
 uci set network.@bridge-vlan[-1].vlan='3'
-uci add_list network.@bridge-vlan[-1].ports='lan9'
-uci add_list network.@bridge-vlan[-1].ports='lan10'
-uci add_list network.@bridge-vlan[-1].ports='lan11'
-uci add_list network.@bridge-vlan[-1].ports='lan12'
-uci add_list network.@bridge-vlan[-1].ports='lan13'
-uci add_list network.@bridge-vlan[-1].ports='lan14'
-uci add_list network.@bridge-vlan[-1].ports='lan15'
-uci add_list network.@bridge-vlan[-1].ports='lan16'
+uci add_list network.@bridge-vlan[-1].ports='lan9*'
+uci add_list network.@bridge-vlan[-1].ports='lan10*'
+uci add_list network.@bridge-vlan[-1].ports='lan11*'
+uci add_list network.@bridge-vlan[-1].ports='lan12*'
+uci add_list network.@bridge-vlan[-1].ports='lan13*'
+uci add_list network.@bridge-vlan[-1].ports='lan14*'
+uci add_list network.@bridge-vlan[-1].ports='lan15*'
+uci add_list network.@bridge-vlan[-1].ports='lan16*'
+uci add_list network.@bridge-vlan[-1].ports='lan27:t'
 uci add_list network.@bridge-vlan[-1].ports='lan28:t'
 
+# vlan: wan
 uci add network bridge-vlan
 uci set network.@bridge-vlan[-1].device='switch'
 uci set network.@bridge-vlan[-1].vlan='4'
-uci add_list network.@bridge-vlan[-1].ports='lan17'
-uci add_list network.@bridge-vlan[-1].ports='lan18'
-uci add_list network.@bridge-vlan[-1].ports='lan19'
+uci add_list network.@bridge-vlan[-1].ports='lan17*'
+uci add_list network.@bridge-vlan[-1].ports='lan18*'
+uci add_list network.@bridge-vlan[-1].ports='lan19*'
+uci add_list network.@bridge-vlan[-1].ports='lan27:t'
 uci add_list network.@bridge-vlan[-1].ports='lan28:t'
 
+# vlan: iot
 uci add network bridge-vlan
 uci set network.@bridge-vlan[-1].device='switch'
 uci set network.@bridge-vlan[-1].vlan='5'
+uci add_list network.@bridge-vlan[-1].ports='lan27:t'
 uci add_list network.@bridge-vlan[-1].ports='lan28:t'
 
 uci set network.trusted=interface
@@ -176,111 +186,10 @@ EOF
 
 uci add    firewall defaults
 uci set    firewall.@defaults[-1]=defaults
-uci set    firewall.@defaults[-1].input='REJECT'
-uci set    firewall.@defaults[-1].output='REJECT'
-uci set    firewall.@defaults[-1].forward='REJECT'
-uci set    firewall.@defaults[-1].flow_offloading=0      # currently broken
-uci set    firewall.@defaults[-1].flow_offloading_hw=0   # currently broken
-uci set    firewall.@defaults[-1].drop_invalid=1
+uci set    firewall.@defaults[-1].input='ACCEPT'
+uci set    firewall.@defaults[-1].output='ACCPT'
+uci set    firewall.@defaults[-1].forward='ACCEPT'
 uci commit firewall.@defaults[-1]
-
-# A zone section groups one or more interfaces and serves as a source or destination for forwardings,
-# rules and redirects. Masquerading (NAT) of outgoing traffic is controlled on a per-zone basis.
-# Note that masquerading is defined on the outgoing interface.
-
-# INPUT   rules for a zone describe what happens to traffic trying to reach the router itself through an interface in that zone.
-# OUTPUT  rules for a zone describe what happens to traffic originating from the router itself going through an interface in that zone.
-# FORWARD rules for a zone describe what happens to traffic passing between different interfaces in that zone.
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='trusted'
-uci add_list firewall.@zone[-1].network='trusted'
-uci add_list firewall.@zone[-1].network='wg0'
-uci add_list firewall.@zone[-1].network='lan'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='ACCEPT'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].mtu_fix='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='notrust'
-uci add_list firewall.@zone[-1].network='notrust'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].device='tnl_+'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='ACCEPT'
-uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='iot'
-uci add_list firewall.@zone[-1].network='iot'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='DROP'
-uci set      firewall.@zone[-1].forward='DROP'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='wan_trusted'
-uci add_list firewall.@zone[-1].network='pyur4'
-uci add_list firewall.@zone[-1].network='pyur6'
-uci add_list firewall.@zone[-1].network='henet'
-uci add_list firewall.@zone[-1].network='cable'
-uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='ffuplink'
-uci add_list firewall.@zone[-1].network='ffuplink'
-uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='ffuplink'
-uci set    firewall.@forwarding[-1].dest='ffuplink'
-uci commit firewall.@forwarding[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='wan_notrust'
-uci add_list firewall.@zone[-1].network='ffvpn'
-uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='wan_trusted'
-uci set    firewall.@forwarding[-1].dest='wan_trusted'
-uci commit firewall.@forwarding[-1]
-
 
 ###############################################################################
 # never lock ourselves out
@@ -306,16 +215,6 @@ uci set      firewall.@rule[-1].icmp_type='echo-request'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='wireguard'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='*'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].dest_port='12321'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
 ###############################################################################
 # Trusted zone specific rules
 ###############################################################################
@@ -326,307 +225,8 @@ uci set    firewall.@forwarding[-1].src='trusted'
 uci set    firewall.@forwarding[-1].dest='trusted'
 uci commit firewall.@forwarding[-1]
 
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='notrust'
-uci commit firewall.@forwarding[-1]
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='iot'
-uci commit firewall.@forwarding[-1]
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='wan_trusted'
-uci commit firewall.@forwarding[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='trusted dns'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].dest_port='53'
-uci set      firewall.@rule[-1].proto='tcpudp'
-uci set      firewall.@rule[-1].family='any'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='luci accees to router'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].dest_port='80'
-uci set      firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].family='any'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='WAN IPv6 input from LAN'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].proto='icmp'
-uci add_list firewall.@rule[-1].icmp_type='echo-request'
-uci add_list firewall.@rule[-1].icmp_type='echo-reply'
-uci add_list firewall.@rule[-1].icmp_type='destination-unreachable'
-uci add_list firewall.@rule[-1].icmp_type='packet-too-big'
-uci add_list firewall.@rule[-1].icmp_type='time-exceeded'
-uci add_list firewall.@rule[-1].icmp_type='bad-header'
-uci add_list firewall.@rule[-1].icmp_type='unknown-header-type'
-uci add_list firewall.@rule[-1].icmp_type='router-solicitation'
-uci add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
-uci add_list firewall.@rule[-1].icmp_type='router-advertisement'
-uci add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
-uci set      firewall.@rule[-1].limit='1000/sec'
-uci set      firewall.@rule[-1].family='ipv6'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted  DHCPv4 requests'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].dest_port='67-68'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].family='ipv4'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted DHCPv6 requests'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].src_ip='fe80::/10'
-uci set      firewall.@rule[-1].src_port='546'
-uci set      firewall.@rule[-1].dest_ip='ff02::1:2'
-uci set      firewall.@rule[-1].dest_port='547'
-uci set      firewall.@rule[-1].family='ipv6'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted Samba browse udp'
-uci set      firewall.@rule[-1].dest_port='137 138'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].dest='trusted'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci add_list firewall.@rule[-1].proto='udp'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].dest_port='139 445'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].name='Trusted samba browse tcp'
-uci set      firewall.@rule[-1].dest='trusted'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci add_list firewall.@rule[-1].proto='tcp'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted prometheus'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].dest_port='9100'
-uci set      firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].family='any'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted IGMP from trusted'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].proto='igmp'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1].name='No fucking idea'
-uci add_list firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].src='*'
-uci set      firewall.@rule[-1].dest_port='5353'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci add_list firewall.@rule[-1].dest_ip='224.0.0.251'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted Multicast to LAN'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].family='ipv4'
-uci set      firewall.@rule[-1].dest_ip='224.0.0.0/4'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-###############################################################################
-# Freifunk zone specific rules
-###############################################################################
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='notrust'
-uci set    firewall.@forwarding[-1].dest='notrust'
-uci commit firewall.@forwarding[-1]
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='notrust'
-uci set    firewall.@forwarding[-1].dest='ffuplink'
-uci commit firewall.@forwarding[-1]
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust DNS'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='notrust'
-uci set      firewall.@rule[-1].proto='tcpudp'
-uci set      firewall.@rule[-1].dest_port='53'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust dhcp'
-uci set      firewall.@rule[-1].src='notrust'
-uci set      firewall.@rule[-1].dest_port='67-68'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].family='ipv4'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust web'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='notrust'
-uci set      firewall.@rule[-1].proto='tcpudp'
-uci set      firewall.@rule[-1].dest_port='80'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust olsr updates'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='ffuplink'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].dest_port='698'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-###############################################################################
-# IoT zone specific rules
-###############################################################################
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='iot DNS'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].proto='tcpudp'
-uci set      firewall.@rule[-1].dest_port='53'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IoT DHCP inbound'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].src_port='68'
-uci set      firewall.@rule[-1].dest_port='67'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IoT DHCP outbound'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].dest='iot'
-uci set      firewall.@rule[-1].src_port='67'
-uci set      firewall.@rule[-1].dest_port='68'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IoT NTP outbound' # all other zones can outbound by default, not IoT
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='wan_trusted'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].dest_port='123'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1].name='syslog'
-uci add_list firewall.@rule[-1].proto='tcp'
-uci add_list firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='trusted'
-uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
-uci set      firewall.@rule[-1].dest_port='514'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1].name='mqtt.imagilan'
-uci add_list firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='trusted'
-uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
-uci set      firewall.@rule[-1].dest_port='1883'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IoT habpanel from tablets'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='trusted'
-uci set      firewall.@rule[-1].dest_port='80'
-uci set      firewall.@rule[-1].dest_ip='10.7.11.1'
-uci set      firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IoT outboud'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='wan_trusted'
-uci set      firewall.@rule[-1].dest_port='80 443 8882 8883 8884 9292 43439' # homematic is port 9292 43439
-uci set      firewall.@rule[-1].proto='tcp'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='IoT ping outbound (homematic needs this)'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='wan_trusted'
-uci set      firewall.@rule[-1].icmp_type='echo-request'
-uci set      firewall.@rule[-1].proto='icmp'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1].name='multicast  into iot network'
-uci add_list firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='iot'
-uci add_list firewall.@rule[-1].dest_ip='224.0.0.251'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
 
 service firewall enable || true
 
 echo -e "All done with writing.\nRebooting..."
-#reboot
+reboot
