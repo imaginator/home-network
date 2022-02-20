@@ -215,17 +215,6 @@ uci set      firewall.@rule[-1].icmp_type='echo-request'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-###############################################################################
-# Trusted zone specific rules
-###############################################################################
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='trusted'
-uci commit firewall.@forwarding[-1]
-
-
 service firewall enable || true
 
 echo -e "All done with writing.\nRebooting..."
