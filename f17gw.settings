@@ -184,6 +184,7 @@ uci set      network.wg_windows.route_allowed_ips='1'
 uci commit   network
 
 # https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
+# testing source routes
 #uci add      network  rule
 #uci set      network.@rule[-1]=rule
 #uci set      network.@rule[-1].src='10.7.12.0/22'
