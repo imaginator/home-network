@@ -81,6 +81,7 @@ uci set      network.trusted.ip6ifaceid='::5'
 uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.netmask='255.255.255.0'
 uci set      network.trusted.proto='static'
+#uci set      network.trusted.ip4table='trusted'
 
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
@@ -90,6 +91,7 @@ uci set      network.notrust.proto='static'
 uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.36.189.5'
 uci set      network.notrust.delegate='0'
+#uci set      network.notrust.ip4table='notrust'
 
 # wan interface
 uci set      network.pyur4=interface
@@ -112,13 +114,6 @@ uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='0'
 #uci set      network.pyur6.ip6table='pyur6'
 
-uci set      network.cable=interface
-uci set      network.cable.ifname='eth0.2'
-uci set      network.cable.proto='static'
-uci add_list network.cable.ipaddr='192.168.0.5/24'
-uci add_list network.cable.ipaddr='192.168.100.5/24'
-uci set      network.cable.delegate='0'
-
 uci set      network.iot=interface
 uci set      network.iot.ifname='eth0.5'
 uci set      network.iot.ipaddr='10.7.9.1'
@@ -126,6 +121,7 @@ uci set      network.iot.netmask='255.255.255.0'
 uci set      network.iot.proto='static'
 uci set      network.iot.type='bridge'
 uci set      network.iot.delegate='0'
+#uci set      network.iot.ip4table='iot'
 
 uci set      network.ffuplink=interface
 uci set      network.ffuplink.ifname='eth0.6'
@@ -181,31 +177,50 @@ uci set      network.wg_windows.persistent_keepalive='25'
 uci add_list network.wg_windows.allowed_ips='10.7.8.8/32'
 uci set      network.wg_windows.route_allowed_ips='1'
 
+# create a new routing table to send out Freifunk gateway
+# route table 222
+uci add network route
+uci set network.@route[-1].interface='iot'
+uci set network.@route[-1].target='10.7.9.0'
+uci set network.@route[-1].netmask='255.255.255.0'
+uci set network.@route[-1].table='222'
+uci commit   network.@route[-1]
+
+uci add network route
+uci set network.@route[-1].interface='trusted'
+uci set network.@route[-1].target='10.7.11.0'
+uci set network.@route[-1].netmask='255.255.255.0'
+uci set network.@route[-1].table='222'
+uci commit   network.@route[-1]
+
+uci add      network route
+uci set      network.@route[-1].target='1.1.1.1'
+uci set      network.@route[-1].gateway='10.36.189.1'
+uci commit   network.@route[-1]
+
+uci add      network  route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].table='222'
+uci set      network.@route[-1].interface='notrust'
+uci set      network.@route[-1].target='0.0.0.0'
+uci set      network.@route[-1].netmask='0.0.0.0'
+uci set      network.@route[-1].gateway='10.36.189.1'
+uci set      network.@route[-1].metric='20'
+uci commit   network.@route[-1]
+
+uci add      network  rule
+uci set      network.@rule[-1]=rule
+uci set      network.@rule[-1].src='10.7.9.0/24'
+uci set      network.@rule[-1].lookup='222'
+uci commit   network.@rule[-1]
+
+uci add      network  rule
+uci set      network.@rule[-1]=rule
+uci set      network.@rule[-1].src='10.7.11.0/24'
+uci set      network.@rule[-1].lookup='222'
+uci commit   network.@rule[-1]
+
 uci commit   network
-
-# https://forum.openwrt.org/viewtopic.php?pid=208948#p208948
-# testing source routes
-#uci add      network  rule
-#uci set      network.@rule[-1]=rule
-#uci set      network.@rule[-1].src='10.7.12.0/22'
-#uci set      network.@rule[-1].lookup='100'
-#uci commit   network.@rule[-1]
-
-#uci add      network  route
-#uci set      network.@route[-1]=route
-#uci set      network.@route[-1].table=100
-#uci set      network.@route[-1].interface=br-trusted
-#uci set      network.@route[-1].target=10.7.9.0
-#uci set      network.@route[-1].netmask=255.255.255.0
-#uci commit   network.@route[-1]
-
-#uci add      network  route
-#uci set      network.@route[-1]=route
-#uci set      network.@route[-1].table=100
-#uci set      network.@route[-1].interface=ffvpn
-#uci set      network.@route[-1].target=0.0.0.0
-#uci set      network.@route[-1].netmask=0.0.0.0
-#uci commit   network.@route[-1]
 
 uci set     luci.sauth.sessiontime="36000000"
 uci commit  luci
@@ -513,140 +528,6 @@ uci commit prometheus-node-exporter-lua
 
 service prometheus-node-exporter-lua enable || true
 
-test -d /etc/adblock || mkdir -p /etc/adblock
-cat <<'EOF' > /etc/adblock/adblock.blacklist
-# domains to block
-# the neighbour streams an inordinate amount of TV from here.
-zattoo.de
-zattoo.com
-EOF
-
-uci import adblock <<EOF
-EOF
-
-uci set    adblock.global=adblock
-uci set    adblock.global.adb_backup='0'
-uci set    adblock.global.adb_backupdir='/mnt'
-uci set    adblock.global.adb_debug='1'
-uci set    adblock.global.adb_dns='dnsmasq'
-uci set    adblock.global.adb_enabled='1'
-uci set    adblock.global.adb_forcedns='0'
-uci set    adblock.global.adb_forcesrt='0'
-uci set    adblock.global.adb_manmode='0'
-uci set    adblock.global.adb_rtfile='/tmp/adb_runtime.json'
-uci set    adblock.global.adb_trigger='pyur4'
-uci set    adblock.global.adb_triggerdelay='5' # gives us the chance to log in and change this if using too much memory.
-uci set    adblock.global.adb_whitelist='/etc/adblock/adblock.whitelist'
-uci set    adblock.global.adb_whitelist_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\"^\"\$1\"\\\|[.]\"\$1)}'
-uci commit adblock.global
-
-uci add    adblock source
-uci set    adblock.@source[-1]=source
-uci rename adblock.@source[-1]=blacklist
-uci set    adblock.@source[-1].enabled='1'
-uci set    adblock.@source[-1].adb_src='/etc/adblock/adblock.blacklist'
-uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
-uci set    adblock.@source[-1].adb_src_desc='static local domain blacklist (always deny these domains)'
-uci commit adblock.@source[-1]
-
-uci add    adblock  source
-uci set    adblock.@source[-1]=source
-uci rename adblock.@source[-1]=adway
-uci set    adblock.@source[-1].enabled='1'
-uci set    adblock.@source[-1].adb_src='https://adaway.org/hosts.txt'
-uci set    adblock.@source[-1].adb_src_rset='\$0 ~/^127\.0\.0\.1[ \t]+([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$2)}'
-uci set    adblock.@source[-1].adb_src_desc='focus on mobile ads, infrequent updates, approx. 400 entries'
-uci commit adblock.@source[-1]
-
-uci add    adblock  source
-uci set    adblock.@source[-1]=source
-uci rename adblock.@source[-1]=yoyo
-uci set    adblock.@source[-1].enabled='1'
-uci set    adblock.@source[-1].adb_src='https://pgl.yoyo.org/adservers/serverlist.php?hostformat=nohtml&showintro=0&mimetype=plaintext'
-uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
-uci set    adblock.@source[-1].adb_src_desc='focus on ad related domains, weekly updates, approx. 2.500 entries'
-uci commit adblock.@source[-1]
-
-uci add    adblock  source
-uci set    adblock.@source[-1]=source
-uci rename adblock.@source[-1]=malvertising
-uci set    adblock.@source[-1].enabled='1'
-uci set    adblock.@source[-1].adb_src='https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt'
-uci set    adblock.@source[-1].adb_src_rset='\$1 ~/^([A-Za-z0-9_-]+\.){1,}[A-Za-z]+/{print tolower(\$1)}'
-uci set    adblock.@source[-1].adb_src_desc='mozilla driven blocklist, numerous updates on the same day, approx. 6.500 entries'
-uci commit adblock.@source[-1]
-
-service adblock enable || true
-
-uci import openvpn <<EOF
-EOF
-
-uci set      openvpn.ffvpn=openvpn
-uci set      openvpn.ffvpn.enabled='0'
-uci set      openvpn.ffvpn.client='1'
-uci set      openvpn.ffvpn.nobind='1'
-uci set      openvpn.ffvpn.proto='udp'
-uci set      openvpn.ffvpn.dev='ffvpn'
-uci set      openvpn.ffvpn.dev_type='tun'
-uci set      openvpn.ffvpn.persist_key='1'
-uci set      openvpn.ffvpn.keepalive='10 60'
-uci set      openvpn.ffvpn.compress='lzo'
-uci set      openvpn.ffvpn.script_security='2'
-uci set      openvpn.ffvpn.cipher='none'
-uci set      openvpn.ffvpn.mute_replay_warnings='1'
-uci add_list openvpn.ffvpn.remote='vpn03.berlin.freifunk.net 1194 udp'
-uci add_list openvpn.ffvpn.remote='vpn03-backup.berlin.freifunk.net 1194 udp'
-uci set      openvpn.ffvpn.ns_cert_type='server'
-uci set      openvpn.ffvpn.ca='/etc/openvpn/freifunk-ca.crt'
-uci set      openvpn.ffvpn.cert='/etc/openvpn/freifunk_client.crt'
-uci set      openvpn.ffvpn.key='/etc/openvpn/freifunk_client.key'
-uci set      openvpn.ffvpn.up='/etc/openvpn/up.sh'
-uci set      openvpn.ffvpn.route_nopull='1'
-uci commit   openvpn.ffvpn
-
-if [ ! -d "/etc/openvpn" ]; then
-  mkdir /etc/openvpn
-fi
-cat <<'EOF' > /etc/openvpn/up.sh
-#!/bin/sh
-set -x
-sleep 10
-if [ `ip route show table 100 | grep "default via 172.31.240.1 dev ffvpn" | wc -l` -lt 1 ]; then
-  ip route add default via 172.31.240.1 table 100
-fi
-if [ `ip route show table 100 | grep "10.7.12.0/22 dev br-notrust" | wc -l` -lt 2 ]; then
-  ip route add 10.7.11.0/24 dev br-trusted table 100
-  ip route add 10.7.12.0/22 dev br-notrust table 100
-fi
-if [ `ip route show table 100 | grep "172.31.240.0/20 dev ffvpn" | wc -l` -lt 1 ]; then
-  ip route add 172.31.240.0/20 dev ffvpn table 100
-fi
-if [ `ip rule | grep "172.31.240.0/20 lookup 100" | wc -l` -lt 1 ]; then
-  ip rule add from 172.31.240.0/20 table 100
-fi
-if [ `ip rule | grep "10.7.12.0/22 lookup 100" | wc -l` -lt 1 ]; then
-  ip rule add from 10.7.12.0/22 table 100
-fi
-EOF
-chmod u+x /etc/openvpn/up.sh
-
-cat <<'EOF' > /etc/openvpn/freifunk-ca.crt
-${freifunk_ca_crt}
-EOF
-cat <<'EOF' > /etc/openvpn/freifunk_client.crt
-${freifunk_client_crt}
-EOF
-cat <<'EOF' > /etc/openvpn/freifunk_client.key
-${freifunk_client_key}
-EOF
-cat <<'EOF' > /etc/openvpn/imagivpn.key
-${imagivpn_key}
-EOF
-cat <<'EOF' > /etc/openvpn/dh2048.pem
-${dh2048_pem}
-EOF
-
-service openvpn enable || true
 
 uci import https_dns_proxy <<EOF
 EOF
@@ -700,7 +581,6 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='notrust'
 uci add_list firewall.@zone[-1].network='notrust'
 uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].device='tnl_+'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].masq='1'
@@ -733,24 +613,6 @@ uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].conntrack='1'
 uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='ffuplink'
-uci add_list firewall.@zone[-1].network='ffuplink'
-uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add    firewall  forwarding
-uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='ffuplink'
-uci set    firewall.@forwarding[-1].dest='ffuplink'
-uci commit firewall.@forwarding[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
@@ -1279,6 +1141,13 @@ uci commit   firewall.@rule[-1]
 ###############################################################################
 # IoT zone specific rules
 ###############################################################################
+
+
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='iot'
+uci set    firewall.@forwarding[-1].dest='notrust'
+uci commit firewall.@forwarding[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
