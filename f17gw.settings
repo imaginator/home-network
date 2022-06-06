@@ -34,16 +34,18 @@ uci set      system.@system[-1].longitude='13.441156148912176'
 
 uci commit   system
 
+uci import watchcat <<EOF
+EOF
 
-uci add      system  watchcat
-uci set      system.@watchcat[-1]=watchcat
-uci set      system.@watchcat[-1].mode='ping'
-uci set      system.@watchcat[-1].forcedelay='300'
-uci set      system.@watchcat[-1].period='30m'
-uci set      system.@watchcat[-1].pingperiod='5m'
-uci set      system.@watchcat[-1].pinghosts='1.1.1.1'
+uci add      watchcat  watchcat
+uci set      watchcat.@watchcat[-1]=watchcat
+uci set      watchcat.@watchcat[-1].mode='ping'
+uci set      watchcat.@watchcat[-1].forcedelay='300'
+uci set      watchcat.@watchcat[-1].period='30m'
+uci set      watchcat.@watchcat[-1].pingperiod='5m'
+uci set      watchcat.@watchcat[-1].pinghosts='1.1.1.1'
 
-uci commit   system.watchcat
+uci commit   watchcat.watchcat
 
 uci import dropbear <<EOF
 EOF
@@ -179,23 +181,18 @@ uci set      network.wg_windows.route_allowed_ips='1'
 
 # create a new routing table to send out Freifunk gateway
 # route table 222
-uci add network route
-uci set network.@route[-1].interface='iot'
-uci set network.@route[-1].target='10.7.9.0'
-uci set network.@route[-1].netmask='255.255.255.0'
-uci set network.@route[-1].table='222'
-uci commit   network.@route[-1]
-
-uci add network route
-uci set network.@route[-1].interface='trusted'
-uci set network.@route[-1].target='10.7.11.0'
-uci set network.@route[-1].netmask='255.255.255.0'
-uci set network.@route[-1].table='222'
+uci add      network route
+uci set      network.@route[-1].interface='iot'
+uci set      network.@route[-1].target='10.7.9.0'
+uci set      network.@route[-1].netmask='255.255.255.0'
+uci set      network.@route[-1].table='222'
 uci commit   network.@route[-1]
 
 uci add      network route
-uci set      network.@route[-1].target='1.1.1.1'
-uci set      network.@route[-1].gateway='10.36.189.1'
+uci set      network.@route[-1].interface='trusted'
+uci set      network.@route[-1].target='10.7.11.0'
+uci set      network.@route[-1].netmask='255.255.255.0'
+uci set      network.@route[-1].table='222'
 uci commit   network.@route[-1]
 
 uci add      network  route
@@ -219,6 +216,14 @@ uci set      network.@rule[-1]=rule
 uci set      network.@rule[-1].src='10.7.11.0/24'
 uci set      network.@rule[-1].lookup='222'
 uci commit   network.@rule[-1]
+
+uci add      network route
+uci set      network.@route[-1]=route
+uci set      network.@route[-1].target='1.1.1.1'
+uci set      network.@route[-1].gateway='10.36.189.1'
+uci set      network.@route[-1].netmask='255.255.255.255'
+uci set      network.@route[-1].interface='notrust'
+uci commit   network.@route[-1]
 
 uci commit   network
 
