@@ -2,9 +2,9 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.3, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.3"
-!System Up Time          "7 days 1 hrs 34 mins 10 secs"
+!System Up Time          "118 days 18 hrs 53 mins 13 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
-!Current SNTP Synchronized Time: Feb 17 14:07:46 2022 UTC
+!Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
 !
 hostname "switch01"
 network ipv6 address autoconfig
@@ -17,11 +17,14 @@ vlan name 5 "iot"
 vlan name 6 "ffuplink"
 exit
 network mgmt_vlan 2
+sshcon timeout 160
 configure
 no device analytics
 ip name server 10.7.10.5
-logging host "10.7.11.1" ipv4
+logging console 7
+logging host "10.7.11.1" ipv4 514 debug
 logging syslog
+logging cli-command
 username "ubnt" password cd4850c26569ef226ff14ba8ceba75643ae0688ff199592191354eb86ae8180412c6c054c0f373e81d7d282182b9879bd0f128fcb8dcc4d6942115f5d0346ddb level 15 encrypted
 line console
 exit
@@ -29,163 +32,154 @@ line telnet
 exit
 line ssh
 exit
-sshcon timeout 160
 no spanning-tree
-no ip dhcp snooping
-no ip dhcp snooping vlan 1-4093
-no ip dhcp snooping verify mac-address
+no port-channel linktrap 3/1
+interface 0/25
+addport 3/1
+exit
+interface 0/26
+addport 3/1
+exit
+no port-channel linktrap 3/2
+no port-channel linktrap 3/3
+no port-channel linktrap 3/4
 snmp-server sysname "switch01"
-
-
-
-
-
+!
+ip dhcp snooping
+no ip dhcp snooping verify mac-address
 interface 0/1
-speed auto 1000 full-duplex
+description 'test'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 switchport trunk native vlan 4
 switchport trunk allowed vlan 4,7-4093
-vlan pvid 4
-vlan participation exclude 1-3,5-6
-vlan participation include 4
-vlan tagging 6
+vlan pvid 2
+vlan participation exclude 1,3-6
+vlan participation include 2
+vlan tagging 4,6
 poe opmode shutdown
 exit
-
 interface 0/2
 description 'knxgw'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 vlan tagging 2-3
 exit
-
 interface 0/3
 description 'veluxgw'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 vlan tagging 2-3
 poe opmode shutdown
 exit
-
 interface 0/4
 speed auto 1000 full-duplex
 description 'repeater-lounge'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
 vlan tagging 2-3,5
 exit
-
 interface 0/5
 description 'repeater-hof-north'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
 vlan tagging 2-5
 poe opmode passive24v
 exit
-
 interface 0/6
 description 'repeater-street-north'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
 vlan tagging 2-3,5
 poe opmode passive24v
 exit
-
 interface 0/7
 description 'repeater-street-south'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
 vlan tagging 2-3,5
 poe opmode passive24v
 exit
-
 interface 0/8
 description 'bunker'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
 vlan tagging 2-3,5
 poe opmode shutdown
 exit
-
 interface 0/9
 no auto-negotiate
 speed 10 full-duplex
 description 'bunker iLO'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,3-6
 vlan participation include 2
 poe opmode shutdown
 exit
-
 interface 0/10
 description 'onkyo-receiver'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,3-6
 vlan participation include 2
 vlan tagging 3,5
 poe opmode shutdown
 exit
-
 interface 0/11
 speed auto 1000 full-duplex
 description 'Nvidia Shield'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,3-6
 vlan participation include 2
 poe opmode shutdown
 exit
-
 interface 0/12
 description 'projector01'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 poe opmode shutdown
 exit
-
 interface 0/13
 no auto-negotiate
 speed 10 full-duplex
 description 'Hue'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 poe opmode shutdown
 exit
-
 interface 0/14
 description 'freifunk router'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 switchport trunk native vlan 4
 switchport trunk allowed vlan 4,7-4093
 vlan pvid 4
@@ -194,109 +188,158 @@ vlan participation include 3,6
 vlan tagging 3,6
 poe opmode shutdown
 exit
-
 interface 0/15
 description 'Vallox'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 switchport access vlan 5
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 poe opmode shutdown
 exit
-
 interface 0/16
 description 'printer'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,3-6
 vlan participation include 2
 poe opmode shutdown
 exit
-
 interface 0/17
+no auto-negotiate
+speed 100 full-duplex
 description 'rpi Compute module'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,3-6
 vlan participation include 2
 vlan tagging 3,5-6
 poe opmode shutdown
 exit
-
 interface 0/18
 speed auto 1000 full-duplex
 description 'repeater-bedroom1'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan participation exclude 1,4,6
 vlan participation include 2-3,5
 vlan tagging 2-3,5
 exit
-
 interface 0/19
 description 'gruenbeck'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 poe opmode shutdown
 exit
-
 interface 0/20
 description 'rpi 3'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,3-6
 vlan participation include 2
 poe opmode shutdown
 exit
-
 interface 0/21
 description 'doorbird'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1-4,6
 vlan participation include 5
 vlan tagging 2-4,6
 exit
-
 interface 0/22
+shutdown
 description 'switch02'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
-poe opmode shutdown
+ip dhcp snooping trust
 switchport mode trunk
+poe opmode shutdown
 exit
-
 interface 0/23
 description 'emmauskirche uplink (NanoBridge M5)'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
+ip dhcp snooping trust
 vlan pvid 6
 vlan participation exclude 1,3-5
 vlan participation include 2,6
 vlan tagging 2,6
 poe opmode passive24v
 exit
-
-! to remove trunk port wierdness use the following:
-!
-!   vlan participation auto 2-4093
-!   vlan participation include 1
-!
-
-
 interface 0/24
 speed auto 1000 full-duplex
+description 'f17gw'
 no spanning-tree port mode
-ip dhcp snooping log-invalid
-poe opmode shutdown
+ip dhcp snooping trust
 switchport mode trunk
+poe opmode shutdown
 exit
+interface 0/25
+no port lacpmode
+shutdown
+no snmp trap link-status
+no spanning-tree port mode
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface 0/26
+no port lacpmode
+shutdown
+no snmp trap link-status
+no spanning-tree port mode
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface lag 1
+shutdown
+no adminmode
+no spanning-tree port mode
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface lag 2
+shutdown
+no adminmode
+no spanning-tree port mode
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface lag 3
+shutdown
+no adminmode
+no spanning-tree port mode
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface lag 4
+shutdown
+no adminmode
+no spanning-tree port mode
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface lag 5
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+interface lag 6
+ip dhcp snooping trust
+ip dhcp snooping log-invalid
+vlan participation exclude 1-6
+exit
+service ubnt-discovery-active-scan
+exit 
