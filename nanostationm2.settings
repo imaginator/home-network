@@ -136,8 +136,8 @@ uci set      network.trusted6.reqprefix='no'
 
 uci set      network.notrust=interface
 uci set      network.notrust.type='bridge'
-uci add_list network.notrust.ifname='eth0.3'   # unifi-ac-lite
-uci add_list network.notrust.ifname='eth1.3'   # unifi-m2-loco
+uci add_list network.notrust.ifname='eth0.40'   # unifi-ac-lite
+uci add_list network.notrust.ifname='eth1.40'   # unifi-m2-loco
 uci set      network.notrust.proto='none'
 
 uci set      network.iot=interface
