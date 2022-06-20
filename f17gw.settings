@@ -1331,14 +1331,8 @@ uci commit   dhcp.trusted
 uci set      dhcp.notrust=dhcp
 uci add_list dhcp.notrust.domain='freifunk'
 uci set      dhcp.notrust.interface='notrust'
-uci set      dhcp.notrust.dhcpv4='server'
-uci set      dhcp.notrust.start='50'
-uci set      dhcp.notrust.limit='200'
-uci set      dhcp.notrust.leasetime='60m'
-uci add_list dhcp.notrust.dhcp_option='option:log-server, 10.36.189.2'
-uci add_list dhcp.notrust.dhcp_option='option:dns-server, 1.1.1.1'
-uci add_list dhcp.notrust.dhcp_option='option:router, 10.36.189.1'
-# uci add_list dhcp.notrust.dhcp_option='option:mtu, 1300'
+uci set      dhcp.notrust.ignore='1'
+uci add_list dhcp.notrust.ra_flags='none'
 uci commit   dhcp.notrust
 
 uci set      dhcp.iot=dhcp
@@ -1823,7 +1817,7 @@ uci commit   dhcp.@domain[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.8'
-uci set      dhcp.@host[-1].name='emmauskirche'
+uci set      dhcp.@host[-1].name='emma-bridge'
 uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
@@ -1831,16 +1825,18 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.9'
-uci set      dhcp.@host[-1].name='freifunkgw'
-uci set      dhcp.@host[-1].mac='a0:f3:c1:5e:d0:36'
+uci set      dhcp.@host[-1].name='zwingli-bridge'
+uci set      dhcp.@host[-1].mac='24:5a:4c:e9:c7:fe'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.10'
-uci set      dhcp.@domain[-1].name='switch02'
-uci commit   dhcp.@domain[-1]
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.10'
+uci set      dhcp.@host[-1].name='rhnk-bridge'
+uci set      dhcp.@host[-1].mac='24:5a:4c:aa:aa:aa'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
