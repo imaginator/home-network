@@ -2019,5 +2019,11 @@ uci set      dhcp.@host[-1].mac='dc:a6:32:7d:7b:77'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.36.189.1'
+uci set      dhcp.@domain[-1].name='f17-core'
+uci commit   dhcp.@domain[-1]
+
 echo -e "All done with writing.\nRebooting..."
 reboot
