@@ -144,7 +144,6 @@ case $MODEL in
     collectd-mod-iwinfo \
     collectd-mod-load \
     collectd-mod-network \
-    collectd-mod-olsrd \
     collectd-mod-rrdtool \
     collectd-mod-uptime \
     curl \
@@ -168,9 +167,6 @@ case $MODEL in
     luci-app-adblock \
     luci-app-ddns \
     luci-app-firewall \
-    luci-app-olsr \
-    luci-app-olsr-services \
-    luci-app-olsr-viz \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-base \
@@ -180,21 +176,6 @@ case $MODEL in
     luci-proto-wireguard \
     luci-app-watchcat \
     odhcp6c \
-    olsrd \
-    olsrd-mod-arprefresh \
-    olsrd-mod-bmf \
-    olsrd-mod-dot-draw \
-    olsrd-mod-dyn-gw \
-    olsrd-mod-dyn-gw-plain \
-    olsrd-mod-httpinfo \
-    olsrd-mod-jsoninfo \
-    olsrd-mod-mdns \
-    olsrd-mod-nameservice \
-    olsrd-mod-netjson \
-    olsrd-mod-p2pd \
-    olsrd-mod-pgraph \
-    olsrd-mod-txtinfo \
-    olsrd-mod-watchdog \
     qrencode \
     softflowd \
     sqm-scripts \
