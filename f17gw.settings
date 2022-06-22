@@ -1795,12 +1795,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.36.189.1'
-uci set      dhcp.@domain[-1].name='f17-core'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.31.167.193'
 uci set      dhcp.@domain[-1].name='f17-core'
 uci commit   dhcp.@domain[-1]
