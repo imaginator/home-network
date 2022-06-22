@@ -66,15 +66,13 @@ uci import network <<EOF
 EOF
 
 uci set      network.loopback=interface
-uci set      network.loopback.ifname='lo'
+uci set      network.loopback.device='lo'
 uci set      network.loopback.proto='static'
 uci set      network.loopback.ipaddr='127.0.0.1'
 uci set      network.loopback.netmask='255.0.0.0'
 
 uci set      network.trusted=interface
-uci set      network.trusted.type='bridge'
-uci set      network.trusted.ifname='eth0.2'
-uci set      network.trusted.macaddr='aa:aa:aa:aa:0f:17'
+uci set      network.trusted.device='eth0.2'
 #uci add_list network.trusted.ip6class='henet'
 uci add_list network.trusted.ip6class='pyur6'
 uci set      network.trusted.igmp_snooping=1
@@ -83,52 +81,41 @@ uci set      network.trusted.ip6ifaceid='::5'
 uci set      network.trusted.ipaddr='10.7.11.5'
 uci set      network.trusted.netmask='255.255.255.0'
 uci set      network.trusted.proto='static'
-#uci set      network.trusted.ip4table='trusted'
 
 uci set      network.notrust=interface
-uci set      network.notrust.type='bridge'
-uci add_list network.notrust.ifname='eth0.40'
+uci set      network.notrust.device='eth0.40'
 uci set      network.notrust.proto='static'
 uci set      network.notrust.netmask='255.255.255.0'
 uci set      network.notrust.ipaddr='10.36.189.2'
 uci set      network.notrust.delegate='0'
-#uci set      network.notrust.ip4table='notrust'
 
 uci set      network.freifunk6=interface
 uci set      network.freifunk6.proto='dhcpv6'
-uci set      network.freifunk6.device='@notrust'
+uci set      network.freifunk6.device='eth0.40'
 uci set      network.freifunk6.reqaddress='try'
 uci set      network.freifunk6.reqprefix='60'
 
-# wan interface
 uci set      network.pyur4=interface
-uci set      network.pyur4.type='bridge'
-uci add_list network.pyur4.ifname='eth0.4'
-uci add_list network.pyur4.ifname='eth1'
+uci set      network.pyur4.device='eth0.4'
 uci set      network.pyur4.proto='dhcp'
-uci set      network.pyur4.macaddr='aa:aa:aa:aa:0e:17'
 uci set      network.pyur4.broadcast=1
 uci set      network.pyur4.peerdns=0
 uci set      network.pyur4.defaultroute=1
-#uci set      network.pyur4.ip4table='pyur4'
 
 uci set      network.pyur6=interface
-uci set      network.pyur6.ifname='@pyur4'
+uci set      network.pyur6.device='eth0.4'
 uci set      network.pyur6.proto='dhcpv6'
 uci set      network.pyur6.reqaddress='try'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='0'
-#uci set      network.pyur6.ip6table='pyur6'
 
 uci set      network.iot=interface
-uci set      network.iot.ifname='eth0.5'
+uci set      network.iot.device='eth0.5'
 uci set      network.iot.ipaddr='10.7.9.1'
 uci set      network.iot.netmask='255.255.255.0'
 uci set      network.iot.proto='static'
-uci set      network.iot.type='bridge'
 uci set      network.iot.delegate='0'
-#uci set      network.iot.ip4table='iot'
 
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
@@ -370,6 +357,7 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='notrust'
 uci add_list firewall.@zone[-1].network='notrust'
+uci add_list firewall.@zone[-1].network='freifunk6'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
@@ -1804,6 +1792,12 @@ uci set      dhcp.@host[-1].name='ln2'
 uci set      dhcp.@host[-1].mac='dc:a6:32:7d:7b:77'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.36.189.1'
+uci set      dhcp.@domain[-1].name='f17-core'
+uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
