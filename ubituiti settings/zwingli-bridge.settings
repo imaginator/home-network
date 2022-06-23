@@ -1,5 +1,5 @@
 ### PART ###
-## 1655902820
+## 1655981574
 ##WA.v8.7.11
 #board.sysid=0xe3d6
 #board.cpurevision=0x00001123
@@ -86,10 +86,10 @@
 #feature.g3=0
 #feature.ext_reset=0
 #feature.poe_passthrough=0
-#213ea9b1b7fb2084ad52b02f8eaeb6c9
+#8bf5a636ab96e9b7d4c3780ff8660ddc
 ### PART ###
 aaa.status=disabled
-system.cfg.editor.webui=2022-06-22T12:47:00.318Z
+system.cfg.editor.webui=2022-06-22T14:12:07.218Z
 igmpproxy.status=disabled
 tshaper.status=disabled
 iptables.sys.portfw.status=disabled
@@ -230,9 +230,9 @@ system.airosx.prov.status=disabled
 syslog.status=enabled
 syslog.remote.status=enabled
 syslog.remote.port=514
-syslog.remote.ip=10.7.11.1
+syslog.remote.ip=10.36.189.3
 snmp.status=enabled
-snmp.location=roof
+snmp.location=f17
 snmp.contact=simon@imaginator.com
 snmp.community=public
 radio.1.txpower=-1
@@ -295,7 +295,6 @@ discovery.lldp.status=enabled
 discovery.cdp.status=disabled
 discovery.beacon.status=enabled
 airview.status=enabled
-aaa.1.wpa.psk=freifunk
 aaa.1.status=disabled
 aaa.1.radius.auth.1.port=1812
 aaa.1.radius.acct.1.status=disabled

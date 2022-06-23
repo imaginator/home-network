@@ -2,7 +2,7 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.3, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.3"
-!System Up Time          "119 days 6 hrs 45 mins 2 secs"
+!System Up Time          "120 days 20 hrs 35 mins 9 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
 !Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
 !
@@ -17,8 +17,8 @@ vlan name 10 "emma-mesh"
 vlan name 11 "zwingli-mesh"
 vlan name 12 "rhnk-mesh"
 vlan name 40 "freifunk-dhcp"
-vlan name 42 "freifunk-management"
-exit 
+vlan name 42 "freifunk-mgmt"
+exit
 network mgmt_vlan 2
 sshcon timeout 160
 configure
@@ -28,7 +28,6 @@ logging console 7
 logging host "10.7.11.1" ipv4 514 debug
 logging syslog
 logging cli-command
-username "ubnt" password cd4850c26569ef226ff14ba8ceba75643ae0688ff199592191354eb86ae8180412c6c054c0f373e81d7d282182b9879bd0f128fcb8dcc4d6942115f5d0346ddb level 15 encrypted
 line console
 exit
 line telnet
@@ -57,8 +56,8 @@ ip dhcp snooping trust
 switchport trunk native vlan 4
 switchport trunk allowed vlan 4,7-4093
 vlan pvid 2
-vlan participation exclude 1,4-5
-vlan participation include 2,10-12,40,42
+vlan participation exclude 1-2,4-5
+vlan participation include 10-12,40,42
 vlan tagging 4,10-12,40,42
 poe opmode shutdown
 exit
@@ -260,8 +259,8 @@ interface 0/22
 description 'zwinglikirche uplink (PowerBeam 5AC Gen2)'
 no spanning-tree port mode
 ip dhcp snooping trust
-vlan participation exclude 10,12,40
-vlan participation include 2,4-5,11,42
+vlan participation exclude 1-2,4-5,10,12,40
+vlan participation include 11,42
 vlan tagging 2,4-5,10-12,40,42
 poe opmode passive24v
 exit
@@ -269,9 +268,9 @@ interface 0/23
 description 'emmauskirche uplink (NanoBridge M5)'
 no spanning-tree port mode
 ip dhcp snooping trust
-vlan participation exclude 1,4-5,11-12,40,42
-vlan participation include 2,10
-vlan tagging 2,10
+vlan participation exclude 1-2,4-5,11-12,40
+vlan participation include 10,42
+vlan tagging 2,10,42
 poe opmode passive24v
 exit
 interface 0/24
@@ -279,7 +278,9 @@ speed auto 1000 full-duplex
 description 'f17gw'
 no spanning-tree port mode
 ip dhcp snooping trust
-switchport mode trunk
+vlan participation exclude 1,10-11,42
+vlan participation include 2,4-5,12,40
+vlan tagging 2,4-5,10-12,40
 poe opmode shutdown
 exit
 interface 0/25

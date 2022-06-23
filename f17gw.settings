@@ -1590,30 +1590,6 @@ uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.8'
-uci set      dhcp.@host[-1].name='emma-bridge'
-uci set      dhcp.@host[-1].mac='dc:9f:db:8d:b2:0b'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.9'
-uci set      dhcp.@host[-1].name='zwingli-bridge'
-uci set      dhcp.@host[-1].mac='24:5a:4c:e9:c7:fe'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.10'
-uci set      dhcp.@host[-1].name='rhnk-bridge'
-uci set      dhcp.@host[-1].mac='24:5a:4c:aa:aa:aa'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.11'
 uci set      dhcp.@host[-1].name='repeater-hof-north'
 uci set      dhcp.@host[-1].mac='6a:72:51:1b:74:89'
