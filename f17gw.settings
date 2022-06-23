@@ -71,23 +71,23 @@ uci set      network.loopback.proto='static'
 uci set      network.loopback.ipaddr='127.0.0.1'
 uci set      network.loopback.netmask='255.0.0.0'
 
-uci set      network.trusted=interface
-uci set      network.trusted.device='eth0.2'
-#uci add_list network.trusted.ip6class='henet'
-uci add_list network.trusted.ip6class='pyur6'
-uci set      network.trusted.igmp_snooping=1
-uci set      network.trusted.ip6assign='64'
-uci set      network.trusted.ip6ifaceid='::5'
-uci set      network.trusted.ipaddr='10.7.11.5'
-uci set      network.trusted.netmask='255.255.255.0'
-uci set      network.trusted.proto='static'
+uci set      network.lan=interface
+uci set      network.lan.device='eth0.2'
+#uci add_list network.lan.ip6class='henet'
+uci add_list network.lan.ip6class='pyur6'
+uci set      network.lan.igmp_snooping=1
+uci set      network.lan.ip6assign='64'
+uci set      network.lan.ip6ifaceid='::5'
+uci set      network.lan.ipaddr='10.7.11.5'
+uci set      network.lan.netmask='255.255.255.0'
+uci set      network.lan.proto='static'
 
-uci set      network.notrust=interface
-uci set      network.notrust.device='eth0.40'
-uci set      network.notrust.proto='static'
-uci set      network.notrust.netmask='255.255.255.0'
-uci set      network.notrust.ipaddr='10.36.189.2'
-uci set      network.notrust.delegate='0'
+uci set      network.freifunk=interface
+uci set      network.freifunk.device='eth0.40'
+uci set      network.freifunk.proto='static'
+uci set      network.freifunk.netmask='255.255.255.0'
+uci set      network.freifunk.ipaddr='10.36.189.2'
+uci set      network.freifunk.delegate='0'
 
 uci set      network.freifunk6=interface
 uci set      network.freifunk6.proto='dhcpv6'
@@ -173,7 +173,7 @@ uci set      network.@route[-1].table='222'
 uci commit   network.@route[-1]
 
 uci add      network route
-uci set      network.@route[-1].interface='trusted'
+uci set      network.@route[-1].interface='lan'
 uci set      network.@route[-1].target='10.7.11.0'
 uci set      network.@route[-1].netmask='255.255.255.0'
 uci set      network.@route[-1].table='222'
@@ -182,7 +182,7 @@ uci commit   network.@route[-1]
 uci add      network  route
 uci set      network.@route[-1]=route
 uci set      network.@route[-1].table='222'
-uci set      network.@route[-1].interface='notrust'
+uci set      network.@route[-1].interface='freifunk'
 uci set      network.@route[-1].target='0.0.0.0'
 uci set      network.@route[-1].netmask='0.0.0.0'
 uci set      network.@route[-1].gateway='10.36.189.1'
@@ -206,7 +206,7 @@ uci set      network.@route[-1]=route
 uci set      network.@route[-1].target='1.1.1.1'
 uci set      network.@route[-1].gateway='10.36.189.1'
 uci set      network.@route[-1].netmask='255.255.255.255'
-uci set      network.@route[-1].interface='notrust'
+uci set      network.@route[-1].interface='freifunk'
 uci commit   network.@route[-1]
 
 uci commit   network
@@ -299,7 +299,7 @@ uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_interface='trusted'
+uci set    prometheus-node-exporter-lua.main.listen_interface='lan'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
@@ -342,8 +342,8 @@ uci commit firewall.@defaults[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='trusted'
-uci add_list firewall.@zone[-1].network='trusted'
+uci set      firewall.@zone[-1].name='lan'
+uci add_list firewall.@zone[-1].network='lan'
 uci add_list firewall.@zone[-1].network='wg0'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
@@ -355,8 +355,8 @@ uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='notrust'
-uci add_list firewall.@zone[-1].network='notrust'
+uci set      firewall.@zone[-1].name='freifunk'
+uci add_list firewall.@zone[-1].network='freifunk'
 uci add_list firewall.@zone[-1].network='freifunk6'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
@@ -379,7 +379,7 @@ uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='wan_trusted'
+uci set      firewall.@zone[-1].name='wan_lan'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci add_list firewall.@zone[-1].network='henet'
@@ -394,7 +394,7 @@ uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='wan_notrust'
+uci set      firewall.@zone[-1].name='wan_freifunk'
 uci add_list firewall.@zone[-1].network='ffvpn'
 uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].input='DROP'
@@ -406,8 +406,8 @@ uci commit   firewall.@zone[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='wan_trusted'
-uci set    firewall.@forwarding[-1].dest='wan_trusted'
+uci set    firewall.@forwarding[-1].src='wan_lan'
+uci set    firewall.@forwarding[-1].dest='wan_lan'
 uci commit firewall.@forwarding[-1]
 
 # Port forwardings (DNAT) are defined by redirect sections.
@@ -418,9 +418,9 @@ uci commit firewall.@forwarding[-1]
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].name='ssh from wan to bunker'
-uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].src='wan_lan'
 uci set    firewall.@redirect[-1].src_dport='23'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='22'
 uci set    firewall.@redirect[-1].proto='tcp'
@@ -431,12 +431,12 @@ uci commit firewall.@redirect[-1]
 #uci add    firewall  redirect
 #uci set    firewall.@redirect[-1]=redirect
 #uci set    firewall.@redirect[-1].target='DNAT'
-#uci set    firewall.@redirect[-1].name='capture dns from trusted'
-#uci set    firewall.@redirect[-1].src='trusted'
+#uci set    firewall.@redirect[-1].name='capture dns from lan'
+#uci set    firewall.@redirect[-1].src='lan'
 #uci set    firewall.@redirect[-1].proto='tcpudp'
 #uci set    firewall.@redirect[-1].src_dport='53'
 #uci set    firewall.@redirect[-1].proto='tcpudp'
-#uci set    firewall.@redirect[-1].dest='trusted'
+#uci set    firewall.@redirect[-1].dest='lan'
 #uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
 #uci set    firewall.@redirect[-1].dest_port='53'
 #uci commit firewall.@redirect[-1]
@@ -444,9 +444,9 @@ uci commit firewall.@redirect[-1]
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].name='80 on bunker'
-uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].src='wan_lan'
 uci set    firewall.@redirect[-1].src_dport='80'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='80'
 uci set    firewall.@redirect[-1].proto='tcp'
@@ -457,8 +457,8 @@ uci commit firewall.@redirect[-1]
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].name='443 on bunker'
-uci set    firewall.@redirect[-1].src='wan_trusted'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].src='wan_lan'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='443'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
@@ -471,8 +471,8 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='443 on bunker from ff users'
-uci set    firewall.@redirect[-1].src='wan_notrust'
-uci set    firewall.@redirect[-1].dest='wan_trusted'
+uci set    firewall.@redirect[-1].src='wan_freifunk'
+uci set    firewall.@redirect[-1].dest='wan_lan'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='443'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
@@ -482,10 +482,10 @@ uci commit firewall.@redirect[-1]
 # fixme
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
-uci set    firewall.@redirect[-1].name='logs from notrust'
-uci set    firewall.@redirect[-1].src='notrust'
+uci set    firewall.@redirect[-1].name='logs from freifunk'
+uci set    firewall.@redirect[-1].src='freifunk'
 uci set    firewall.@redirect[-1].src_dport='514'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='514'
 uci set    firewall.@redirect[-1].proto='tcp'
@@ -493,11 +493,11 @@ uci set    firewall.@redirect[-1].target='DNAT'
 uci commit firewall.@redirect[-1]
 
 uci add    firewall redirect
-uci set    firewall.@redirect[-1].src='wan_trusted'
+uci set    firewall.@redirect[-1].src='wan_lan'
 uci set    firewall.@redirect[-1].name='logs from cable modem'
 uci set    firewall.@redirect[-1].src_ip='192.168.100.1'
 uci set    firewall.@redirect[-1].target='DNAT'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].src_dport='514'
 uci set    firewall.@redirect[-1].src_dip='192.168.100.5'
@@ -507,8 +507,8 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='plex on bunker'
-uci set    firewall.@redirect[-1].src='wan_trusted'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].src='wan_lan'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='32400'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
@@ -520,8 +520,8 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='plex on nvidia shield'
-uci set    firewall.@redirect[-1].src='wan_trusted'
-uci set    firewall.@redirect[-1].dest='trusted'
+uci set    firewall.@redirect[-1].src='wan_lan'
+uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='32401'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.51'
@@ -534,8 +534,8 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='wireguard'
-uci set    firewall.@redirect[-1].src='trusted'
-uci set    firewall.@redirect[-1].dest='wan_trusted'
+uci set    firewall.@redirect[-1].src='lan'
+uci set    firewall.@redirect[-1].dest='wan_lan'
 uci set    firewall.@redirect[-1].proto='udp'
 uci set    firewall.@redirect[-1].src_dport='12321'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
@@ -595,7 +595,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN IPv6 input from WAN'
-uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].src='wan_lan'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
 uci add_list firewall.@rule[-1].icmp_type='echo-reply'
@@ -616,7 +616,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN Forward ICMPv6 from wan to lan'
-uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].src='wan_lan'
 uci set      firewall.@rule[-1].dest='*'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
@@ -635,7 +635,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN Allow-ICMPv6-LAN-output'
 uci set      firewall.@rule[-1].src='*'
-uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest='wan_lan'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
 uci add_list firewall.@rule[-1].icmp_type='echo-reply'
@@ -654,7 +654,7 @@ uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN DHCPv6 requests'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
 uci set      firewall.@rule[-1].src_port='546'
-uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest='wan_lan'
 uci set      firewall.@rule[-1].dest_ip='ff02::1:2'
 uci set      firewall.@rule[-1].dest_port='547'
 uci set      firewall.@rule[-1].proto='udp'
@@ -665,7 +665,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN DHCPv6 replies'
-uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].src='wan_lan'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
 uci set      firewall.@rule[-1].src_port='547'
 uci set      firewall.@rule[-1].dest_ip='fe80::/10'
@@ -678,7 +678,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN ICMP Input'
-uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].src='wan_lan'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
@@ -698,7 +698,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN ICMP6 Forward'
-uci set      firewall.@rule[-1].src='wan_trusted'
+uci set      firewall.@rule[-1].src='wan_lan'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
@@ -712,37 +712,37 @@ uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
 ###############################################################################
-# Trusted zone specific rules
+# lan zone specific rules
 ###############################################################################
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='trusted'
+uci set    firewall.@forwarding[-1].src='lan'
+uci set    firewall.@forwarding[-1].dest='lan'
 uci commit firewall.@forwarding[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='notrust'
+uci set    firewall.@forwarding[-1].src='lan'
+uci set    firewall.@forwarding[-1].dest='freifunk'
 uci commit firewall.@forwarding[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
+uci set    firewall.@forwarding[-1].src='lan'
 uci set    firewall.@forwarding[-1].dest='iot'
 uci commit firewall.@forwarding[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='trusted'
-uci set    firewall.@forwarding[-1].dest='wan_trusted'
+uci set    firewall.@forwarding[-1].src='lan'
+uci set    firewall.@forwarding[-1].dest='wan_lan'
 uci commit firewall.@forwarding[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='trusted dns'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='lan dns'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].dest_port='53'
 uci set      firewall.@rule[-1].proto='tcpudp'
 uci set      firewall.@rule[-1].family='any'
@@ -752,7 +752,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='luci accees to router'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].dest_port='80'
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].family='any'
@@ -762,7 +762,7 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='WAN IPv6 input from LAN'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].proto='icmp'
 uci add_list firewall.@rule[-1].icmp_type='echo-request'
 uci add_list firewall.@rule[-1].icmp_type='echo-reply'
@@ -782,8 +782,8 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted  DHCPv4 requests'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='lan  DHCPv4 requests'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].dest_port='67-68'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
@@ -792,8 +792,8 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted DHCPv6 requests'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='lan DHCPv6 requests'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].src_ip='fe80::/10'
 uci set      firewall.@rule[-1].src_port='546'
@@ -805,10 +805,10 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted Samba browse udp'
+uci set      firewall.@rule[-1].name='lan Samba browse udp'
 uci set      firewall.@rule[-1].dest_port='137 138'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].src='lan'
+uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci add_list firewall.@rule[-1].proto='udp'
 uci commit   firewall.@rule[-1]
@@ -816,17 +816,17 @@ uci commit   firewall.@rule[-1]
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].dest_port='139 445'
-uci set      firewall.@rule[-1].src='trusted'
-uci set      firewall.@rule[-1].name='Trusted samba browse tcp'
-uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].src='lan'
+uci set      firewall.@rule[-1].name='lan samba browse tcp'
+uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci add_list firewall.@rule[-1].proto='tcp'
 uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted prometheus'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='lan prometheus'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].dest_port='9100'
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].family='any'
@@ -835,8 +835,8 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted IGMP from trusted'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='lan IGMP from lan'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].proto='igmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -852,8 +852,8 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Trusted Multicast to LAN'
-uci set      firewall.@rule[-1].src='trusted'
+uci set      firewall.@rule[-1].name='lan Multicast to LAN'
+uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
 uci set      firewall.@rule[-1].dest_ip='224.0.0.0/4'
@@ -866,21 +866,21 @@ uci commit   firewall.@rule[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='notrust'
-uci set    firewall.@forwarding[-1].dest='notrust'
+uci set    firewall.@forwarding[-1].src='freifunk'
+uci set    firewall.@forwarding[-1].dest='freifunk'
 uci commit firewall.@forwarding[-1]
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
-uci set    firewall.@forwarding[-1].src='notrust'
+uci set    firewall.@forwarding[-1].src='freifunk'
 uci set    firewall.@forwarding[-1].dest='ffuplink'
 uci commit firewall.@forwarding[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust DNS'
+uci set      firewall.@rule[-1].name='freifunk DNS'
 uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='notrust'
+uci set      firewall.@rule[-1].src='freifunk'
 uci set      firewall.@rule[-1].proto='tcpudp'
 uci set      firewall.@rule[-1].dest_port='53'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -888,8 +888,8 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust dhcp'
-uci set      firewall.@rule[-1].src='notrust'
+uci set      firewall.@rule[-1].name='freifunk dhcp'
+uci set      firewall.@rule[-1].src='freifunk'
 uci set      firewall.@rule[-1].dest_port='67-68'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='ipv4'
@@ -898,9 +898,9 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust web'
+uci set      firewall.@rule[-1].name='freifunk web'
 uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='notrust'
+uci set      firewall.@rule[-1].src='freifunk'
 uci set      firewall.@rule[-1].proto='tcpudp'
 uci set      firewall.@rule[-1].dest_port='80'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -908,7 +908,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='notrust olsr updates'
+uci set      firewall.@rule[-1].name='freifunk olsr updates'
 uci set      firewall.@rule[-1].enabled='1'
 uci set      firewall.@rule[-1].src='ffuplink'
 uci set      firewall.@rule[-1].proto='udp'
@@ -924,7 +924,7 @@ uci commit   firewall.@rule[-1]
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
 uci set    firewall.@forwarding[-1].src='iot'
-uci set    firewall.@forwarding[-1].dest='notrust'
+uci set    firewall.@forwarding[-1].dest='freifunk'
 uci commit firewall.@forwarding[-1]
 
 uci add      firewall  rule
@@ -961,7 +961,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT NTP outbound' # all other zones can outbound by default, not IoT
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest='wan_lan'
 uci set      firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].dest_port='123'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -972,7 +972,7 @@ uci set      firewall.@rule[-1].name='syslog'
 uci add_list firewall.@rule[-1].proto='tcp'
 uci add_list firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].dest='lan'
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
 uci set      firewall.@rule[-1].dest_port='514'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -982,7 +982,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1].name='mqtt.imagilan'
 uci add_list firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].dest='lan'
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
 uci set      firewall.@rule[-1].dest_port='1883'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -992,7 +992,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT habpanel from tablets'
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='trusted'
+uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='80'
 uci set      firewall.@rule[-1].dest_ip='10.7.11.1'
 uci set      firewall.@rule[-1].proto='tcp'
@@ -1003,7 +1003,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT outboud'
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest='wan_lan'
 uci set      firewall.@rule[-1].dest_port='80 443 8882 8883 8884 9292 43439' # homematic is port 9292 43439
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -1013,7 +1013,7 @@ uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT ping outbound (homematic needs this)'
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].dest='wan_trusted'
+uci set      firewall.@rule[-1].dest='wan_lan'
 uci set      firewall.@rule[-1].icmp_type='echo-request'
 uci set      firewall.@rule[-1].proto='icmp'
 uci set      firewall.@rule[-1].target='ACCEPT'
@@ -1066,25 +1066,25 @@ uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
 uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
 uci commit   dhcp.@dnsmasq[-1]
 
-uci set      dhcp.trusted=dhcp
-uci add_list dhcp.trusted.dhcp_option='option:log-server, 10.7.11.1'
-uci add_list dhcp.trusted.dns='fe80::a8aa:aaff:feaa:0f17'
-uci add_list dhcp.trusted.domain='imagilan'
-uci add_list dhcp.trusted.domain='imaginator.com'
-uci set      dhcp.trusted.dhcpv6='server'
-uci set      dhcp.trusted.force='1'
-uci set      dhcp.trusted.interface='trusted'
-uci set      dhcp.trusted.ip6class='pyur6'
-uci set      dhcp.trusted.leasetime='24h'
-uci set      dhcp.trusted.limit='100'
-uci set      dhcp.trusted.ra_default='1'
-uci set      dhcp.trusted.ra_management='4' # https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=package/network/services/dnsmasq/files/dnsmasq.init;h=1054f7a12a15618a869f2f68b97276f50eebc5a4;hb=4fc0a61ed3da96330d30703a2a039a6a06dc0b2f#l592
-uci set      dhcp.trusted.ra='server'
-uci set      dhcp.trusted.start='100'
-uci commit   dhcp.trusted
+uci set      dhcp.lan=dhcp
+uci add_list dhcp.lan.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.lan.dns='fe80::a8aa:aaff:feaa:0f17'
+uci add_list dhcp.lan.domain='imagilan'
+uci add_list dhcp.lan.domain='imaginator.com'
+uci set      dhcp.lan.dhcpv6='server'
+uci set      dhcp.lan.force='1'
+uci set      dhcp.lan.interface='lan'
+uci set      dhcp.lan.ip6class='pyur6'
+uci set      dhcp.lan.leasetime='24h'
+uci set      dhcp.lan.limit='100'
+uci set      dhcp.lan.ra_default='1'
+uci set      dhcp.lan.ra_management='4' # https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=package/network/services/dnsmasq/files/dnsmasq.init;h=1054f7a12a15618a869f2f68b97276f50eebc5a4;hb=4fc0a61ed3da96330d30703a2a039a6a06dc0b2f#l592
+uci set      dhcp.lan.ra='server'
+uci set      dhcp.lan.start='100'
+uci commit   dhcp.lan
 
 #uci set      dhcp.ispv6=dhcp
-#uci set      dhcp.ispv6.interface='trusted'
+#uci set      dhcp.ispv6.interface='lan'
 #uci set      dhcp.ispv6.ra_preference='high'
 #uci set      dhcp.ispv6.ra_default='1'
 #uci set      dhcp.ispv6.ra='server'
@@ -1102,12 +1102,12 @@ uci commit   dhcp.trusted
 #        option ra_preference 'high'
 #        option leasetime '30m'
 
-uci set      dhcp.notrust=dhcp
-uci add_list dhcp.notrust.domain='freifunk'
-uci set      dhcp.notrust.interface='notrust'
-uci set      dhcp.notrust.ignore='1'
-uci add_list dhcp.notrust.ra_flags='none'
-uci commit   dhcp.notrust
+uci set      dhcp.freifunk=dhcp
+uci add_list dhcp.freifunk.domain='freifunk'
+uci set      dhcp.freifunk.interface='freifunk'
+uci set      dhcp.freifunk.ignore='1'
+uci add_list dhcp.freifunk.ra_flags='none'
+uci commit   dhcp.freifunk
 
 uci set      dhcp.iot=dhcp
 uci set      dhcp.iot.domain='imagilan'
@@ -1498,7 +1498,7 @@ uci commit   dhcp.@host[-1]
 
 
 ###############################################################################
-# Trusted w16
+# lan w16
 ###############################################################################
 
 uci add      dhcp  domain
@@ -1508,7 +1508,7 @@ uci set      dhcp.@domain[-1].name='w16gw'
 uci commit   dhcp.@domain[-1]
 
 ###############################################################################
-# Trusted f17
+# lan f17
 ###############################################################################
 
 uci add      dhcp  cname
