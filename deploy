@@ -37,7 +37,7 @@ case $1 in
     $henet_f17_password \
     $henet_f17_tunnelid \
     $henet_f17_username \
-    $trusted_wifikey \
+    $lan_wifikey \
     $wg_f17gw_private_key \
     $wg_f17gw_private_key \
     $wg_f17gw_public_key \
@@ -75,7 +75,7 @@ case $1 in
     $henet_f17_password \
     $henet_f17_tunnelid \
     $henet_f17_username \
-    $trusted_wifikey \
+    $lan_wifikey \
     $wg_f17gw_private_key \
     $wg_f17gw_private_key \
     $wg_f17gw_public_key \
@@ -100,7 +100,7 @@ case $1 in
 
   repeater-lounge|repeater-bedroom1|repeater-street-north|repeater-street-south|repeater-hof-north)
     envsubst \ '
-    $trusted_wifikey \
+    $lan_wifikey \
     $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
@@ -109,14 +109,14 @@ case $1 in
 
   travelrouter)
     envsubst \ '
-    $trusted_wifikey \
+    $lan_wifikey \
     $root_shadow \
     ' < travelrouter.settings  | ssh root@192.168.1.1
     ;;
 
   first-time)
     envsubst \ '
-    $trusted_wifikey \
+    $lan_wifikey \
     $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
@@ -125,7 +125,7 @@ case $1 in
 
   repeater08)
     envsubst \ '
-    $trusted_wifikey \
+    $lan_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
     ' < mr33.settings  | ssh root@10.7.11.111
