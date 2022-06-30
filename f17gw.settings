@@ -72,15 +72,17 @@ uci set      network.loopback.ipaddr='127.0.0.1'
 uci set      network.loopback.netmask='255.0.0.0'
 
 uci set      network.lan=interface
+uci set      network.lan.proto='static'
 uci set      network.lan.device='eth0.2'
-#uci add_list network.lan.ip6class='henet'
+uci add_list network.lan.ip6class='freifunk6'
+uci add_list network.lan.ip6class='henet'
 uci add_list network.lan.ip6class='pyur6'
-uci set      network.lan.igmp_snooping=1
+uci set      network.lan.delegate='0'
+uci set      network.lan.igmp_snooping='1'
 uci set      network.lan.ip6assign='64'
-uci set      network.lan.ip6ifaceid='::5'
+uci set      network.lan.ip6weight='10'
 uci set      network.lan.ipaddr='10.7.11.5'
 uci set      network.lan.netmask='255.255.255.0'
-uci set      network.lan.proto='static'
 
 uci set      network.freifunk=interface
 uci set      network.freifunk.device='eth0.40'
@@ -88,15 +90,15 @@ uci set      network.freifunk.proto='static'
 uci set      network.freifunk.netmask='255.255.255.0'
 uci set      network.freifunk.ipaddr='10.36.189.2'
 uci set      network.freifunk.gateway='10.36.189.1'
-uci set      network.freifunk.delegate='0'
 uci set      network.freifunk.metric='20'
 
 uci set      network.freifunk6=interface
 uci set      network.freifunk6.proto='dhcpv6'
 uci set      network.freifunk6.device='eth0.40'
 uci set      network.freifunk6.reqaddress='try'
-uci set      network.freifunk6.reqprefix='60'
-uci set      network.freifunk.metric='21'
+uci set      network.freifunk6.reqprefix='62'
+uci set      network.freifunk6.metric='21'
+uci set      network.freifunk6.peerdns='0'
 
 uci set      network.pyur4=interface
 uci set      network.pyur4.device='eth0.4'
@@ -114,11 +116,17 @@ uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='11'
 
 uci set      network.iot=interface
+uci set      network.iot.proto='static'
 uci set      network.iot.device='eth0.5'
+uci add_list network.iot.ip6class='freifunk6'
+uci add_list network.iot.ip6class='henet'
+uci add_list network.iot.ip6class='pyur6'
+uci set      network.iot.delegate='0'
+uci set      network.iot.igmp_snooping='1'
+uci set      network.iot.ip6assign='64'
+uci set      network.iot.ip6weight='20'
 uci set      network.iot.ipaddr='10.7.9.1'
 uci set      network.iot.netmask='255.255.255.0'
-uci set      network.iot.proto='static'
-uci set      network.iot.delegate='0'
 
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
@@ -302,7 +310,7 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='lan'
 uci add_list firewall.@zone[-1].network='lan'
 uci add_list firewall.@zone[-1].network='wg0'
-uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].log='1'
@@ -315,7 +323,7 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='freifunk'
 uci add_list firewall.@zone[-1].network='freifunk'
 uci add_list firewall.@zone[-1].network='freifunk6'
-uci set      firewall.@zone[-1].input='DROP'
+uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
 uci set      firewall.@zone[-1].masq='1'
@@ -327,8 +335,8 @@ uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='iot'
 uci add_list firewall.@zone[-1].network='iot'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='DROP'
+uci set      firewall.@zone[-1].input='ACCEPT'
+uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='DROP'
 uci set      firewall.@zone[-1].log='1'
 uci set      firewall.@zone[-1].conntrack='1'
@@ -341,18 +349,6 @@ uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
 uci add_list firewall.@zone[-1].network='henet'
 uci add_list firewall.@zone[-1].network='cable'
-uci set      firewall.@zone[-1].masq='1'
-uci set      firewall.@zone[-1].input='DROP'
-uci set      firewall.@zone[-1].output='ACCEPT'
-uci set      firewall.@zone[-1].forward='DROP'
-uci set      firewall.@zone[-1].log='1'
-uci set      firewall.@zone[-1].conntrack='1'
-uci commit   firewall.@zone[-1]
-
-uci add      firewall  zone
-uci set      firewall.@zone[-1]=zone
-uci set      firewall.@zone[-1].name='wan_freifunk'
-uci add_list firewall.@zone[-1].network='ffvpn'
 uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].input='DROP'
 uci set      firewall.@zone[-1].output='ACCEPT'
@@ -1023,64 +1019,43 @@ uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
 uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
 uci commit   dhcp.@dnsmasq[-1]
 
-uci set      dhcp.lan=dhcp
-uci add_list dhcp.lan.dhcp_option='option:log-server, 10.7.11.1'
-uci add_list dhcp.lan.dns='fe80::a8aa:aaff:feaa:0f17'
-uci add_list dhcp.lan.domain='imagilan'
-uci add_list dhcp.lan.domain='imaginator.com'
-uci set      dhcp.lan.dhcpv6='server'
-uci set      dhcp.lan.force='1'
-uci set      dhcp.lan.interface='lan'
-uci set      dhcp.lan.ip6class='pyur6'
-uci set      dhcp.lan.leasetime='24h'
-uci set      dhcp.lan.limit='100'
-uci set      dhcp.lan.ra_default='1'
-uci set      dhcp.lan.ra_management='4' # https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=package/network/services/dnsmasq/files/dnsmasq.init;h=1054f7a12a15618a869f2f68b97276f50eebc5a4;hb=4fc0a61ed3da96330d30703a2a039a6a06dc0b2f#l592
-uci set      dhcp.lan.ra='server'
-uci set      dhcp.lan.start='100'
-uci commit   dhcp.lan
-
-#uci set      dhcp.ispv6=dhcp
-#uci set      dhcp.ispv6.interface='lan'
-#uci set      dhcp.ispv6.ra_preference='high'
-#uci set      dhcp.ispv6.ra_default='1'
-#uci set      dhcp.ispv6.ra='server'
-#uci set      dhcp.ispv6.ip6class='pyur6'
-#uci commit   dhcp.ispv6
-
-#config dhcp 'lan'
-#        option interface 'lan'
-#        option start '100'
-#        option limit '150'
-#        option dhcpv6 'server'
-#        option ra 'server'
-#        option ra_management '1'
-#        list ip6class 'wan6'
-#        option ra_preference 'high'
-#        option leasetime '30m'
-
-uci set      dhcp.freifunk=dhcp
-uci add_list dhcp.freifunk.domain='freifunk'
-uci set      dhcp.freifunk.interface='freifunk'
-uci set      dhcp.freifunk.ignore='1'
-uci add_list dhcp.freifunk.ra_flags='none'
-uci commit   dhcp.freifunk
-
-uci set      dhcp.iot=dhcp
-uci set      dhcp.iot.domain='imagilan'
-uci set      dhcp.iot.interface='iot'
-uci set      dhcp.iot.dhcpv4='server'
-uci set      dhcp.iot.force='1'
-uci set      dhcp.iot.leasetime='24h'
-uci set      dhcp.iot.start='100'
-uci set      dhcp.iot.limit='150'
-uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
-uci commit   dhcp.iot
-
 uci set      dhcp.pyur4=dhcp
 uci set      dhcp.pyur4.interface='pyur4'
 uci set      dhcp.pyur4.ignore='1'
 uci commit   dhcp.pyur4
+
+uci set      dhcp.freifunk=dhcp
+uci set      dhcp.freifunk.interface='freifunk'
+uci set      dhcp.freifunk.ignore='1'
+uci commit   dhcp.freifunk
+
+uci set      dhcp.lan=dhcp
+uci set      dhcp.lan.interface='lan'
+uci add_list dhcp.lan.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.lan.domain='imagilan'
+uci add_list dhcp.lan.domain='imaginator.com'
+uci set      dhcp.lan.dhcpv6='server'
+uci set      dhcp.lan.force='1'
+uci set      dhcp.lan.ip6class='freifunk6'
+uci set      dhcp.lan.leasetime='24h'
+uci set      dhcp.lan.limit='150'
+uci set      dhcp.lan.ra='server'
+uci set      dhcp.lan.start='100'
+uci commit   dhcp.lan
+
+uci set      dhcp.iot=dhcp
+uci set      dhcp.iot.interface='iot'
+uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.iot.domain='imagilan'
+uci add_list dhcp.iot.domain='imaginator.com'
+uci set      dhcp.iot.dhcpv6='server'
+uci set      dhcp.iot.force='1'
+uci set      dhcp.iot.ip6class='freifunk6'
+uci set      dhcp.iot.leasetime='24h'
+uci set      dhcp.iot.limit='150'
+uci set      dhcp.iot.ra='server'
+uci set      dhcp.iot.start='100'
+uci commit   dhcp.iot
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
