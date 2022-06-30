@@ -392,6 +392,12 @@ uci set      wireless.ffunk5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:0
 uci set      wireless.ffunk5.wnm_sleep_mode='1'
 uci commit   wireless.ffunk5
 
+# only issue addresses from f17gw.imagilan
+uci import dhcp <<EOF
+EOF
+
+/etc/init.d/odhcpd disable || true
+
 uci import firewall <<EOF
 EOF
 
