@@ -174,12 +174,12 @@ uci set      network.wg_windows.persistent_keepalive='25'
 uci add_list network.wg_windows.allowed_ips='10.7.8.8/32'
 uci set      network.wg_windows.route_allowed_ips='1'
 
-uci commit   network
-
 uci add      network route
 uci set      network.@route[-1].target='10.31.167.192/27' # Freifunk management network
 uci set      network.@route[-1].gateway='10.36.189.1'
 uci commit   network.@route[-1]
+
+uci commit   network
 
 uci set     luci.sauth.sessiontime="36000000"
 uci commit  luci
@@ -197,7 +197,6 @@ uci commit ddns.global
 
 uci add    ddns  service
 uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].bind_network='pyur4'
 uci set    ddns.@service[-1].cacert='/etc/ssl/certs/ca-certificates.crt'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
@@ -205,13 +204,12 @@ uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='eth0.4' # for hotplug events
-uci set    ddns.@service[-1].ip_source='interface'
+uci set    ddns.@service[-1].interface='eth0.4'
 uci set    ddns.@service[-1].ip_interface='eth0.4'
-uci set    ddns.@service[-1].ip_network='pyur4'
-uci set    ddns.@service[-1].ip_url='https://checkip.dns.he.net/'
+uci set    ddns.@service[-1].ip_source='interface' # using ip_source=interface due to bind_ip issues in curl
 uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
-uci set    ddns.@service[-1].retry_interval='1'
+uci set    ddns.@service[-1].retry_count='0'
+uci set    ddns.@service[-1].retry_interval='5'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='he.net'
 uci set    ddns.@service[-1].use_https='1'
@@ -227,14 +225,15 @@ uci set    ddns.@service[-1].cacert='/etc/ssl/certs/ca-certificates.crt'
 uci set    ddns.@service[-1].check_interval='5'
 uci set    ddns.@service[-1].check_unit='minutes'
 uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
-uci set    ddns.@service[-1].enabled='0'
+uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='pyur6' # for hotplug events
-uci set    ddns.@service[-1].ip_source='network'
-uci set    ddns.@service[-1].ip_network='pyur6'
+uci set    ddns.@service[-1].interface='eth0.4'
+uci set    ddns.@service[-1].ip_interface='eth0.4'
+uci set    ddns.@service[-1].ip_source='interface'
 uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
-uci set    ddns.@service[-1].retry_interval='1'
+uci set    ddns.@service[-1].retry_count='0'
+uci set    ddns.@service[-1].retry_interval='5'
 uci set    ddns.@service[-1].retry_unit='minutes'
 uci set    ddns.@service[-1].service_name='he.net'
 uci set    ddns.@service[-1].use_https='1'
