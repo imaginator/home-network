@@ -32,7 +32,7 @@ uci set      system.@system[-1].klogconloglevel='8'
 uci set      system.@system[-1].cronloglevel='0'
 uci set      system.@system[-1].log_size='128'
 uci set      system.@system[-1].log_buffer_size='64'
-uci set      system.@system[-1].log_ip='10.7.11.1'
+uci set      system.@system[-1].log_ip='10.7.11.10'
 uci set      system.@system[-1].log_proto='tcp'
 uci set      system.@system[-1].log_remote='1'
 
