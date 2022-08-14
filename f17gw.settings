@@ -17,7 +17,7 @@ uci set      system.@system[-1].timezone='UTC'
 uci set      system.@system[-1].conloglevel='8'
 uci set      system.@system[-1].klogconloglevel='8'
 uci set      system.@system[-1].cronloglevel='0'
-uci set      system.@system[-1].log_ip='10.7.11.1'
+uci set      system.@system[-1].log_ip='10.7.11.10'
 uci set      system.@system[-1].log_proto='tcp'
 uci set      system.@system[-1].log_port='514'
 uci set      system.@system[-1].log_size='128'
@@ -81,7 +81,7 @@ uci set      network.lan.delegate='0'
 uci set      network.lan.igmp_snooping='1'
 uci set      network.lan.ip6assign='64'
 uci set      network.lan.ip6weight='10'
-uci set      network.lan.ipaddr='10.7.11.5'
+uci set      network.lan.ipaddr='10.7.11.1'
 uci set      network.lan.netmask='255.255.255.0'
 
 uci set      network.freifunk=interface
@@ -207,6 +207,7 @@ uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='eth0.4'
 uci set    ddns.@service[-1].ip_interface='eth0.4'
 uci set    ddns.@service[-1].ip_source='interface' # using ip_source=interface due to bind_ip issues in curl
+uci set    ddns.@service[-1].lookup_host='${f17gw_ddns4_domain}'
 uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
 uci set    ddns.@service[-1].retry_count='0'
 uci set    ddns.@service[-1].retry_interval='5'
@@ -231,6 +232,7 @@ uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='eth0.4'
 uci set    ddns.@service[-1].ip_interface='eth0.4'
 uci set    ddns.@service[-1].ip_source='interface'
+uci set    ddns.@service[-1].lookup_host='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
 uci set    ddns.@service[-1].retry_count='0'
 uci set    ddns.@service[-1].retry_interval='5'
@@ -377,7 +379,7 @@ uci set    firewall.@redirect[-1].name='ssh from wan to bunker'
 uci set    firewall.@redirect[-1].src='pyur'
 uci set    firewall.@redirect[-1].src_dport='23'
 uci set    firewall.@redirect[-1].dest='lan'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.10'
 uci set    firewall.@redirect[-1].dest_port='22'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].target='DNAT'
@@ -390,7 +392,7 @@ uci set    firewall.@redirect[-1].name='80 on bunker'
 uci set    firewall.@redirect[-1].src='pyur'
 uci set    firewall.@redirect[-1].src_dport='80'
 uci set    firewall.@redirect[-1].dest='lan'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.10'
 uci set    firewall.@redirect[-1].dest_port='80'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].target='DNAT'
@@ -404,7 +406,7 @@ uci set    firewall.@redirect[-1].src='pyur'
 uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='443'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.10'
 uci set    firewall.@redirect[-1].dest_port='443'
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].reflection=1
@@ -418,7 +420,7 @@ uci set    firewall.@redirect[-1].src='wan_freifunk'
 uci set    firewall.@redirect[-1].dest='pyur'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='443'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.10'
 uci set    firewall.@redirect[-1].dest_port='443'
 uci commit firewall.@redirect[-1]
 
@@ -428,9 +430,8 @@ uci set    firewall.@redirect[-1].name='logs from cable modem'
 uci set    firewall.@redirect[-1].src_ip='192.168.100.1'
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].dest='lan'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.10'
 uci set    firewall.@redirect[-1].src_dport='514'
-uci set    firewall.@redirect[-1].src_dip='192.168.100.5'
 uci commit firewall.@redirect[-1]
 
 # fix to stop vpn traffic leaving and entering home network
@@ -442,7 +443,7 @@ uci set    firewall.@redirect[-1].src='lan'
 uci set    firewall.@redirect[-1].dest='pyur'
 uci set    firewall.@redirect[-1].proto='udp'
 uci set    firewall.@redirect[-1].src_dport='12321'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.5'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='12321'
 uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
@@ -622,7 +623,7 @@ uci set    firewall.@redirect[-1].src='pyur'
 uci set    firewall.@redirect[-1].dest='lan'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='32400'
-uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.10'
 uci set    firewall.@redirect[-1].dest_port='32400'
 uci set    firewall.@redirect[-1].reflection=1
 uci commit firewall.@redirect[-1]
@@ -660,7 +661,8 @@ uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='lan dns'
 uci set      firewall.@rule[-1].src='lan'
 uci set      firewall.@rule[-1].dest_port='53'
-uci set      firewall.@rule[-1].proto='tcpudp'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci add_list firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -707,26 +709,6 @@ uci set      firewall.@rule[-1].dest_ip='ff02::1:2'
 uci set      firewall.@rule[-1].dest_port='547'
 uci set      firewall.@rule[-1].family='ipv6'
 uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='lan Samba browse udp'
-uci set      firewall.@rule[-1].dest_port='137 138'
-uci set      firewall.@rule[-1].src='lan'
-uci set      firewall.@rule[-1].dest='lan'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci add_list firewall.@rule[-1].proto='udp'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].dest_port='139 445'
-uci set      firewall.@rule[-1].src='lan'
-uci set      firewall.@rule[-1].name='lan samba browse tcp'
-uci set      firewall.@rule[-1].dest='lan'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci add_list firewall.@rule[-1].proto='tcp'
 uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
@@ -778,53 +760,15 @@ uci commit firewall.@forwarding[-1]
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='freifunk DNS'
-uci set      firewall.@rule[-1].enabled='1'
-uci set      firewall.@rule[-1].src='freifunk'
-uci set      firewall.@rule[-1].proto='tcpudp'
-uci set      firewall.@rule[-1].dest_port='53'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='freifunk dhcp'
-uci set      firewall.@rule[-1].src='freifunk'
-uci set      firewall.@rule[-1].dest_port='67-68'
-uci set      firewall.@rule[-1].proto='udp'
-uci set      firewall.@rule[-1].family='ipv4'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='freifunk web'
 uci set      firewall.@rule[-1].enabled='1'
 uci set      firewall.@rule[-1].src='freifunk'
-uci set      firewall.@rule[-1].proto='tcpudp'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci add_list firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].dest_port='80'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-uci add      firewall  rule
-uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='Plex (freifunk to bunker)'
-uci set      firewall.@rule[-1].family='ipv6'
-uci set      firewall.@rule[-1].src='freifunk'
-uci set      firewall.@rule[-1].dest='lan'
-uci add_list firewall.@rule[-1].dest_ip='2001:bf7:830:b005::31'
-uci set      firewall.@rule[-1].dest_port='32400'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
-
-uci add      firewall rule
-uci set      firewall.@rule[-1].family='ipv6'
-uci add_list firewall.@rule[-1].proto='icmp'
-uci set      firewall.@rule[-1].src='freifunk'
-uci set      firewall.@rule[-1].dest='lan'
-uci add_list firewall.@rule[-1].dest_ip='2001:bf7:830:b005::31'
-uci set      firewall.@rule[-1].target='ACCEPT'
-uci commit   firewall.@rule[-1]
 
 ###############################################################################
 # IoT zone specific rules
@@ -842,7 +786,8 @@ uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='iot DNS'
 uci set      firewall.@rule[-1].enabled='1'
 uci set      firewall.@rule[-1].src='iot'
-uci set      firewall.@rule[-1].proto='tcpudp'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci add_list firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].dest_port='53'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -883,7 +828,7 @@ uci add_list firewall.@rule[-1].proto='tcp'
 uci add_list firewall.@rule[-1].proto='udp'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='lan'
-uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
+uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
 uci set      firewall.@rule[-1].dest_port='514'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -893,7 +838,7 @@ uci set      firewall.@rule[-1].name='mqtt.imagilan'
 uci add_list firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='lan'
-uci add_list firewall.@rule[-1].dest_ip='10.7.11.1'
+uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
 uci set      firewall.@rule[-1].dest_port='1883'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -904,7 +849,7 @@ uci set      firewall.@rule[-1].name='IoT habpanel from tablets'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='80'
-uci set      firewall.@rule[-1].dest_ip='10.7.11.1'
+uci set      firewall.@rule[-1].dest_ip='10.7.11.10'
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -968,7 +913,7 @@ uci commit   dhcp.freifunk
 
 uci set      dhcp.lan=dhcp
 uci set      dhcp.lan.interface='lan'
-uci add_list dhcp.lan.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.lan.dhcp_option='option:log-server, 10.7.11.10'
 uci add_list dhcp.lan.domain='imagilan'
 uci add_list dhcp.lan.domain='imaginator.com'
 uci add_list dhcp.lan.ra_flags='managed-config'
@@ -985,7 +930,7 @@ uci commit   dhcp.lan
 
 uci set      dhcp.iot=dhcp
 uci set      dhcp.iot.interface='iot'
-uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.1'
+uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.10'
 uci add_list dhcp.iot.domain='imagilan'
 uci add_list dhcp.iot.domain='imaginator.com'
 uci add_list dhcp.iot.ra_flags='managed-config'
@@ -1028,12 +973,6 @@ uci commit   dhcp.@domain[-1]
 # IoT
 ###############################################################################
 
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.9.2'
-uci set      dhcp.@domain[-1].name='bunker-iot'
-uci commit   dhcp.@domain[-1]
-
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.6'
@@ -1044,7 +983,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.9'
+uci set      dhcp.@host[-1].ip='10.7.9.8'
 uci set      dhcp.@host[-1].name='camera01'
 uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'
@@ -1052,11 +991,17 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.10'
+uci set      dhcp.@host[-1].ip='10.7.9.9'
 uci set      dhcp.@host[-1].name='camera02'
 uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
+
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.9.10'
+uci set      dhcp.@domain[-1].name='bunker-iot'
+uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1371,17 +1316,6 @@ uci set      dhcp.@host[-1].mac='14:C1:4E:72:67:41'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-
-###############################################################################
-# lan w16
-###############################################################################
-
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.10.1'
-uci set      dhcp.@domain[-1].name='w16gw'
-uci commit   dhcp.@domain[-1]
-
 ###############################################################################
 # lan f17
 ###############################################################################
@@ -1412,15 +1346,6 @@ uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.1'
-uci set      dhcp.@host[-1].name='bunker'
-uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
-uci set      dhcp.@host[-1].dns='1'
-uci set      dhcp.@host[-1].hostid='31' # can only be 8 characters
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.2'
 uci set      dhcp.@host[-1].name='switch01'
 uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
@@ -1445,7 +1370,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.11.5'
+uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='f17gw'
 uci commit   dhcp.@domain[-1]
 
@@ -1462,6 +1387,15 @@ uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.7'
 uci set      dhcp.@domain[-1].name='ilo'
 uci commit   dhcp.@domain[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.10'
+uci set      dhcp.@host[-1].name='bunker'
+uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
+uci set      dhcp.@host[-1].dns='1'
+uci set      dhcp.@host[-1].hostid='10' # can only be 8 characters
+uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
