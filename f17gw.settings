@@ -325,6 +325,7 @@ uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='freifunk'
 uci add_list firewall.@zone[-1].network='freifunk'
 uci add_list firewall.@zone[-1].network='freifunk6'
+uci set      firewall.@zone[-1].masq='1'
 uci set      firewall.@zone[-1].input='ACCEPT'
 uci set      firewall.@zone[-1].output='ACCEPT'
 uci set      firewall.@zone[-1].forward='ACCEPT'
