@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# stop after any errors
+set -xe
+
+
+uci set      system.@system[0].log_ip='10.36.189.10'
+uci commit   system
+service log restart
+
+
+uci set      dhcp.@dnsmasq[0].logqueries='0'
+uci set      dhcp.dhcp_dhcp.start='11'       # bunker uses .10
+uci set      dhcp.dhcp_dhcp.dhcpv6="server"
+uci commit   dhcp
+service dnsmasq restart
