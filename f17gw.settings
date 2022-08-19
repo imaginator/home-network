@@ -841,7 +841,7 @@ uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='80'
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
-uci add_list firewall.@rule[-1].dest_ip='::9992/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
+uci add_list firewall.@rule[-1].dest_ip='::10/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -1376,14 +1376,9 @@ uci set      dhcp.@host[-1].ip='10.7.11.10'
 uci set      dhcp.@host[-1].name='bunker'
 uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
 uci set      dhcp.@host[-1].dns='1'
-#uci set      dhcp.@host[-1].hostid='10' # can only be 8 characters
-uci commit   dhcp.@host[-1]
+uci set      dhcp.@host[-1].duid='00020000ab118a5aacc20aa3d319'
+uci set      dhcp.@host[-1].hostid='10'
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].name='bunker'
-uci set      dhcp.@host[-1].duid='00:02:00:00:AB:11:8A:5A:AC:C2:0A:A3:D3:19'
-uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
