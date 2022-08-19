@@ -2,7 +2,7 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.3, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.3"
-!System Up Time          "123 days 23 hrs 56 mins 40 secs"
+!System Up Time          "178 days 18 hrs 19 mins 55 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
 !Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
 !
@@ -25,7 +25,7 @@ configure
 no device analytics
 ip name server 10.7.10.5
 logging console 7
-logging host "10.7.11.1" ipv4 514 debug
+logging host "10.7.11.10" ipv4 514 debug
 logging syslog
 logging cli-command
 line console
@@ -50,7 +50,7 @@ snmp-server sysname "switch01"
 ip dhcp snooping
 no ip dhcp snooping verify mac-address
 interface 0/1
-description 'freifunk-router'
+description 'f17-core'
 no spanning-tree port mode
 ip dhcp snooping trust
 switchport trunk native vlan 4
@@ -59,7 +59,6 @@ vlan pvid 2
 vlan participation exclude 1-2,4-5
 vlan participation include 10-12,40,42
 vlan tagging 4,10-12,40,42
-poe opmode shutdown
 exit
 interface 0/2
 description 'knxgw'
@@ -245,7 +244,7 @@ vlan tagging 42
 poe opmode shutdown
 exit
 interface 0/20
-description 'cablemodem'
+description 'cable modem'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 4
@@ -289,7 +288,7 @@ ip dhcp snooping trust
 vlan participation exclude 1,10-12,42
 vlan participation include 2,4-5,40
 vlan tagging 2,4-5,10-12,40,42
-poe opmode shutdown
+poe opmode passive24v
 exit
 interface 0/25
 no port lacpmode
