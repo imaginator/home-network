@@ -978,13 +978,6 @@ uci set      dhcp.@host[-1].mac='94:e1:ac:11:cd:34'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.9'
-uci set      dhcp.@host[-1].name='camera02'
-uci set      dhcp.@host[-1].mac='34:ce:00:b4:72:56'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
