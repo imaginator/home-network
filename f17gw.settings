@@ -176,6 +176,11 @@ uci set      network.@route[-1].target='10.31.167.192/27' # Freifunk management 
 uci set      network.@route[-1].gateway='10.36.189.1'
 uci commit   network.@route[-1]
 
+uci add      network route
+uci set      network.@route[-1].target='2001:bf7:830:b001::/64' # Freifunk management network
+uci set      network.@route[-1].gateway='2001:bf7:830:b000::1'
+uci commit   network.@route[-1]
+
 uci commit   network
 
 uci set     luci.sauth.sessiontime="36000000"
@@ -936,12 +941,6 @@ uci commit   dhcp.iot
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.7.8.1'
-uci set      dhcp.@domain[-1].name='wolliner-vpn'
-uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  domain
-uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.8.2'
 uci set      dhcp.@domain[-1].name='f17gw-vpn'
 uci commit   dhcp.@domain[-1]
@@ -1314,11 +1313,6 @@ uci set      dhcp.@cname[-1].cname='mqtt.imagilan'
 uci set      dhcp.@cname[-1].target='bunker.imagilan'
 uci commit   dhcp.@cname[-1]
 
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='openhab.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  cname
 uci set      dhcp.@cname[-1]=cname
@@ -1370,15 +1364,20 @@ uci set      dhcp.@domain[-1].ip='10.7.11.7'
 uci set      dhcp.@domain[-1].name='ilo'
 uci commit   dhcp.@domain[-1]
 
+uci add      dhcp  domain
+uci set      dhcp.@domain[-1]=domain
+uci set      dhcp.@domain[-1].ip='10.7.11.10'
+uci set      dhcp.@domain[-1].name='openhab'
+uci commit   dhcp.@domain[-1]
+
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.10'
 uci set      dhcp.@host[-1].name='bunker'
 uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
 uci set      dhcp.@host[-1].dns='1'
-uci set      dhcp.@host[-1].duid='00020000ab118a5aacc20aa3d319'
+uci set      dhcp.@host[-1].duid='00:02:00:00:AB:11:8A:5A:AC:C2:0A:A3:D3:19'
 uci set      dhcp.@host[-1].hostid='10'
-
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1563,13 +1562,13 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='10.31.167.193'
+uci set      dhcp.@domain[-1].ip='10.36.189.1'
 uci set      dhcp.@domain[-1].name='f17-core'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
-uci set      dhcp.@domain[-1].ip='2001:bf7:830:b001::1'
+uci set      dhcp.@domain[-1].ip='2001:bf7:830:b000::1'
 uci set      dhcp.@domain[-1].name='f17-core'
 uci commit   dhcp.@domain[-1]
 
@@ -1759,6 +1758,15 @@ uci add_list mwan3.freifunk_pyur.use_member='pyur_m2_w3'
 uci add_list mwan3.freifunk_pyur.use_member='freifunk_m1_w2'
 uci add_list mwan3.freifunk_pyur.use_member='pyur6_m2_w3'
 uci add_list mwan3.freifunk_pyur.use_member='freifunk6_m1_w2'
+
+uci set      mwan3.plex_v4=rule
+uci set      mwan3.plex_v4.family='ipv4'
+uci set      mwan3.plex_v4.proto='tcp'
+uci set      mwan3.plex_v4.src_port='32400'
+uci set      mwan3.plex_v4.dest_ip='0.0.0.0/0'
+uci set      mwan3.plex_v4.sticky='0'
+uci set      mwan3.plex_v4.logging='1'
+uci set      mwan3.plex_v4.use_policy='pyur_only'
 
 uci set      mwan3.https=rule
 uci set      mwan3.https.sticky='1'
