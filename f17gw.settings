@@ -206,7 +206,7 @@ uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='eth0.4'
+uci set    ddns.@service[-1].interface='pyur4'   # hotplug events only on network (not interfaces)
 uci set    ddns.@service[-1].ip_interface='eth0.4'
 uci set    ddns.@service[-1].ip_source='interface' # using ip_source=interface due to bind_ip issues in curl
 uci set    ddns.@service[-1].lookup_host='${f17gw_ddns4_domain}'
@@ -231,7 +231,7 @@ uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='eth0.4'
+uci set    ddns.@service[-1].interface='pyur6'   # hotplug events only on network (not interfaces)
 uci set    ddns.@service[-1].ip_interface='eth0.4'
 uci set    ddns.@service[-1].ip_source='interface'
 uci set    ddns.@service[-1].lookup_host='${f17gw_ddns6_domain}'
