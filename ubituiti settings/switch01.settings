@@ -2,17 +2,21 @@
 !
 !System Description "EdgeSwitch 24 250W, 1.9.3, Linux 3.6.5-03329b4a, 0.0.0.0000000"
 !System Software Version "1.9.3"
-!System Up Time          "178 days 18 hrs 19 mins 55 secs"
+!System Up Time          "186 days 2 hrs 8 mins 0 secs"
 !Additional Packages     QOS,IPv6 Management,Routing
 !Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
 !
 hostname "switch01"
+network protocol none
+network parms 10.7.11.2 255.255.255.0 10.7.11.1
+network ipv6 address dhcp
 network ipv6 address autoconfig
 vlan database
-vlan 2,4-5,10-12,40,42
+vlan 2,4-6,10-12,40,42
 vlan name 2 "trusted"
 vlan name 4 "wan"
 vlan name 5 "iot"
+vlan name 6 "splash"
 vlan name 10 "emma-mesh"
 vlan name 11 "zwingli-mesh"
 vlan name 12 "rhnk-mesh"
@@ -23,7 +27,7 @@ network mgmt_vlan 2
 sshcon timeout 160
 configure
 no device analytics
-ip name server 10.7.10.5
+ip name server 10.7.11.1
 logging console 7
 logging host "10.7.11.10" ipv4 514 debug
 logging syslog
@@ -56,7 +60,7 @@ ip dhcp snooping trust
 switchport trunk native vlan 4
 switchport trunk allowed vlan 4,7-4093
 vlan pvid 2
-vlan participation exclude 1-2,4-5
+vlan participation exclude 1-2,4-6
 vlan participation include 10-12,40,42
 vlan tagging 4,10-12,40,42
 exit
@@ -65,7 +69,7 @@ description 'knxgw'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 2,42
 exit
@@ -74,7 +78,7 @@ description 'veluxgw'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 2,42
 poe opmode shutdown
@@ -86,8 +90,8 @@ no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 2
 vlan participation exclude 1,4,10-12,42
-vlan participation include 2,5,40
-vlan tagging 2,5,40,42
+vlan participation include 2,5-6,40
+vlan tagging 2,5-6,40,42
 exit
 interface 0/5
 description 'repeater-hof-north'
@@ -95,8 +99,8 @@ no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
 vlan participation exclude 1,4,10-12,42
-vlan participation include 2,5,40
-vlan tagging 2,4-5,40,42
+vlan participation include 2,5-6,40
+vlan tagging 2,4-6,40,42
 poe opmode passive24v
 exit
 interface 0/6
@@ -104,8 +108,8 @@ description 'repeater-street-north'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan participation exclude 1,4,10-12,42
-vlan participation include 2,5,40
-vlan tagging 2,5,40,42
+vlan participation include 2,5-6,40
+vlan tagging 2,5-6,40,42
 poe opmode passive24v
 exit
 interface 0/7
@@ -113,15 +117,15 @@ description 'repeater-street-south'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan participation exclude 1,4,10-12,42
-vlan participation include 2,5,40
-vlan tagging 2,5,40,42
+vlan participation include 2,5-6,40
+vlan tagging 2,5-6,40,42
 poe opmode passive24v
 exit
 interface 0/8
 description 'bunker'
 no spanning-tree port mode
 ip dhcp snooping trust
-vlan participation exclude 1,4,10-12,42
+vlan participation exclude 1,4,6,10-12,42
 vlan participation include 2,5,40
 vlan tagging 2,5,40,42
 poe opmode shutdown
@@ -133,7 +137,7 @@ description 'bunker iLO'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 2
-vlan participation exclude 1,4-5,10-12,40,42
+vlan participation exclude 1,4-6,10-12,40,42
 vlan participation include 2
 vlan tagging 42
 poe opmode shutdown
@@ -143,7 +147,7 @@ description 'onkyo-receiver'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 2
-vlan participation exclude 1,4-5,10-12,40,42
+vlan participation exclude 1,4-6,10-12,40,42
 vlan participation include 2
 vlan tagging 5,42
 poe opmode shutdown
@@ -154,7 +158,7 @@ description 'Nvidia Shield'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 2
-vlan participation exclude 1,4-5,10-12,40,42
+vlan participation exclude 1,4-6,10-12,40,42
 vlan participation include 2
 vlan tagging 42
 poe opmode shutdown
@@ -164,7 +168,7 @@ description 'projector01'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 42
 poe opmode shutdown
@@ -176,7 +180,7 @@ description 'Hue'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 42
 poe opmode shutdown
@@ -187,7 +191,7 @@ ip dhcp snooping trust
 switchport trunk native vlan 4
 switchport trunk allowed vlan 4,7-4093
 vlan pvid 4
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 poe opmode shutdown
 exit
@@ -197,7 +201,7 @@ no spanning-tree port mode
 ip dhcp snooping trust
 switchport access vlan 5
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 42
 poe opmode shutdown
@@ -207,7 +211,7 @@ description 'printer'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 2
-vlan participation exclude 1,4-5,10-12,40,42
+vlan participation exclude 1,4-6,10-12,40,42
 vlan participation include 2
 vlan tagging 42
 poe opmode shutdown
@@ -219,7 +223,7 @@ description 'rpi Compute module'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 2
-vlan participation exclude 1,4-5,10-12,40,42
+vlan participation exclude 1,4-6,10-12,40,42
 vlan participation include 2
 vlan tagging 5,42
 poe opmode shutdown
@@ -230,15 +234,15 @@ description 'repeater-bedroom1'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan participation exclude 1,4,10-12,42
-vlan participation include 2,5,40
-vlan tagging 2,5,40,42
+vlan participation include 2,5-6,40
+vlan tagging 2,5-6,40,42
 exit
 interface 0/19
 description 'gruenbeck'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 42
 poe opmode shutdown
@@ -248,7 +252,7 @@ description 'cable modem'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 4
-vlan participation exclude 1-2,5,10-12,40,42
+vlan participation exclude 1-2,5-6,10-12,40,42
 vlan participation include 4
 vlan tagging 42
 poe opmode shutdown
@@ -258,15 +262,16 @@ description 'doorbird'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan pvid 5
-vlan participation exclude 1-2,4,10-12,40,42
+vlan participation exclude 1-2,4,6,10-12,40,42
 vlan participation include 5
 vlan tagging 2,4,42
 exit
 interface 0/22
+speed auto 1000 full-duplex
 description 'zwinglikirche uplink (PowerBeam 5AC Gen2)'
 no spanning-tree port mode
 ip dhcp snooping trust
-vlan participation exclude 1-2,4-5,10,12,40
+vlan participation exclude 1-2,4-6,10,12,40
 vlan participation include 11,42
 vlan tagging 2,4-5,10-12,40,42
 poe opmode passive24v
@@ -275,7 +280,7 @@ interface 0/23
 description 'emmauskirche uplink (NanoBridge M5)'
 no spanning-tree port mode
 ip dhcp snooping trust
-vlan participation exclude 1-2,4-5,11-12,40
+vlan participation exclude 1-2,4-6,11-12,40
 vlan participation include 10,42
 vlan tagging 2,10,42
 poe opmode passive24v
@@ -286,8 +291,8 @@ description 'f17gw'
 no spanning-tree port mode
 ip dhcp snooping trust
 vlan participation exclude 1,10-12,42
-vlan participation include 2,4-5,40
-vlan tagging 2,4-5,10-12,40,42
+vlan participation include 2,4-6,40
+vlan tagging 2,4-6,10-12,40,42
 poe opmode passive24v
 exit
 interface 0/25
@@ -297,7 +302,7 @@ no snmp trap link-status
 no spanning-tree port mode
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface 0/26
@@ -307,7 +312,7 @@ no snmp trap link-status
 no spanning-tree port mode
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface lag 1
@@ -316,7 +321,7 @@ no adminmode
 no spanning-tree port mode
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface lag 2
@@ -325,7 +330,7 @@ no adminmode
 no spanning-tree port mode
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface lag 3
@@ -334,7 +339,7 @@ no adminmode
 no spanning-tree port mode
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface lag 4
@@ -343,19 +348,19 @@ no adminmode
 no spanning-tree port mode
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface lag 5
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 interface lag 6
 ip dhcp snooping trust
 ip dhcp snooping log-invalid
-vlan participation exclude 1-2,4-5,10-12,40,42
+vlan participation exclude 1-2,4-6,10-12,40,42
 vlan tagging 42
 exit
 service ubnt-discovery-active-scan

@@ -126,6 +126,14 @@ uci set      network.iot.ip6weight='20'
 uci set      network.iot.ipaddr='10.7.9.1'
 uci set      network.iot.netmask='255.255.255.0'
 
+uci set      network.splash=interface
+uci set      network.splash.proto='static'
+uci set      network.splash.device='eth0.6'
+uci set      network.splash.ipaddr='10.7.100.1'
+uci set      network.splash.netmask='255.255.255.0'
+uci set      network.splash.defaultroute='0'
+uci set      network.splash.delegate='0'
+
 uci set      network.henet=interface
 uci set      network.henet.proto='6in4'
 uci set      network.henet.peeraddr='216.66.86.114'
@@ -185,6 +193,14 @@ uci commit   network
 
 uci set     luci.sauth.sessiontime="36000000"
 uci commit  luci
+
+# f17 free wifi slash page
+uci set      uhttpd.splash=uhttpd
+uci add_list uhttpd.splash.listen_http='0.0.0.0:81'
+uci add_list uhttpd.splash.listen_http='[::]:81'
+uci set      uhttpd.splash.home='/splash'
+
+uci commit   uhttpd.splash
 
 uci import ddns <<EOF
 EOF
@@ -348,6 +364,16 @@ uci commit   firewall.@zone[-1]
 
 uci add      firewall  zone
 uci set      firewall.@zone[-1]=zone
+uci set      firewall.@zone[-1].name='splash'
+uci add_list firewall.@zone[-1].network='splash'
+uci set      firewall.@zone[-1].input='ACCEPT'
+uci set      firewall.@zone[-1].output='ACCEPT'
+uci set      firewall.@zone[-1].forward='DROP'
+uci set      firewall.@zone[-1].log='1'
+uci commit   firewall.@zone[-1]
+
+uci add      firewall  zone
+uci set      firewall.@zone[-1]=zone
 uci set      firewall.@zone[-1].name='pyur'
 uci add_list firewall.@zone[-1].network='pyur4'
 uci add_list firewall.@zone[-1].network='pyur6'
@@ -442,6 +468,17 @@ uci set    firewall.@redirect[-1].src_dport='12321'
 uci set    firewall.@redirect[-1].dest_ip='10.7.11.1'
 uci set    firewall.@redirect[-1].dest_port='12321'
 uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
+# show a splah page for F17 Free Wifi
+uci add    firewall redirect
+uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].name='slash'
+uci set    firewall.@redirect[-1].src='splash'
+uci set    firewall.@redirect[-1].src_dport='80'
+uci set    firewall.@redirect[-1].dest_ip='10.7.100.1'
+uci set    firewall.@redirect[-1].dest_port='81'
 uci commit firewall.@redirect[-1]
 
 # Rules
@@ -907,7 +944,8 @@ uci commit   dhcp.freifunk
 
 uci set      dhcp.lan=dhcp
 uci set      dhcp.lan.interface='lan'
-uci add_list dhcp.lan.dhcp_option='option:log-server, 10.7.11.10'
+uci add_list dhcp.lan.dhcp_option='7,10.7.11.10' # log server
+uci add_list dhcp.lan.dhcp_option='114,urn:ietf:params:capport:unrestricted'
 uci add_list dhcp.lan.domain='imagilan'
 uci add_list dhcp.lan.domain='imaginator.com'
 uci add_list dhcp.lan.ra_flags='managed-config'
@@ -924,7 +962,8 @@ uci commit   dhcp.lan
 
 uci set      dhcp.iot=dhcp
 uci set      dhcp.iot.interface='iot'
-uci add_list dhcp.iot.dhcp_option='option:log-server, 10.7.11.10'
+uci add_list dhcp.iot.dhcp_option='7,10.7.11.10' # log server
+uci add_list dhcp.iot.dhcp_option='114,urn:ietf:params:capport:unrestricted'
 uci add_list dhcp.iot.domain='imagilan'
 uci add_list dhcp.iot.domain='imaginator.com'
 uci add_list dhcp.iot.ra_flags='managed-config'
@@ -938,6 +977,15 @@ uci set      dhcp.iot.ra_default='2'
 uci set      dhcp.iot.ra='server'
 uci set      dhcp.iot.start='100'
 uci commit   dhcp.iot
+
+uci set      dhcp.splash=dhcp
+uci set      dhcp.splash.interface='splash'
+uci set      dhcp.splash.leasetime='24h'
+uci set      dhcp.splash.limit='150'
+uci set      dhcp.splash.start='100'
+uci add_list dhcp.splash.address='/#/10.7.100.1'
+uci add_list dhcp.splash.dhcp_option_force='114,http://10.7.100.1:81'
+uci commit   dhcp.splash
 
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain

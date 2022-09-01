@@ -146,6 +146,12 @@ uci add_list network.iot.ifname='eth0.5'       # unifi-ac-lite
 uci add_list network.iot.ifname='eth1.5'       # unifi-m2-loco
 uci set      network.iot.proto='none'
 
+uci set      network.splash=interface
+uci set      network.splash.type='bridge'
+uci add_list network.splash.ifname='eth0.6'       # unifi-ac-lite
+uci add_list network.splash.ifname='eth1.6'       # unifi-m2-loco
+uci set      network.splash.proto='none'
+
 uci commit   network
 
 uci import wireless <<EOF
@@ -325,11 +331,12 @@ uci set      wireless.f17free2.ieee80211w='0'
 uci set      wireless.f17free2.ifname='f17free2'
 uci set      wireless.f17free2.isolate='1'
 uci set      wireless.f17free2.mode='ap'
-uci set      wireless.f17free2.network='freifunk'
+uci set      wireless.f17free2.network='splash'
 uci set      wireless.f17free2.skip_inactivity_poll=1
 uci set      wireless.f17free2.time_advertisement='2'
 uci set      wireless.f17free2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
 uci set      wireless.f17free2.wnm_sleep_mode='1'
+uci set      wireless.f17free2.disabled='1' # until opennds works
 uci commit   wireless.f17free2
 
 uci set      wireless.f17free5=wifi-iface
@@ -345,11 +352,12 @@ uci set      wireless.f17free5.ieee80211w='0'
 uci set      wireless.f17free5.ifname='f17free5'
 uci set      wireless.f17free5.isolate='1'
 uci set      wireless.f17free5.mode='ap'
-uci set      wireless.f17free5.network='freifunk'
+uci set      wireless.f17free5.network='splash'
 uci set      wireless.f17free5.skip_inactivity_poll=1
 uci set      wireless.f17free5.time_advertisement='2'
 uci set      wireless.f17free5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
 uci set      wireless.f17free5.wnm_sleep_mode='1'
+uci set      wireless.f17free5.disabled='1' # until opennds works
 uci commit   wireless.f17free5
 
 uci set      wireless.ffunk2=wifi-iface
