@@ -7,9 +7,9 @@
 USER=root
 IFNAME=enx48d705e9d307
 FILENAME=kernel.bin
-/sbin/ip addr replace 192.168.1.10/24 dev $IFNAME
-/sbin/ip link set dev $IFNAME up
-/usr/sbin/dnsmasq --user=$USER \
+sudo /sbin/ip addr replace 192.168.1.10/24 dev $IFNAME
+sudo /sbin/ip link set dev $IFNAME up
+sudo /usr/sbin/dnsmasq --user=$USER \
 --no-daemon \
 --listen-address 192.168.1.10 \
 --bind-interfaces \
