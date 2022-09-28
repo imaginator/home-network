@@ -1431,7 +1431,15 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.11'
 uci set      dhcp.@host[-1].name='repeater-hof-north'
-uci set      dhcp.@host[-1].mac='6a:72:51:1b:74:89'
+uci set      dhcp.@host[-1].mac='de:9f:db:f5:88:5c dc:9f:db:f5:88:5c'   # nanostation m5
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.12'
+uci set      dhcp.@host[-1].name='repeater-hof-south'
+uci set      dhcp.@host[-1].mac='de:9f:db:f5:59:0b'   # nanostation m5
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1439,15 +1447,15 @@ uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.14'
 uci set      dhcp.@host[-1].name='repeater-street-south'
-uci set      dhcp.@host[-1].mac='00:27:22:cb:ff:20 02:27:22:cb:ff:20'
+uci set      dhcp.@host[-1].mac='de:9f:db:95:0f:32'   # nanostation m5
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.15'
-uci set      dhcp.@host[-1].name='repeater-street-north'
-uci set      dhcp.@host[-1].mac='de:9f:db:59:ca:a2'
+uci set      dhcp.@host[-1].name='repeater-street-north'  # nanostation m5
+uci set      dhcp.@host[-1].mac='dc:9f:db:95:0e:a8 de:9f:db:95:0e:a8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 

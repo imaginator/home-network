@@ -157,18 +157,18 @@ uci commit   network
 uci import wireless <<EOF
 EOF
 
-# 2.4 GHz
+# 5.8 Ghz
 uci set      wireless.radio0=wifi-device
 uci set      wireless.radio0.channel='auto'
-uci add_list wireless.radio0.channels="1"
-uci add_list wireless.radio0.channels="6"
-uci add_list wireless.radio0.channels="11"
+#uci add_list wireless.radio0.channels="36-48"    # Non-DFS but busy with neighbours
+#uci add_list wireless.radio0.channels="149-165"  # "indoor only" and not supported by Android
+#uci add_list wireless.radio0.channels="52-144"   # DFS
+#uci add_list wireless.radio0.channels="149-173"  # "indoor only" and not supported by Android
 uci set      wireless.radio0.country='DE'
-uci set      wireless.radio0.distance=30
-uci set      wireless.radio0.htmode='HT20'
-uci set      wireless.radio0.hwmode='11g'
-uci set      wireless.radio0.legacy_rates=0
-uci set      wireless.radio0.log_level=0 # 0=verbose
+uci set      wireless.radio0.distance='30'
+uci set      wireless.radio0.band='5g'
+uci set      wireless.radio0.htmode='HT40'
+uci set      wireless.radio0.log_level='0' # 0=verbose
 case "$system_hostname" in
     repeater-lounge|repeater-bedroom1)
         uci set      wireless.radio0.path='platform/qca956x_wmac'
@@ -178,20 +178,20 @@ case "$system_hostname" in
     ;;
 esac
 uci set      wireless.radio0.type='mac80211'
-# uci set      wireless.radio0.txpower='15'
+#uci set      wireless.radio0.txpower='11'
 uci commit   wireless.radio0
 
-# 5.8 Ghz
+# 2.4 GHz
 uci set      wireless.radio1=wifi-device
 uci set      wireless.radio1.channel='auto'
-#uci add_list wireless.radio1.channels="36-48"   # non-DFS but busy with neighbours
-uci add_list wireless.radio1.channels="52-144"   # DFS
-#uci add_list wireless.radio1.channels="149-173" # "indoor only" and not supported by Android
-uci set      wireless.radio1.doth=1
+uci add_list wireless.radio1.channels="1"
+uci add_list wireless.radio1.channels="6"
+uci add_list wireless.radio1.channels="11"
 uci set      wireless.radio1.country='DE'
 uci set      wireless.radio1.distance=30
-uci set      wireless.radio1.htmode='VHT80'
-uci set      wireless.radio1.hwmode='11a'
+uci set      wireless.radio1.htmode='HT20'
+uci set      wireless.radio1.hwmode='11g'
+uci set      wireless.radio1.legacy_rates=0
 uci set      wireless.radio1.log_level=0 # 0=verbose
 case "$system_hostname" in
     repeater-lounge|repeater-bedroom1)
@@ -202,13 +202,14 @@ case "$system_hostname" in
     ;;
 esac
 uci set      wireless.radio1.type='mac80211'
-#uci set      wireless.radio1.txpower='11'
+# uci set      wireless.radio1.txpower='15'
 uci commit   wireless.radio1
+
 
 uci set      wireless.imagifi2=wifi-iface
 uci set      wireless.imagifi2.ssid='imagiFi'
-uci set      wireless.imagifi2.device='radio0'
-uci set      wireless.imagifi2.bss_transition='1'
+uci set      wireless.imagifi2.device='radio1'
+#uci set      wireless.imagifi2.bss_transition='1'
 uci set      wireless.imagifi2.disassoc_low_ack=0
 uci set      wireless.imagifi2.encryption='psk2+ccmp'
 uci set      wireless.imagifi2.ft_over_ds='1'
@@ -224,13 +225,13 @@ uci set      wireless.imagifi2.network='lan'
 uci set      wireless.imagifi2.skip_inactivity_poll=1
 uci set      wireless.imagifi2.time_advertisement='2'
 uci set      wireless.imagifi2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.imagifi2.wnm_sleep_mode='1'
+#uci set      wireless.imagifi2.wnm_sleep_mode='1'
 uci commit   wireless.imagifi2
 
 uci set      wireless.imagifi25=wifi-iface
 uci set      wireless.imagifi25.ssid='imagiFi'
-uci set      wireless.imagifi25.device='radio1'
-uci set      wireless.imagifi25.bss_transition='1'
+uci set      wireless.imagifi25.device='radio0'
+#uci set      wireless.imagifi25.bss_transition='1'
 uci set      wireless.imagifi25.disassoc_low_ack=0
 uci set      wireless.imagifi25.encryption='psk2+ccmp'
 uci set      wireless.imagifi25.ft_over_ds='1'
@@ -246,13 +247,13 @@ uci set      wireless.imagifi25.network='lan'
 uci set      wireless.imagifi25.skip_inactivity_poll=1
 uci set      wireless.imagifi25.time_advertisement='2'
 uci set      wireless.imagifi25.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.imagifi25.wnm_sleep_mode='1'
+#uci set      wireless.imagifi25.wnm_sleep_mode='1'
 uci commit   wireless.imagifi25
 
 uci set      wireless.imagifi5=wifi-iface
 uci set      wireless.imagifi5.ssid='imagiFi 5'
-uci set      wireless.imagifi5.device='radio1'
-uci set      wireless.imagifi5.bss_transition='1'
+uci set      wireless.imagifi5.device='radio0'
+#uci set      wireless.imagifi5.bss_transition='1'
 uci set      wireless.imagifi5.disassoc_low_ack=0
 uci set      wireless.imagifi5.encryption='psk2+ccmp'
 uci set      wireless.imagifi5.ft_over_ds='1'
@@ -268,13 +269,13 @@ uci set      wireless.imagifi5.network='lan'
 uci set      wireless.imagifi5.skip_inactivity_poll=1
 uci set      wireless.imagifi5.time_advertisement='2'
 uci set      wireless.imagifi5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.imagifi5.wnm_sleep_mode='1'
+#uci set      wireless.imagifi5.wnm_sleep_mode='1'
 uci commit   wireless.imagifi5
 
 uci set      wireless.iot2=wifi-iface
 uci set      wireless.iot2.ssid='imagiFi IoT'
-uci set      wireless.iot2.device='radio0'
-uci set      wireless.iot2.bss_transition='1'
+uci set      wireless.iot2.device='radio1'
+#uci set      wireless.iot2.bss_transition='1'
 uci set      wireless.iot2.disassoc_low_ack=0
 uci set      wireless.iot2.encryption='psk2+ccmp'
 uci set      wireless.iot2.ft_over_ds='1'
@@ -291,13 +292,13 @@ uci set      wireless.iot2.network='iot'
 uci set      wireless.iot2.skip_inactivity_poll=1
 uci set      wireless.iot2.time_advertisement='2'
 uci set      wireless.iot2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.iot2.wnm_sleep_mode='1'
+#uci set      wireless.iot2.wnm_sleep_mode='1'
 uci commit   wireless.iot2
 
 uci set      wireless.iot5=wifi-iface
 uci set      wireless.iot5.ssid='imagiFi IoT'
-uci set      wireless.iot5.device='radio1'
-uci set      wireless.iot5.bss_transition='1'
+uci set      wireless.iot5.device='radio0'
+#uci set      wireless.iot5.bss_transition='1'
 uci set      wireless.iot5.disassoc_low_ack=0
 uci set      wireless.iot5.encryption='psk2+ccmp'
 uci set      wireless.iot5.ft_over_ds='1'
@@ -314,13 +315,13 @@ uci set      wireless.iot5.network='iot'
 uci set      wireless.iot5.skip_inactivity_poll=1
 uci set      wireless.iot5.time_advertisement='2'
 uci set      wireless.iot5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.iot5.wnm_sleep_mode='1'
+#uci set      wireless.iot5.wnm_sleep_mode='1'
 uci commit   wireless.iot5
 
 # open APs below (no roaming possible)
 uci set      wireless.f17free2=wifi-iface
 uci set      wireless.f17free2.ssid='Falckensteinstr 17 Free WiFi'
-uci set      wireless.f17free2.device='radio0'
+uci set      wireless.f17free2.device='radio1'
 uci set      wireless.f17free2.bss_transition='1'
 uci set      wireless.f17free2.disassoc_low_ack=0
 uci set      wireless.f17free2.encryption='none'
@@ -335,14 +336,14 @@ uci set      wireless.f17free2.network='splash'
 uci set      wireless.f17free2.skip_inactivity_poll=1
 uci set      wireless.f17free2.time_advertisement='2'
 uci set      wireless.f17free2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.f17free2.wnm_sleep_mode='1'
+#uci set      wireless.f17free2.wnm_sleep_mode='1'
 uci set      wireless.f17free2.disabled='1' # until opennds works
 uci commit   wireless.f17free2
 
 uci set      wireless.f17free5=wifi-iface
 uci set      wireless.f17free5.ssid='Falckensteinstr 17 Free WiFi'
-uci set      wireless.f17free5.device='radio1'
-uci set      wireless.f17free5.bss_transition='1'
+uci set      wireless.f17free5.device='radio0'
+#uci set      wireless.f17free5.bss_transition='1'
 uci set      wireless.f17free5.disassoc_low_ack=0
 uci set      wireless.f17free5.encryption='none'
 uci set      wireless.f17free5.ieee80211k='1'
@@ -356,14 +357,14 @@ uci set      wireless.f17free5.network='splash'
 uci set      wireless.f17free5.skip_inactivity_poll=1
 uci set      wireless.f17free5.time_advertisement='2'
 uci set      wireless.f17free5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.f17free5.wnm_sleep_mode='1'
+#uci set      wireless.f17free5.wnm_sleep_mode='1'
 uci set      wireless.f17free5.disabled='1' # until opennds works
 uci commit   wireless.f17free5
 
 uci set      wireless.ffunk2=wifi-iface
 uci set      wireless.ffunk2.ssid='berlin.freifunk.net'
-uci set      wireless.ffunk2.device='radio0'
-uci set      wireless.ffunk2.bss_transition='1'
+uci set      wireless.ffunk2.device='radio1'
+#uci set      wireless.ffunk2.bss_transition='1'
 uci set      wireless.ffunk2.disassoc_low_ack=0
 uci set      wireless.ffunk2.encryption='none'
 uci set      wireless.ffunk2.ieee80211k='1'
@@ -377,13 +378,13 @@ uci set      wireless.ffunk2.network='freifunk'
 uci set      wireless.ffunk2.skip_inactivity_poll=1
 uci set      wireless.ffunk2.time_advertisement='2'
 uci set      wireless.ffunk2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.ffunk2.wnm_sleep_mode='1'
+#uci set      wireless.ffunk2.wnm_sleep_mode='1'
 uci commit   wireless.ffunk2
 
 uci set      wireless.ffunk5=wifi-iface
 uci set      wireless.ffunk5.ssid='berlin.freifunk.net'
-uci set      wireless.ffunk5.device='radio1'
-uci set      wireless.ffunk5.bss_transition='1'
+uci set      wireless.ffunk5.device='radio0'
+#uci set      wireless.ffunk5.bss_transition='1'
 uci set      wireless.ffunk5.disassoc_low_ack=0
 uci set      wireless.ffunk5.encryption='none'
 uci set      wireless.ffunk5.ieee80211k='1'
@@ -397,7 +398,7 @@ uci set      wireless.ffunk5.network='freifunk'
 uci set      wireless.ffunk5.skip_inactivity_poll=1
 uci set      wireless.ffunk5.time_advertisement='2'
 uci set      wireless.ffunk5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.ffunk5.wnm_sleep_mode='1'
+#uci set      wireless.ffunk5.wnm_sleep_mode='1'
 uci commit   wireless.ffunk5
 
 # only issue addresses from f17gw.imagilan
@@ -444,24 +445,7 @@ if rm /etc/seccomp/umdns.json; then
   /etc/init.d/umdns restart || true
 fi
 
-uci -q batch <<-EOF >/dev/null
-# set dawn.@network[0].broadcast_ip='192.168.2.255'
-set dawn.@network[0].shared_key='${dawn_key}'
-set dawn.@network[0].iv='${dawn_iv}'
-set dawn.@network[0].collision_domain='1'
-set dawn.@metric[0].ht_support='10'
-set dawn.@metric[0].vht_support='100'
-set dawn.@metric[0].eval_probe_req='0'
-set dawn.@metric[0].eval_auth_req='0'
-set dawn.@metric[0].eval_assoc_req='0'
-set dawn.@times[0].update_beacon_reports='0'
-set dawn.@times[0].update_chan_util='0'
-EOF
-
-uci commit dawn
-
-/etc/init.d/dawn disable
-/etc/init.d/umdns disable
+/etc/init.d/umdns disable || true
 
 echo "all done with writing"
 
