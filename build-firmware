@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=22.03.0-rc4
+VERSION=22.03.0
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -204,6 +204,34 @@ case $MODEL in
     "
 ;;
 
+"nanostationm5")
+  PLATFORM=ath79
+  TYPE=generic
+  TARGET_DEVICE=ath79-generic
+  PROFILE=ubnt_nanostation-m
+  EXTRA_PACKAGES="\
+    wpad \
+    "
+  REMOVED_PACKAGES="\
+    -dnsmasq \
+    -hostapd-openssl \
+    -kmod-phy-ath79-usb \
+    -kmod-usb \
+    -kmod-usb \
+    -kmod-usb-ohci \
+    -luci \
+    -luci-proto-ppp \
+    -ppp \
+    -ppp-mod-pppoe \
+    -tcpdump-mini \
+    -umdns \
+    -wpa-supplicant \
+    -wpa-supplicant-mini \
+    -wpad-basic \
+    -wpad-basic-wolfssl \
+    -wpad-mini \
+    "
+;;
 "ubnt-uap-ac-lite")
   PLATFORM=ath79
   TYPE=generic
