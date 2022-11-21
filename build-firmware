@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=22.03.0
+VERSION=22.03.2
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -56,55 +56,6 @@ case $MODEL in
     " # dhcpv6 stuff provided by dnsmasq-full
 ;;
 
-"w16gw")
-  PLATFORM=ath79
-  TYPE=generic
-  TARGET_DEVICE=ath79-generic
-  PROFILE=tl-wdr4300-v1
-  EXTRA_PACKAGES="\
-    6in4 \
-    bind-host \
-    ca-bundle \
-    ca-certificates \
-    curl \
-    ddns-scripts \
-    dnsmasq \
-    hostapd-openssl \
-    ip-full \
-    ipset \
-    iptables-mod-conntrack-extra \
-    iptables-mod-ipopt \
-    kmod-ipip \
-    kmod-l2tp \
-    kmod-l2tp-eth \
-    kmod-l2tp-ip \
-    kmod-tun \
-    libiwinfo-lua \
-    libustream-openssl \
-    luci-app-ddns \
-    luci-app-firewall \
-    luci-app-watchcat \
-    luci-app-wireguard \
-    luci-mod-admin-full \
-    luci-proto-ipv6 \
-    luci-proto-wireguard \
-    luci-theme-bootstrap \
-    odhcp6c \
-    odhcpd \
-    qrencode \
-    uhttpd \
-    watchcat \
-    wireguard \
-    wireguard-tools \
-    "
-  REMOVED_PACKAGES="\
-    -client-splash \
-    -dnsmasq-full \
-    -odhcpd-ipv6only \
-    -wpad-basic \
-    -wpad-mini \
-    "
-;;
 
 "travelrouter")
   PLATFORM=ramips
@@ -130,6 +81,7 @@ case $MODEL in
   PLATFORM=ramips
   TYPE=mt7621
   TARGET_DEVICE=ramips-mt7621
+  # PROFILE=mikrotik_routerboard-760igs
   PROFILE=ubnt_edgerouter-x
   EXTRA_PACKAGES="\
     6in4 \
@@ -171,6 +123,8 @@ case $MODEL in
     softflowd \
     sqm-scripts \
     sqm-scripts-extra \
+    tor-gencert \
+    tor-hs \
     uboot-envtools \
     watchcat \
     wireguard-tools \
