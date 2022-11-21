@@ -438,7 +438,7 @@ uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='443 on bunker from ff users'
-uci set    firewall.@redirect[-1].src='wan_freifunk'
+uci set    firewall.@redirect[-1].src='freifunk'
 uci set    firewall.@redirect[-1].dest='pyur'
 uci set    firewall.@redirect[-1].proto='tcp'
 uci set    firewall.@redirect[-1].src_dport='443'
@@ -504,6 +504,13 @@ uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].family='any'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
+
+uci set firewall.@rule[-1].name='ssh from anywhere'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci set firewall.@rule[-1].src='pyur'
+uci set firewall.@rule[-1].dest_port='22'
+uci set firewall.@rule[-1].target='ACCEPT'
+
 
 uci add      firewall  rule
 uci set      firewall.@rule[-1]=rule
@@ -905,14 +912,13 @@ EOF
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
 uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr.ipv6'
-uci add_list dhcp.@dnsmasq[-1].addnhosts='/tmp/hosts/olsr'
 uci add_list dhcp.@dnsmasq[-1].rebind_domain='/imagilan/'
 uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
 uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
 uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
 uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
 uci add_list dhcp.@dnsmasq[-1].server='/olsr/10.36.189.1'
+uci add_list dhcp.@dnsmasq[-1].server='/31.10.in-addr.arpa/10.36.189.1'
 uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
 uci set      dhcp.@dnsmasq[-1].authoritative='1'
 uci set      dhcp.@dnsmasq[-1].cachesize='4096'
@@ -1202,26 +1208,32 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.57'
-uci set      dhcp.@host[-1].name='plugswitch07'
+uci set      dhcp.@host[-1].name='plugswitch-bunker'
 uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2c:8f'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-#SP111
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.58'
-uci set      dhcp.@host[-1].name='plugswitch08'
+uci set      dhcp.@host[-1].name='plugswitch-fridge'
 uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2c:ea'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
-#SP111
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.59'
-uci set      dhcp.@host[-1].name='plugswitch09'
+uci set      dhcp.@host[-1].name='plugswitch-hifi'
 uci set      dhcp.@host[-1].mac='bc:dd:c2:23:2a:8e'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.60'
+uci set      dhcp.@host[-1].name='plugswitch-switch01'
+uci set      dhcp.@host[-1].mac='cc:50:e3:37:49:3a'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1415,7 +1427,7 @@ uci commit   dhcp.@domain[-1]
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.10'
-uci set      dhcp.@domain[-1].name='openhab'
+uci set      dhcp.@domain[-1].name='ha'
 uci commit   dhcp.@domain[-1]
 
 uci add      dhcp  host
@@ -1487,7 +1499,7 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
-uci set      dhcp.@host[-1].mac='ca:48:4c:fc:26:18'
+uci set      dhcp.@host[-1].mac='dc:e5:5b:01:50:a9'
 uci set      dhcp.@host[-1].name='simon-phone'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
