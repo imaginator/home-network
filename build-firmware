@@ -91,6 +91,7 @@ case $MODEL in
     curl \
     ddns-scripts \
     dnsmasq-full \
+    dnstop \
     ip-bridge \
     ip-full \
     iptables-mod-tee \
