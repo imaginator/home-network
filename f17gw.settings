@@ -1363,7 +1363,13 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  cname
 uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='salt.imagilan'
+uci set      dhcp.@cname[-1].cname='photos.imagilan'
+uci set      dhcp.@cname[-1].target='bunker.imagilan'
+uci commit   dhcp.@cname[-1]
+
+uci add      dhcp  cname
+uci set      dhcp.@cname[-1]=cname
+uci set      dhcp.@cname[-1].cname='pigallery2.imagilan'
 uci set      dhcp.@cname[-1].target='bunker.imagilan'
 uci commit   dhcp.@cname[-1]
 
