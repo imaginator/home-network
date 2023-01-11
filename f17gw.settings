@@ -1634,6 +1634,18 @@ uci set      dhcp.@host[-1].mac='dc:a6:32:7d:7b:77'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.194'
+uci set      dhcp.@host[-1].name='friedapi'
+uci set      dhcp.@host[-1].mac='dc:a6:32:64:2b:05'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+##############################################################
+# Freifunk
+##############################################################
+
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.36.189.1'
