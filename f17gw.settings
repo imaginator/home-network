@@ -436,6 +436,19 @@ uci commit firewall.@redirect[-1]
 
 uci add    firewall  redirect
 uci set    firewall.@redirect[-1]=redirect
+uci set    firewall.@redirect[-1].name='9735 on lightning node'
+uci set    firewall.@redirect[-1].src='pyur'
+uci set    firewall.@redirect[-1].dest='lan'
+uci set    firewall.@redirect[-1].proto='tcp'
+uci set    firewall.@redirect[-1].src_dport='9735'
+uci set    firewall.@redirect[-1].dest_ip='10.7.11.52'
+uci set    firewall.@redirect[-1].dest_port='9735'
+uci set    firewall.@redirect[-1].target='DNAT'
+uci set    firewall.@redirect[-1].reflection=1
+uci commit firewall.@redirect[-1]
+
+uci add    firewall  redirect
+uci set    firewall.@redirect[-1]=redirect
 uci set    firewall.@redirect[-1].target='DNAT'
 uci set    firewall.@redirect[-1].name='443 on bunker from ff users'
 uci set    firewall.@redirect[-1].src='freifunk'
