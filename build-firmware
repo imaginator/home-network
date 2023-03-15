@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=22.03.2
+VERSION=22.03.3
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -19,8 +19,8 @@ BASE_PACKAGES=" \
 case $MODEL in
 "switch02")
   PLATFORM=realtek
-  TYPE=generic
-  TARGET_DEVICE=realtek-generic
+  TYPE=rtl838x
+  TARGET_DEVICE=realtek-rtl838x
   PROFILE=d-link_dgs-1210-28
   EXTRA_PACKAGES="\
     6in4 \
@@ -272,4 +272,4 @@ echo "Combined package list ${COMBINED_PACKAGE_LIST}"
 echo "Building ${VERSION}..."
 ( cd ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 && sudo make image PROFILE="$PROFILE" PACKAGES="$COMBINED_PACKAGE_LIST" )
 
-echo "scp ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64/bin/targets/${PLATFORM}/${TYPE}/openwrt-${VERSION}-${TARGET_DEVICE}-${PROFILE}-squashfs-sysupgrade.bin root@<dest>:/tmp"
+echo "scp -O ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64/bin/targets/${PLATFORM}/${TYPE}/openwrt-${VERSION}-${TARGET_DEVICE}-${PROFILE}-squashfs-sysupgrade.bin root@<dest>:/tmp"
