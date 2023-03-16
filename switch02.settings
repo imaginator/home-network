@@ -11,7 +11,6 @@ EOF
 uci add      system  system
 uci set      system.@system[-1]=system
 uci set      system.@system[-1].hostname='switch02'
-uci set      system.@system[-1].hostname='switch02'
 uci set      system.@system[-1].description='D-Link DGS-1210-28'
 uci set      system.@system[-1].notes='non-POE switch in rack'
 uci set      system.@system[-1].zonename='UTC'
@@ -24,14 +23,14 @@ uci set      system.@system[-1].log_port='514'
 uci set      system.@system[-1].log_size='128'
 uci set      system.@system[-1].log_buffer_size='64'
 uci set      system.@system[-1].log_remote='1'
+uci set      system.@system[-1].location='Falckensteinstrasse 17'
+uci set      system.@system[-1].latitude='52.497618743398135'
+uci set      system.@system[-1].longitude='13.441156148912176'
 uci set      system.ntp=timeserver
 uci set      system.ntp.enabled=1
 uci add_list system.ntp.server='0.de.pool.ntp.org'
 uci add_list system.ntp.server='1.de.pool.ntp.org'
 uci add_list system.ntp.server='2.de.pool.ntp.org'
-uci set      system.@system[-1].location='Falckensteinstrasse 17'
-uci set      system.@system[-1].latitude='52.497618743398135'
-uci set      system.@system[-1].longitude='13.441156148912176'
 
 uci commit   system
 
@@ -75,23 +74,26 @@ uci set      network.loopback.netmask='255.0.0.0'
 uci add      network device
 uci set      network.@device[-1].name='switch'
 uci set      network.@device[-1].type='bridge'
-uci add_list network.@device[-1].ports='lan1'
-uci add_list network.@device[-1].ports='lan2'
-uci add_list network.@device[-1].ports='lan3'
-uci add_list network.@device[-1].ports='lan4'
-uci add_list network.@device[-1].ports='lan5'
-uci add_list network.@device[-1].ports='lan6'
-uci add_list network.@device[-1].ports='lan7'
+
+uci add_list network.@device[-1].ports='lan1'   # empty
+uci add_list network.@device[-1].ports='lan2'   # printer
+uci add_list network.@device[-1].ports='lan3'   # bunker ILO
+uci add_list network.@device[-1].ports='lan4'   # Onkyo
+uci add_list network.@device[-1].ports='lan5'   # Raspberry Pi
+uci add_list network.@device[-1].ports='lan6'   # nvidia shield
+uci add_list network.@device[-1].ports='lan7'   # bunker
 uci add_list network.@device[-1].ports='lan8'
-uci add_list network.@device[-1].ports='lan9'
-uci add_list network.@device[-1].ports='lan10'
-uci add_list network.@device[-1].ports='lan11'
+
+uci add_list network.@device[-1].ports='lan9'   # vallox
+uci add_list network.@device[-1].ports='lan10'  # gruenbeck
+uci add_list network.@device[-1].ports='lan11'  # velux
 uci add_list network.@device[-1].ports='lan12'
 uci add_list network.@device[-1].ports='lan13'
 uci add_list network.@device[-1].ports='lan14'
 uci add_list network.@device[-1].ports='lan15'
 uci add_list network.@device[-1].ports='lan16'
-uci add_list network.@device[-1].ports='lan17'
+
+uci add_list network.@device[-1].ports='lan17' # rhnk-uplink
 uci add_list network.@device[-1].ports='lan18'
 uci add_list network.@device[-1].ports='lan19'
 uci add_list network.@device[-1].ports='lan20'
@@ -99,48 +101,69 @@ uci add_list network.@device[-1].ports='lan21'
 uci add_list network.@device[-1].ports='lan22'
 uci add_list network.@device[-1].ports='lan23'
 uci add_list network.@device[-1].ports='lan24'
+
 uci add_list network.@device[-1].ports='lan25'
 uci add_list network.@device[-1].ports='lan26'
 uci add_list network.@device[-1].ports='lan27'
 uci add_list network.@device[-1].ports='lan28'
 
-# vlan: trusted
-uci add      network bridge-vlan
-uci set      network.@bridge-vlan[-1].device='switch'
-uci set      network.@bridge-vlan[-1].vlan='2'
-uci add_list network.@bridge-vlan[-1].ports='lan1'
-uci add_list network.@bridge-vlan[-1].ports='lan11'
-uci add_list network.@bridge-vlan[-1].ports='lan12'
-uci add_list network.@bridge-vlan[-1].ports='lan13'
-uci add_list network.@bridge-vlan[-1].ports='lan14'
-uci add_list network.@bridge-vlan[-1].ports='lan15'
-uci add_list network.@bridge-vlan[-1].ports='lan16'
-uci add_list network.@bridge-vlan[-1].ports='lan17'
-uci add_list network.@bridge-vlan[-1].ports='lan18'
-uci add_list network.@bridge-vlan[-1].ports='lan19'
-uci add_list network.@bridge-vlan[-1].ports='lan20'
-uci add_list network.@bridge-vlan[-1].ports='lan28:t'
+# vlan: lan
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='2'
+uci add_list    network.@bridge-vlan[-1].ports='lan1'
+uci add_list    network.@bridge-vlan[-1].ports='lan2'
+uci add_list    network.@bridge-vlan[-1].ports='lan3'
+uci add_list    network.@bridge-vlan[-1].ports='lan4'
+uci add_list    network.@bridge-vlan[-1].ports='lan5'
+uci add_list    network.@bridge-vlan[-1].ports='lan6'
+uci add_list    network.@bridge-vlan[-1].ports='lan7:t'     # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
 
 # vlan: iot
-uci add network bridge-vlan
-uci set network.@bridge-vlan[-1].device='switch'
-uci set network.@bridge-vlan[-1].vlan='5'
-uci add_list network.@bridge-vlan[-1].ports='lan28:t'
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='5'
+uci add_list    network.@bridge-vlan[-1].ports='lan7:t'     # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan9'
+uci add_list    network.@bridge-vlan[-1].ports='lan10'
+uci add_list    network.@bridge-vlan[-1].ports='lan11'
+uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
 
-# vlan: freifunk
-uci add network bridge-vlan
-uci set network.@bridge-vlan[-1].device='switch'
-uci set network.@bridge-vlan[-1].vlan='40'
-uci add_list network.@bridge-vlan[-1].ports='lan6'
-uci add_list network.@bridge-vlan[-1].ports='lan28:t'
+# vlan: rhnk-mesh
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='12'
+uci add_list    network.@bridge-vlan[-1].ports='lan17:t'    # rhnk-uplink
+uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
 
-uci set network.trusted=interface
-uci set network.trusted.proto='static'
-uci set network.trusted.device='switch.2'
-uci add_list network.trusted.ipaddr='192.168.1.1/24'
-uci add_list network.trusted.ipaddr='10.7.11.3/24'
-uci set network.trusted.gateway='10.7.11.5'
-uci add_list network.trusted.dns='10.7.11.5'
+# vlan: freifunk-dhcp
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='40'
+uci add_list    network.@bridge-vlan[-1].ports='lan7:t'     # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
+
+# vlan: freifunk-mgmt
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='42'
+uci add_list    network.@bridge-vlan[-1].ports='lan17:t'    # rhnk-uplink
+uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
+
+uci set         network.lan=interface
+uci set         network.lan.proto='static'
+uci set         network.lan.device='switch.2'
+uci add_list    network.lan.ipaddr='10.7.11.3/24'
+uci set         network.lan.gateway='10.7.11.1'
+uci add_list    network.lan.dns='10.7.11.1'
+uci set         network.lan.delegate='0'
+
+uci set         network.lan6=interface
+uci set         network.lan6.proto='dhcpv6'
+uci set         network.lan6.device='switch.2'
+uci set         network.lan6.reqaddress='try'
+uci set         network.lan6.reqprefix='auto'
 
 uci commit   network
 
@@ -151,7 +174,7 @@ uci import prometheus-node-exporter-lua<<EOF
 EOF
 
 uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
-uci set    prometheus-node-exporter-lua.main.listen_interface='trusted'
+uci set    prometheus-node-exporter-lua.main.listen_interface='lan'
 uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
@@ -194,5 +217,5 @@ uci commit   firewall.@rule[-1]
 
 service firewall enable || true
 
-echo -e "All done with writing.\nRebooting..."
+echo -e "All done with writing.\n..."
 #reboot
