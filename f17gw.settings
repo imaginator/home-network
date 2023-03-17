@@ -1142,14 +1142,24 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.28'
-uci set      dhcp.@host[-1].name='doorbird'
+uci set      dhcp.@host[-1].name='doorbird-downstairs'
 uci set      dhcp.@host[-1].mac='1c:ca:e3:78:ad:e1'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+# wifi mac 1c:ca:e3:74:9e:49
+# ethernet 1c:ca:e3:7c:2b:e1
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.9.29'
+uci set      dhcp.@host[-1].name='doorbird-upstairs'
+uci set      dhcp.@host[-1].mac='1c:ca:e3:74:9e:49 1c:ca:e3:7c:2b:e1'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.9.29'
+uci set      dhcp.@host[-1].ip='10.7.9.30'
 uci set      dhcp.@host[-1].name='coffeemachine'
 uci set      dhcp.@host[-1].mac='00:1d:63:2e:99:e2'
 uci set      dhcp.@host[-1].dns='1'
@@ -1247,6 +1257,13 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.60'
 uci set      dhcp.@host[-1].name='plugswitch-switch01'
 uci set      dhcp.@host[-1].mac='cc:50:e3:37:49:3a'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp host
+uci set      dhcp.@host[-1].name='plugswitch-bedroom1-bedleft'
+uci set      dhcp.@host[-1].ip='10.7.9.61'
+uci set      dhcp.@host[-1].mac='cc:50:e3:d3:94:12'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1871,6 +1888,7 @@ uci set      mwan3.https=rule
 uci set      mwan3.https.sticky='1'
 uci set      mwan3.https.dest_port='443'
 uci set      mwan3.https.proto='tcp'
+uci set      mwan3.https.family='ipv4'
 uci set      mwan3.https.use_policy='balanced'
 
 uci set      mwan3.default_rule_v4=rule

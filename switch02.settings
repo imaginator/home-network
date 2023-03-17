@@ -102,7 +102,7 @@ uci add_list network.@device[-1].ports='lan22'
 uci add_list network.@device[-1].ports='lan23'
 uci add_list network.@device[-1].ports='lan24'
 
-uci add_list network.@device[-1].ports='lan25'
+uci add_list network.@device[-1].ports='lan25'  # cable modem
 uci add_list network.@device[-1].ports='lan26'
 uci add_list network.@device[-1].ports='lan27'
 uci add_list network.@device[-1].ports='lan28'
@@ -118,6 +118,13 @@ uci add_list    network.@bridge-vlan[-1].ports='lan4'
 uci add_list    network.@bridge-vlan[-1].ports='lan5'
 uci add_list    network.@bridge-vlan[-1].ports='lan6'
 uci add_list    network.@bridge-vlan[-1].ports='lan7:t'     # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
+
+# vlan: wan
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='4'
+uci add_list    network.@bridge-vlan[-1].ports='lan25'      # cable modem
 uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
 
 # vlan: iot
