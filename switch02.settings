@@ -57,6 +57,15 @@ uci set    dropbear.@dropbear[-1].PasswordAuth='0'
 uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
 uci commit dropbear
 
+cat <<'EOF' > /etc/sysctl.d/20-arpcache.conf
+net.ipv4.neigh.default.gc_thresh1=8192
+net.ipv4.neigh.default.gc_thresh2=32768
+net.ipv4.neigh.default.gc_thresh3=65536
+net.ipv6.neigh.default.gc_thresh1=8192
+net.ipv6.neigh.default.gc_thresh2=32768
+net.ipv6.neigh.default.gc_thresh3=65536
+EOF
+
 cat <<'EOF' > /etc/dropbear/authorized_keys
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHwK3f7YB4qmDKgnZ6yKaQlLEdDAFaVbNREiE2gyHwSN simon@imaginator.com
 EOF
