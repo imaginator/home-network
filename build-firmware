@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=22.03.3
+VERSION=22.03.5
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -44,6 +44,8 @@ case $MODEL in
     luci-app-watchcat \
     luci-base \
     luci-mod-admin-full \
+    luci-mod-network \
+    luci-mod-status \
     luci-proto-ipv6 \
     odhcp6c \
     uboot-envtools \
