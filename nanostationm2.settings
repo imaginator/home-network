@@ -10,6 +10,10 @@ set -xe
 # ping 192.168.1.1
 # cat <device>.settings| ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@192.168.1.1
 
+# give ourselves more memory
+sync
+echo 3 > /proc/sys/vm/drop_caches
+
 # for roaming support we need to know the MAC address
 imagifi2_nasid="000000000000"            && [[ -e /sys/class/net/imagifi2/address    ]] &&            imagifi2_nasid=$(cat /sys/class/net/imagifi2/address    | tr -d \:)
 # imagifi2_r1_key_holder="000000000000"    && [[ -e /sys/class/net/imagifi2/address    ]] &&    imagifi2_r1_key_holder=$(cat /sys/class/net/imagifi2/address    | tr -d \:)
