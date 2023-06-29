@@ -52,15 +52,7 @@ EOF
 
 uci add    dropbear  dropbear
 uci set    dropbear.@dropbear[-1]=dropbear
-uci set    dropbear.@dropbear[-1].Port='22'
-uci set    dropbear.@dropbear[-1].PasswordAuth='0'
-uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
-uci commit dropbear
-
-cat <<'EOF' > /etc/dropbear/authorized_keys
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHwK3f7YB4qmDKgnZ6yKaQlLEdDAFaVbNREiE2gyHwSN simon@imaginator.com
-EOF
-chmod 0600 /etc/dropbear/authorized_keys
+uci setsssssd_keys
 
 uci import network <<EOF
 EOF
@@ -973,7 +965,7 @@ uci set      dhcp.lan.dhcpv6='server'
 uci set      dhcp.lan.force='1'
 uci set      dhcp.lan.ip6class='freifunk6'
 uci set      dhcp.lan.leasetime='24h'
-uci set      dhcp.lan.limit='150'
+uci set      dhcp.lan.limit='100' # abover this reserved for k8s ingress
 uci set      dhcp.lan.ra_default='2'
 uci set      dhcp.lan.ra='server'
 uci set      dhcp.lan.start='100'
