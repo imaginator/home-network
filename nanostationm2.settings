@@ -286,6 +286,7 @@ uci set      wireless.iot5.mode='ap'
 uci set      wireless.iot5.network='iot'
 uci set      wireless.iot5.time_advertisement='2'
 uci set      wireless.iot5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
+uci set      wireless.iot5.disabled='1' # testing tablet reliability 
 uci commit   wireless.iot5
 
 # open APs below (no roaming possible)
