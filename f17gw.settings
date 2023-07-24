@@ -52,7 +52,15 @@ EOF
 
 uci add    dropbear  dropbear
 uci set    dropbear.@dropbear[-1]=dropbear
-uci setsssssd_keys
+uci set    dropbear.@dropbear[-1].Port='22'
+uci set    dropbear.@dropbear[-1].PasswordAuth='0'
+uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
+uci commit dropbear
+
+cat <<'EOF' > /etc/dropbear/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHwK3f7YB4qmDKgnZ6yKaQlLEdDAFaVbNREiE2gyHwSN simon@imaginator.com
+EOF
+chmod 0600 /etc/dropbear/authorized_keys
 
 uci import network <<EOF
 EOF
