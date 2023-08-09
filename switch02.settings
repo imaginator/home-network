@@ -43,7 +43,7 @@ uci set      system.@watchcat[-1].mode='ping'
 uci set      system.@watchcat[-1].forcedelay='300'
 uci set      system.@watchcat[-1].period='30m'
 uci set      system.@watchcat[-1].pingperiod='5m'
-uci set      system.@watchcat[-1].pinghosts='1.1.1.1'
+uci set      system.@watchcat[-1].pinghosts='10.7.11.1'
 
 uci commit   system.watchcat
 
