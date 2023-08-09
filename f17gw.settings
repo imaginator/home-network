@@ -1133,7 +1133,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.27'
 uci set      dhcp.@host[-1].name='gruenbeck'
-uci set      dhcp.@host[-1].mac='D8:86:0B:70:C5:DC'
+uci set      dhcp.@host[-1].mac='d8:86:0b:73:2b:57'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
