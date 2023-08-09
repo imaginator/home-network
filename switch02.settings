@@ -89,7 +89,7 @@ uci add_list network.@device[-1].ports='lan2'   # printer
 uci add_list network.@device[-1].ports='lan3'   # bunker ILO
 uci add_list network.@device[-1].ports='lan4'   # Onkyo
 uci add_list network.@device[-1].ports='lan5'   # Raspberry Pi
-uci add_list network.@device[-1].ports='lan6'   # nvidia shield
+uci add_list network.@device[-1].ports='lan6'   # Google-TV
 uci add_list network.@device[-1].ports='lan7'   # bunker
 uci add_list network.@device[-1].ports='lan8'
 

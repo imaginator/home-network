@@ -1641,8 +1641,8 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.51'
-uci set      dhcp.@host[-1].name='nvidia-shield'
-uci set      dhcp.@host[-1].mac='48:b0:2d:14:fb:40 48:B0:2D:13:5D:30' # wireless interface is 48:B0:2D:13:5D:30
+uci set      dhcp.@host[-1].name='google-tv'
+uci set      dhcp.@host[-1].mac='14:ae:85:70:55:f1'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
