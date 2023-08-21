@@ -144,6 +144,7 @@ uci add_list network.henet.ip6prefix='2001:470:5155::/48'
 uci set      network.henet.password='${henet_f17_password}'
 uci set      network.henet.metric='31'
 uci set      network.henet.mtu='1480'
+uci set      network.henet.auto='0'
 
 uci set      network.wg0='interface'
 uci set      network.wg0.proto='wireguard'
