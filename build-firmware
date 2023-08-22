@@ -109,14 +109,12 @@ case $MODEL in
     libstdcpp \
     lldpd \
     luci \
-    luci-app-adblock \
     luci-app-ddns \
     luci-app-firewall \
     luci-app-mwan3 \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-base \
-    luci-base adblock \
     luci-mod-admin-full \
     luci-proto-ipv6 \
     luci-proto-wireguard \
@@ -126,8 +124,6 @@ case $MODEL in
     softflowd \
     sqm-scripts \
     sqm-scripts-extra \
-    tor-gencert \
-    tor-hs \
     uboot-envtools \
     watchcat \
     wireguard-tools \
