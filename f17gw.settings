@@ -83,6 +83,8 @@ uci set      network.lan.ip6ifaceid='::1'
 uci set      network.lan.ip6weight='10'
 uci set      network.lan.ipaddr='10.7.11.1'
 uci set      network.lan.netmask='255.255.255.0'
+uci add_list network.lan.dns='127.0.0.1' # used to populate /etc/resolv.conf
+uci add_list network.lan.dns_search='imagilan'
 
 uci set      network.freifunk=interface
 uci set      network.freifunk.device='eth0.40'
