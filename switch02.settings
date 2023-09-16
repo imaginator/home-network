@@ -31,21 +31,19 @@ uci set      system.ntp.enabled=1
 uci add_list system.ntp.server='0.de.pool.ntp.org'
 uci add_list system.ntp.server='1.de.pool.ntp.org'
 uci add_list system.ntp.server='2.de.pool.ntp.org'
-
 uci commit   system
 
-uci import system.watchcat <<EOF
+uci import   watchcat <<EOF
 EOF
 
-uci add      system  watchcat
-uci set      system.@watchcat[-1]=watchcat
-uci set      system.@watchcat[-1].mode='ping'
-uci set      system.@watchcat[-1].forcedelay='300'
-uci set      system.@watchcat[-1].period='30m'
-uci set      system.@watchcat[-1].pingperiod='5m'
-uci set      system.@watchcat[-1].pinghosts='10.7.11.1'
-
-uci commit   system.watchcat
+uci add      watchcat  watchcat
+uci set      watchcat.@watchcat[-1]=watchcat
+uci set      watchcat.@watchcat[-1].mode='ping'
+uci set      watchcat.@watchcat[-1].forcedelay='300'
+uci set      watchcat.@watchcat[-1].period='30m'
+uci set      watchcat.@watchcat[-1].pingperiod='5m'
+uci set      watchcat.@watchcat[-1].pinghosts='10.7.11.1'
+uci commit   watchcat
 
 uci import dropbear <<EOF
 EOF
