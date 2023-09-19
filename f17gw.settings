@@ -1135,7 +1135,7 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.9.50'
 uci set      dhcp.@host[-1].name='imagisuck'
-uci set      dhcp.@host[-1].mac='34:ce:00:e9:ce:c8'
+uci set      dhcp.@host[-1].mac='b0:4a:39:30:1b:4d'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
