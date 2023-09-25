@@ -76,7 +76,6 @@ uci set      network.lan=interface
 uci set      network.lan.proto='static'
 uci set      network.lan.device='eth0.2'
 uci add_list network.lan.ip6class='pyur6'
-uci add_list network.lan.ip6class='freifunk6'
 uci set      network.lan.delegate='0'
 uci set      network.lan.igmp_snooping='1'
 uci set      network.lan.ip6assign='64'
@@ -84,8 +83,6 @@ uci set      network.lan.ip6ifaceid='::1'
 uci set      network.lan.ip6weight='10'
 uci set      network.lan.ipaddr='10.7.11.1'
 uci set      network.lan.netmask='255.255.255.0'
-# uci add_list network.lan.dns='127.0.0.1' # used to populate /etc/resolv.conf
-uci add_list network.lan.dns_search='imagilan'
 uci add_list network.lan.dns_search='imagilan.imaginator.com'
 
 uci set      network.freifunk=interface
@@ -129,6 +126,7 @@ uci set      network.iot.ip6assign='64'
 uci set      network.iot.ip6weight='20'
 uci set      network.iot.ipaddr='10.7.9.1'
 uci set      network.iot.netmask='255.255.255.0'
+uci set      network.iot.ip6ifaceid='::1'
 
 uci set      network.splash=interface
 uci set      network.splash.proto='static'
@@ -810,16 +808,20 @@ uci set      firewall.@rule[-1].dest_port='80'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
-
 ###############################################################################
 # IoT zone specific rules
 ###############################################################################
-
 
 uci add    firewall  forwarding
 uci set    firewall.@forwarding[-1]=forwarding
 uci set    firewall.@forwarding[-1].src='iot'
 uci set    firewall.@forwarding[-1].dest='freifunk'
+uci commit firewall.@forwarding[-1]
+
+uci add    firewall  forwarding
+uci set    firewall.@forwarding[-1]=forwarding
+uci set    firewall.@forwarding[-1].src='iot'
+uci set    firewall.@forwarding[-1].dest='pyur'
 uci commit firewall.@forwarding[-1]
 
 uci add      firewall rule
@@ -884,78 +886,81 @@ uci commit   firewall.@rule[-1]
 
 service firewall enable || true
 
+###############################################################################
+# Unbound
+###############################################################################
+
+uci import unbound <<EOF
+EOF
+
+uci add      unbound  unbound
+uci set      unbound.@unbound[-1]=unbound
+uci set      unbound.@unbound[-1].add_local_fqdn='1'
+uci set      unbound.@unbound[-1].add_wan_fqdn='1'
+uci set      unbound.@unbound[-1].dhcp_link='odhcpd'
+uci set      unbound.@unbound[-1].dhcp4_slaac6='1'
+uci set      unbound.@unbound[-1].domain_type='static'
+uci set      unbound.@unbound[-1].domain='imagilan.imaginator.com'
+uci set      unbound.@unbound[-1].listen_port='53'
+uci set      unbound.@unbound[-1].rebind_protection='1'
+uci set      unbound.@unbound[-1].unbound_control='1'
+uci set      unbound.@unbound[-1].verbosity='1'
+uci set      unbound.@unbound[-1].dhcp4_slaac6='1'
+uci set      unbound.@unbound[-1].add_extra_dns='3' # use from from host files (all cname, domain, mxhost, and srvhost)
+
+uci set      unbound.fwd_cloudflare=zone
+uci set      unbound.fwd_cloudflare.fallback='1'
+uci set      unbound.fwd_cloudflare.tls_index='cloudflare-dns.com'
+uci set      unbound.fwd_cloudflare.tls_upstream='1'
+uci set      unbound.fwd_cloudflare.zone_type='forward_zone'
+uci add_list unbound.fwd_cloudflare.server='1.1.1.1'
+uci add_list unbound.fwd_cloudflare.server='1.0.0.1'
+uci add_list unbound.fwd_cloudflare.server='2606:4700:4700::1111'
+uci add_list unbound.fwd_cloudflare.server='2606:4700:4700::1001'
+uci set      unbound.fwd_cloudflare.zone_name='.'
+uci set      unbound.fwd_cloudflare.enabled='1'
+uci set      unbound.fwd_cloudflare.dns_assist='none'
+
+uci commit unbound
+service unbound enable || true
+
 uci import dhcp <<EOF
 EOF
 
-uci add      dhcp  dnsmasq
-uci set      dhcp.@dnsmasq[-1]=dnsmasq
-uci set      dhcp.@dnsmasq[-1].domain='imagilan.imaginator.com' # DNS domain handed out to DHCP clients
-uci add_list dhcp.@dnsmasq[-1].local='/imagilan.imaginator.com/' # Look up DNS entries for this domain from /etc/hosts
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='imagilan.imaginator.com'
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='k8s.imaginator.com'
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
-uci add_list dhcp.@dnsmasq[-1].server='/31.10.in-addr.arpa/10.36.189.1'
-uci add_list dhcp.@dnsmasq[-1].server='/olsr/10.36.189.1'
-uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
-uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
-uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
-uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
-uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
-uci set      dhcp.@dnsmasq[-1].add_local_fqdn='1'
-uci set      dhcp.@dnsmasq[-1].add_local_hostname='1'
-uci set      dhcp.@dnsmasq[-1].authoritative='1'
-uci set      dhcp.@dnsmasq[-1].cachesize='4096'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].expandhosts='1'
-uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
-uci set      dhcp.@dnsmasq[-1].localise_queries='1'
-uci set      dhcp.@dnsmasq[-1].localservice='0' # anyone can query us
-uci set      dhcp.@dnsmasq[-1].localuse='1'
-uci set      dhcp.@dnsmasq[-1].logqueries='1'
-uci set      dhcp.@dnsmasq[-1].rapid_commit='1'
-uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
-uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
-uci commit   dhcp.@dnsmasq[-1]
-
-uci set      dhcp.pyur4=dhcp
-uci set      dhcp.pyur4.interface='pyur4'
-uci set      dhcp.pyur4.ignore='1'
-uci commit   dhcp.pyur4
-
-uci set      dhcp.freifunk=dhcp
-uci set      dhcp.freifunk.interface='freifunk'
-uci set      dhcp.freifunk.ignore='1'
-uci commit   dhcp.freifunk
+uci add      dhcp  odhcpd
+uci set      dhcp.odhcpd=odhcpd
+uci set      dhcp.odhcpd.leasefile='/var/lib/odhcpd/dhcp.leases'
+uci set      dhcp.odhcpd.leasetrigger='/usr/lib/unbound/odhcpd.sh'
+uci set      dhcp.odhcpd.loglevel='7'
+uci set      dhcp.odhcpd.maindhcp='1'
+uci commit   dhcp.odhcpd
 
 uci set      dhcp.lan=dhcp
 uci set      dhcp.lan.interface='lan'
-uci add_list dhcp.lan.dhcp_option='7,10.7.11.10' # log server
 uci add_list dhcp.lan.dhcp_option='114,urn:ietf:params:capport:unrestricted'
+uci add_list dhcp.lan.dhcp_option='7,10.7.11.10' # log server
+uci add_list dhcp.lan.domain='imagilan.imaginator.com'
 uci add_list dhcp.lan.ra_flags='managed-config'
 uci add_list dhcp.lan.ra_flags='other-config'
+uci set      dhcp.lan.dhcpv4='server'
 uci set      dhcp.lan.dhcpv6='server'
 uci set      dhcp.lan.force='1'
-uci set      dhcp.lan.ip6class='freifunk6'
 uci set      dhcp.lan.leasetime='24h'
-uci set      dhcp.lan.limit='100' # abover this reserved for k8s ingress
-uci set      dhcp.lan.ra_default='2'
 uci set      dhcp.lan.ra='server'
 uci set      dhcp.lan.start='100'
 uci commit   dhcp.lan
 
 uci set      dhcp.iot=dhcp
 uci set      dhcp.iot.interface='iot'
-uci add_list dhcp.iot.dhcp_option='7,10.7.11.10' # log server
 uci add_list dhcp.iot.dhcp_option='114,urn:ietf:params:capport:unrestricted'
+uci add_list dhcp.iot.dhcp_option='7,10.7.11.10' # log server
+uci add_list dhcp.iot.domain='imagilan.imaginator.com'
 uci add_list dhcp.iot.ra_flags='managed-config'
 uci add_list dhcp.iot.ra_flags='other-config'
+uci set      dhcp.iot.dhcpv4='server'
 uci set      dhcp.iot.dhcpv6='server'
 uci set      dhcp.iot.force='1'
-uci set      dhcp.iot.ip6class='freifunk6'
 uci set      dhcp.iot.leasetime='24h'
-uci set      dhcp.iot.limit='150'
-uci set      dhcp.iot.ra_default='2'
 uci set      dhcp.iot.ra='server'
 uci set      dhcp.iot.start='100'
 uci commit   dhcp.iot
@@ -968,6 +973,16 @@ uci set      dhcp.splash.start='100'
 uci add_list dhcp.splash.address='/#/10.7.100.1'
 uci add_list dhcp.splash.dhcp_option_force='114,http://10.7.100.1:81'
 uci commit   dhcp.splash
+
+uci set      dhcp.pyur4=dhcp
+uci set      dhcp.pyur4.interface='pyur4'
+uci set      dhcp.pyur4.ignore='1'
+uci commit   dhcp.pyur4
+
+uci set      dhcp.freifunk=dhcp
+uci set      dhcp.freifunk.interface='freifunk'
+uci set      dhcp.freifunk.ignore='1'
+uci commit   dhcp.freifunk
 
 ###############################################################################
 # VPN
@@ -1847,4 +1862,4 @@ uci set      mwan3.default_rule_v6.family='ipv6'
 uci commit   mwan3
 
 echo -e "All done with writing.\nRebooting..."
-#reboot
+reboot

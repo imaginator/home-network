@@ -92,7 +92,6 @@ case $MODEL in
     ca-certificates \
     curl \
     ddns-scripts \
-    dnsmasq-full \
     dnstop \
     ip-bridge \
     ip-full \
@@ -112,6 +111,7 @@ case $MODEL in
     luci-app-ddns \
     luci-app-firewall \
     luci-app-mwan3 \
+    luci-app-unbound \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-base \
@@ -120,18 +120,21 @@ case $MODEL in
     luci-proto-wireguard \
     mwan3 \
     odhcp6c \
+    odhcpd \
     qrencode \
     softflowd \
     sqm-scripts \
     sqm-scripts-extra \
     uboot-envtools \
+    unbound-control \
+    unbound-daemon \
     watchcat \
     wireguard-tools \
   "
-  REMOVED_PACKAGES="-dnsmasq \
-    -odhcpd \
+  REMOVED_PACKAGES="\
+    -dnsmasq \
     -odhcpd-ipv6only \
-    " # dhcpv6 stuff provided by dnsmasq-full
+    "
 ;;
 
 "nanostationm2")
