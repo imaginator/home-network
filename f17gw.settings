@@ -722,7 +722,7 @@ uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='80'
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
-uci add_list firewall.@rule[-1].dest_ip='::ef43/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
+uci add_list firewall.@rule[-1].dest_ip='::10/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -734,7 +734,7 @@ uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='443'
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
-uci add_list firewall.@rule[-1].dest_ip='::ef43/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
+uci add_list firewall.@rule[-1].dest_ip='::10/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -746,7 +746,7 @@ uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='32400' # plex
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
-uci add_list firewall.@rule[-1].dest_ip='::ef43/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
+uci add_list firewall.@rule[-1].dest_ip='::10/::ffff:ffff:ffff:ffff'  # http://blog.dupondje.be/?p=17
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
@@ -893,20 +893,20 @@ service firewall enable || true
 uci import unbound <<EOF
 EOF
 
-uci add      unbound  unbound
-uci set      unbound.@unbound[-1]=unbound
-uci set      unbound.@unbound[-1].add_local_fqdn='1'
-uci set      unbound.@unbound[-1].add_wan_fqdn='1'
-uci set      unbound.@unbound[-1].dhcp_link='odhcpd'
-uci set      unbound.@unbound[-1].dhcp4_slaac6='1'
-uci set      unbound.@unbound[-1].domain_type='static'
-uci set      unbound.@unbound[-1].domain='imagilan.imaginator.com'
-uci set      unbound.@unbound[-1].listen_port='53'
-uci set      unbound.@unbound[-1].rebind_protection='1'
-uci set      unbound.@unbound[-1].unbound_control='1'
-uci set      unbound.@unbound[-1].verbosity='1'
-uci set      unbound.@unbound[-1].dhcp4_slaac6='1'
-uci set      unbound.@unbound[-1].add_extra_dns='3' # use from from host files (all cname, domain, mxhost, and srvhost)
+uci set      unbound.ub_main=unbound
+uci add_list unbound.ub_main.iface_lan='iot'
+uci add_list unbound.ub_main.iface_lan='lan'
+uci add_list unbound.ub_main.iface_lan='wg0'
+uci set      unbound.ub_main.add_extra_dns='3' # use from from host files (all cname, domain, mxhost, and srvhost)
+uci set      unbound.ub_main.dhcp_link='dnsmasq'
+uci set      unbound.ub_main.dhcp4_slaac6='1'
+uci set      unbound.ub_main.domain_type='static'
+uci set      unbound.ub_main.domain='imagilan.imaginator.com'
+uci set      unbound.ub_main.listen_port='53'
+uci set      unbound.ub_main.localservice='0'
+uci set      unbound.ub_main.rebind_protection='2'
+uci set      unbound.ub_main.unbound_control='1'
+uci set      unbound.ub_main.verbosity='1'
 
 uci set      unbound.fwd_cloudflare=zone
 uci set      unbound.fwd_cloudflare.fallback='1'
@@ -927,18 +927,18 @@ service unbound enable || true
 uci import dhcp <<EOF
 EOF
 
-uci add      dhcp  odhcpd
-uci set      dhcp.odhcpd=odhcpd
-uci set      dhcp.odhcpd.leasefile='/var/lib/odhcpd/dhcp.leases'
-uci set      dhcp.odhcpd.leasetrigger='/usr/lib/unbound/odhcpd.sh'
-uci set      dhcp.odhcpd.loglevel='7'
-uci set      dhcp.odhcpd.maindhcp='1'
-uci commit   dhcp.odhcpd
+uci set      dhcp.dnsmasq=dnsmasq
+uci set      dhcp.dnsmasq.domain='imagilan.imaginator.com'
+uci set      dhcp.dnsmasq.noresolv='1'
+uci set      dhcp.dnsmasq.port='1053'
+uci set      dhcp.dnsmasq.resolvfile='/tmp/resolv.conf.auto'
+uci commit   dhcp.dnsmasq
 
 uci set      dhcp.lan=dhcp
 uci set      dhcp.lan.interface='lan'
 uci add_list dhcp.lan.dhcp_option='114,urn:ietf:params:capport:unrestricted'
-uci add_list dhcp.lan.dhcp_option='7,10.7.11.10' # log server
+uci add_list dhcp.lan.dhcp_option='option:dns-server,10.7.11.1'
+uci add_list dhcp.lan.dhcp_option='option:log-server,10.7.11.10'
 uci add_list dhcp.lan.domain='imagilan.imaginator.com'
 uci add_list dhcp.lan.ra_flags='managed-config'
 uci add_list dhcp.lan.ra_flags='other-config'
@@ -953,7 +953,8 @@ uci commit   dhcp.lan
 uci set      dhcp.iot=dhcp
 uci set      dhcp.iot.interface='iot'
 uci add_list dhcp.iot.dhcp_option='114,urn:ietf:params:capport:unrestricted'
-uci add_list dhcp.iot.dhcp_option='7,10.7.11.10' # log server
+uci add_list dhcp.iot.dhcp_option='option:dns-server,10.7.9.1'
+uci add_list dhcp.iot.dhcp_option='option:log-server,10.7.11.10'
 uci add_list dhcp.iot.domain='imagilan.imaginator.com'
 uci add_list dhcp.iot.ra_flags='managed-config'
 uci add_list dhcp.iot.ra_flags='other-config'
@@ -1475,6 +1476,7 @@ uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.10'
 uci set      dhcp.@host[-1].name='bunker'
 uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
+uci set      dhcp.@host[-1].duid='00:02:00:00:AB:11:2A:E2:8D:CC:8F:85:AF:D9'
 uci set      dhcp.@host[-1].dns='1'
 uci set      dhcp.@host[-1].hostid='10'
 
@@ -1862,4 +1864,4 @@ uci set      mwan3.default_rule_v6.family='ipv6'
 uci commit   mwan3
 
 echo -e "All done with writing.\nRebooting..."
-reboot
+#reboot
