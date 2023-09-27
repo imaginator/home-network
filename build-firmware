@@ -92,7 +92,6 @@ case $MODEL in
     ca-certificates \
     curl \
     ddns-scripts \
-    dnsmasq-dhcpv6 \
     dnstop \
     ip-bridge \
     ip-full \
@@ -121,6 +120,7 @@ case $MODEL in
     luci-proto-wireguard \
     mwan3 \
     odhcp6c \
+    odhcpd \
     qrencode \
     softflowd \
     sqm-scripts \
