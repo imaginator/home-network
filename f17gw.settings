@@ -824,6 +824,15 @@ uci set    firewall.@forwarding[-1].src='iot'
 uci set    firewall.@forwarding[-1].dest='pyur'
 uci commit firewall.@forwarding[-1]
 
+uci add     firewall nat
+uci set     firewall.@nat[-1]=nat
+uci set     firewall.@nat[-1].name='imagiSuck Roborock S7 / Home Assistant discovery fix'
+uci set     firewall.@nat[-1].src='iot'
+uci set     firewall.@nat[-1].dest_ip='10.7.9.50'
+uci set     firewall.@nat[-1].target='SNAT'
+uci set     firewall.@nat[-1].snat_ip='10.7.9.1'
+uci commit  firewall.@nat[-1]
+
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
 uci set      firewall.@rule[-1].name='IoT DHCP inbound'
