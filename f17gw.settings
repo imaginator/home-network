@@ -895,71 +895,39 @@ uci commit   firewall.@rule[-1]
 
 service firewall enable || true
 
-###############################################################################
-# Unbound
-###############################################################################
-
-uci import unbound <<EOF
-EOF
-
-# add the following back in for add_local_fqdn to work
-# /usr/lib/unbound/dnsmasq.sh around line 219:
-#
-#    config_foreach create_host_record domain
-#    config_foreach create_host_record host <--- this line
-
-uci set      unbound.ub_main=unbound
-uci add_list unbound.ub_main.iface_lan='iot'
-uci add_list unbound.ub_main.iface_lan='lan'
-uci add_list unbound.ub_main.iface_lan='wg0'
-uci add_list unbound.ub_main.iface_trig='freifunk'
-uci add_list unbound.ub_main.iface_trig='pyur4'
-uci add_list unbound.ub_main.iface_wan='freifunk'
-uci add_list unbound.ub_main.iface_wan='pyur4'
-uci set      unbound.ub_main.add_extra_dns='3'
-uci set      unbound.ub_main.add_local_fqdn='3'
-uci set      unbound.ub_main.add_wan_fqdn='3'
-uci set      unbound.ub_main.dhcp_link='odhcpd'
-uci set      unbound.ub_main.dhcp4_slaac6='1'
-uci set      unbound.ub_main.dns64='0'
-uci set      unbound.ub_main.domain_type='static'
-uci set      unbound.ub_main.domain='imagilan.imaginator.com'
-uci set      unbound.ub_main.enabled='1' # otherwise no Luci love
-uci set      unbound.ub_main.listen_port='53'
-uci set      unbound.ub_main.localservice='0'
-uci set      unbound.ub_main.manual_conf='0' # otherwise no Luci love
-uci set      unbound.ub_main.rebind_localhost='0'
-uci set      unbound.ub_main.rebind_protection='0'
-uci set      unbound.ub_main.unbound_control='1'
-uci set      unbound.ub_main.verbosity='2'
-uci set      unbound.ub_main.validator='0'
-
-uci set      unbound.fwd_cloudflare=zone
-uci set      unbound.fwd_cloudflare.fallback='1'
-uci set      unbound.fwd_cloudflare.tls_index='cloudflare-dns.com'
-uci set      unbound.fwd_cloudflare.tls_upstream='1'
-uci set      unbound.fwd_cloudflare.zone_type='forward_zone'
-uci add_list unbound.fwd_cloudflare.server='1.1.1.1'
-uci add_list unbound.fwd_cloudflare.server='1.0.0.1'
-uci add_list unbound.fwd_cloudflare.server='2606:4700:4700::1111'
-uci add_list unbound.fwd_cloudflare.server='2606:4700:4700::1001'
-uci set      unbound.fwd_cloudflare.zone_name='.'
-uci set      unbound.fwd_cloudflare.enabled='1'
-uci set      unbound.fwd_cloudflare.dns_assist='none'
-
-uci commit unbound
-service unbound enable || true
-
 uci import dhcp <<EOF
 EOF
 
-uci add      dhcp  odhcpd
-uci set      dhcp.odhcpd=odhcpd
-uci set      dhcp.odhcpd.leasefile='/var/lib/odhcpd/dhcp.leases'
-uci set      dhcp.odhcpd.leasetrigger='/usr/lib/unbound/odhcpd.sh'
-uci set      dhcp.odhcpd.loglevel='7'
-uci set      dhcp.odhcpd.maindhcp='1'
-uci commit   dhcp.odhcpd
+uci add      dhcp  dnsmasq
+uci set      dhcp.@dnsmasq[-1]=dnsmasq
+uci set      dhcp.@dnsmasq[-1].domain='imagilan.imaginator.com' # DNS domain handed out to DHCP clients
+uci add_list dhcp.@dnsmasq[-1].local='/imagilan.imaginator.com/' # Look up DNS entries for this domain from /etc/hosts
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='imagilan.imaginator.com'
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='k8s.imaginator.com'
+uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
+uci add_list dhcp.@dnsmasq[-1].server='/31.10.in-addr.arpa/10.36.189.1'
+uci add_list dhcp.@dnsmasq[-1].server='/olsr/10.36.189.1'
+uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
+uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
+uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
+uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
+uci set      dhcp.@dnsmasq[-1].add_local_fqdn='1'
+uci set      dhcp.@dnsmasq[-1].add_local_hostname='1'
+uci set      dhcp.@dnsmasq[-1].authoritative='1'
+uci set      dhcp.@dnsmasq[-1].cachesize='4096'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].expandhosts='1'
+uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
+uci set      dhcp.@dnsmasq[-1].localise_queries='1'
+uci set      dhcp.@dnsmasq[-1].localservice='0' # anyone can query us
+uci set      dhcp.@dnsmasq[-1].localuse='1'
+uci set      dhcp.@dnsmasq[-1].logqueries='1'
+uci set      dhcp.@dnsmasq[-1].rapid_commit='1'
+uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
+uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
+uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.lan=dhcp
 uci set      dhcp.lan.interface='lan'

@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=22.03.5
+VERSION=23.05.0-rc4
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -92,6 +92,7 @@ case $MODEL in
     ca-certificates \
     curl \
     ddns-scripts \
+    dnsmasq-full \
     dnstop \
     ip-bridge \
     ip-full \
@@ -111,7 +112,6 @@ case $MODEL in
     luci-app-ddns \
     luci-app-firewall \
     luci-app-mwan3 \
-    luci-app-unbound \
     luci-app-watchcat \
     luci-app-wireguard \
     luci-base \
@@ -126,8 +126,6 @@ case $MODEL in
     sqm-scripts \
     sqm-scripts-extra \
     uboot-envtools \
-    unbound-control \
-    unbound-daemon \
     watchcat \
     wireguard-tools \
   "
