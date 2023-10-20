@@ -98,13 +98,13 @@ case $1 in
     ' < switch02.settings | ssh root@switch02
     ;;
 
-  repeater-lounge|repeater-bedroom1|repeater-street-north|repeater-street-south|repeater-hof-north|repeater-hof-south)
+  repeater-lounge|repeater-bedroom1)
     envsubst \ '
     $lan_wifikey \
     $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
-    ' < nanostationm2.settings  | ssh root@$1.imagilan
+    ' < nanostationm2.settings  | ssh root@$1
     ;;
 
   travelrouter)

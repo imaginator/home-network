@@ -87,11 +87,9 @@ uci add_list network.lan.dns_search='imagilan.imaginator.com'
 
 uci set      network.freifunk=interface
 uci set      network.freifunk.device='eth0.40'
-uci set      network.freifunk.proto='static'
-uci set      network.freifunk.netmask='255.255.255.0'
-uci set      network.freifunk.ipaddr='10.36.189.2'
-uci set      network.freifunk.gateway='10.36.189.1'
+uci set      network.freifunk.proto='dhcp'
 uci set      network.freifunk.metric='20'
+uci set      network.freifunk.peerdns='0'
 
 uci set      network.freifunk6=interface
 uci set      network.freifunk6.proto='dhcpv6'
@@ -104,8 +102,8 @@ uci set      network.freifunk6.peerdns='0'
 uci set      network.pyur4=interface
 uci set      network.pyur4.device='eth0.4'
 uci set      network.pyur4.proto='dhcp'
-uci set      network.pyur4.broadcast=1
-uci set      network.pyur4.peerdns=0
+uci set      network.pyur4.broadcast='1'
+uci set      network.pyur4.peerdns='0'
 uci set      network.pyur4.metric='10'
 
 uci set      network.pyur6=interface
@@ -1463,37 +1461,6 @@ uci set      dhcp.@host[-1].name='bunker'
 uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
 uci set      dhcp.@host[-1].dns='1'
 
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.11'
-uci set      dhcp.@host[-1].name='repeater-hof-north'
-uci set      dhcp.@host[-1].mac='de:9f:db:f5:88:5c dc:9f:db:f5:88:5c'   # nanostation m5
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.12'
-uci set      dhcp.@host[-1].name='repeater-hof-south'
-uci set      dhcp.@host[-1].mac='de:9f:db:f5:59:0b'   # nanostation m5
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.14'
-uci set      dhcp.@host[-1].name='repeater-street-south'
-uci set      dhcp.@host[-1].mac='de:9f:db:95:0f:32'   # nanostation m5
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.15'
-uci set      dhcp.@host[-1].name='repeater-street-north'  # nanostation m5
-uci set      dhcp.@host[-1].mac='dc:9f:db:95:0e:a8 de:9f:db:95:0e:a8'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 #mr33
 uci add      dhcp host
@@ -1687,7 +1654,7 @@ uci set      mwan3.pyur4.count='5'
 uci set      mwan3.pyur4.down='2'
 uci set      mwan3.pyur4.enabled='1'
 uci set      mwan3.pyur4.family='ipv4'
-uci set      mwan3.pyur4.initial_state='online'
+uci set      mwan3.pyur4.initial_state='offline'
 uci set      mwan3.pyur4.interval='30'
 uci set      mwan3.pyur4.reliability='1'
 uci set      mwan3.pyur4.up='2'
@@ -1699,7 +1666,7 @@ uci set      mwan3.pyur6.count='5'
 uci set      mwan3.pyur6.down='2'
 uci set      mwan3.pyur6.enabled='1'
 uci set      mwan3.pyur6.family='ipv6'
-uci set      mwan3.pyur6.initial_state='online'
+uci set      mwan3.pyur6.initial_state='offline'
 uci set      mwan3.pyur6.interval='30'
 uci set      mwan3.pyur6.reliability='1'
 uci set      mwan3.pyur6.up='2'
@@ -1711,7 +1678,7 @@ uci set      mwan3.freifunk.count='5'
 uci set      mwan3.freifunk.down='2'
 uci set      mwan3.freifunk.enabled='1'
 uci set      mwan3.freifunk.family='ipv4'
-uci set      mwan3.freifunk.initial_state='online'
+uci set      mwan3.freifunk.initial_state='offline'
 uci set      mwan3.freifunk.interval='30'
 uci set      mwan3.freifunk.reliability='1'
 uci set      mwan3.freifunk.up='2'
@@ -1723,7 +1690,7 @@ uci set      mwan3.freifunk6.count='5'
 uci set      mwan3.freifunk6.down='2'
 uci set      mwan3.freifunk6.enabled='1'
 uci set      mwan3.freifunk6.family='ipv6'
-uci set      mwan3.freifunk6.initial_state='online'
+uci set      mwan3.freifunk6.initial_state='offline'
 uci set      mwan3.freifunk6.interval='30'
 uci set      mwan3.freifunk6.reliability='1'
 uci set      mwan3.freifunk6.up='2'
@@ -1735,7 +1702,7 @@ uci set      mwan3.henet.count='5'
 uci set      mwan3.henet.down='2'
 uci set      mwan3.henet.enabled='1'
 uci set      mwan3.henet.family='ipv6'
-uci set      mwan3.henet.initial_state='online'
+uci set      mwan3.henet.initial_state='offline'
 uci set      mwan3.henet.interval='30'
 uci set      mwan3.henet.reliability='1'
 uci set      mwan3.henet.up='2'
@@ -1750,15 +1717,15 @@ uci set      mwan3.pyur_m2_w3.interface='pyur'
 uci set      mwan3.pyur_m2_w3.metric='2'
 uci set      mwan3.pyur_m2_w3.weight='3'
 
-uci set      mwan3.freifunk_m1_w2=member
-uci set      mwan3.freifunk_m1_w2.interface='freifunk'
-uci set      mwan3.freifunk_m1_w2.metric='1'
-uci set      mwan3.freifunk_m1_w2.weight='2'
+uci set      mwan3.freifunk_m1_w3=member
+uci set      mwan3.freifunk_m1_w3.interface='freifunk'
+uci set      mwan3.freifunk_m1_w3.metric='1'
+uci set      mwan3.freifunk_m1_w3.weight='3'
 
-uci set      mwan3.freifunk_m2_w2=member
-uci set      mwan3.freifunk_m2_w2.interface='freifunk'
-uci set      mwan3.freifunk_m2_w2.metric='2'
-uci set      mwan3.freifunk_m2_w2.weight='2'
+uci set      mwan3.freifunk_m2_w3=member
+uci set      mwan3.freifunk_m2_w3.interface='freifunk'
+uci set      mwan3.freifunk_m2_w3.metric='2'
+uci set      mwan3.freifunk_m2_w3.weight='3'
 
 uci set      mwan3.pyur6_m1_w3=member
 uci set      mwan3.pyur6_m1_w3.interface='pyur6'
@@ -1770,50 +1737,50 @@ uci set      mwan3.pyur6_m2_w3.interface='pyur6'
 uci set      mwan3.pyur6_m2_w3.metric='2'
 uci set      mwan3.pyur6_m2_w3.weight='3'
 
-uci set      mwan3.freifunk6_m1_w2=member
-uci set      mwan3.freifunk6_m1_w2.interface='freifunk6'
-uci set      mwan3.freifunk6_m1_w2.metric='1'
-uci set      mwan3.freifunk6_m1_w2.weight='2'
+uci set      mwan3.freifunk6_m1_w3=member
+uci set      mwan3.freifunk6_m1_w3.interface='freifunk6'
+uci set      mwan3.freifunk6_m1_w3.metric='1'
+uci set      mwan3.freifunk6_m1_w3.weight='3'
 
-uci set      mwan3.freifunk6_m2_w2=member
-uci set      mwan3.freifunk6_m2_w2.interface='freifunk6'
-uci set      mwan3.freifunk6_m2_w2.metric='2'
-uci set      mwan3.freifunk6_m2_w2.weight='2'
+uci set      mwan3.freifunk6_m2_w3=member
+uci set      mwan3.freifunk6_m2_w3.interface='freifunk6'
+uci set      mwan3.freifunk6_m2_w3.metric='2'
+uci set      mwan3.freifunk6_m2_w3.weight='3'
 
-uci set      mwan3.henet_m1_w2=member
-uci set      mwan3.henet_m1_w2.interface='henet'
-uci set      mwan3.henet_m1_w2.metric='1'
-uci set      mwan3.henet_m1_w2.weight='2'
+uci set      mwan3.henet_m1_w3=member
+uci set      mwan3.henet_m1_w3.interface='henet'
+uci set      mwan3.henet_m1_w3.metric='1'
+uci set      mwan3.henet_m1_w3.weight='3'
 
-uci set      mwan3.henet_m2_w2=member
-uci set      mwan3.henet_m2_w2.interface='henet'
-uci set      mwan3.henet_m2_w2.metric='1'
-uci set      mwan3.henet_m2_w2.weight='2'
+uci set      mwan3.henet_m2_w3=member
+uci set      mwan3.henet_m2_w3.interface='henet'
+uci set      mwan3.henet_m2_w3.metric='1'
+uci set      mwan3.henet_m2_w3.weight='3'
 
 uci set      mwan3.pyur_only=policy
 uci add_list mwan3.pyur_only.use_member='pyur_m1_w3'
 uci add_list mwan3.pyur_only.use_member='pyur6_m1_w3'
 
 uci set      mwan3.freifunk_only=policy
-uci add_list mwan3.freifunk_only.use_member='freifunk_m1_w2'
-uci add_list mwan3.freifunk_only.use_member='freifunk6_m1_w2'
+uci add_list mwan3.freifunk_only.use_member='freifunk_m1_w3'
+uci add_list mwan3.freifunk_only.use_member='freifunk6_m1_w3'
 
 uci set      mwan3.balanced=policy
 uci add_list mwan3.balanced.use_member='pyur_m1_w3'
-uci add_list mwan3.balanced.use_member='freifunk_m1_w2'
+uci add_list mwan3.balanced.use_member='freifunk_m1_w3'
 uci add_list mwan3.balanced.use_member='pyur6_m1_w3'
 # https://openwrt.org/docs/guide-user/network/wan/multiwan/mwan3#ipv6_support
 # uci add_list mwan3.balanced.use_member='freifunk6_m1_w2'
 
 uci set      mwan3.pyur_freifunk=policy
 uci add_list mwan3.pyur_freifunk.use_member='pyur_m1_w3'
-uci add_list mwan3.pyur_freifunk.use_member='freifunk_m2_w2'
+uci add_list mwan3.pyur_freifunk.use_member='freifunk_m2_w3'
 uci add_list mwan3.pyur_freifunk.use_member='pyur6_m1_w3'
 # uci add_list mwan3.pyur_freifunk.use_member='freifunk6_m2_w2'
 
 uci set      mwan3.freifunk_pyur=policy
+uci add_list mwan3.freifunk_pyur.use_member='freifunk_m1_w3'
 uci add_list mwan3.freifunk_pyur.use_member='pyur_m2_w3'
-uci add_list mwan3.freifunk_pyur.use_member='freifunk_m1_w2'
 uci add_list mwan3.freifunk_pyur.use_member='pyur6_m2_w3'
 # uci add_list mwan3.freifunk_pyur.use_member='freifunk6_m1_w2'
 
