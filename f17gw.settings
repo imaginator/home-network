@@ -890,38 +890,87 @@ uci commit   firewall.@rule[-1]
 
 service firewall enable || true
 
+uci import unbound <<EOF
+EOF
+
+uci add      unbound unbound
+uci set      unbound.@unbound[-1]=unbound
+uci set      unbound.@unbound[-1].manual_conf='1'
+uci commit   unbound
+
+service unbound enable || true
+
+cat <<'EOF' > /etc/unbound/unbound.conf
+# forward all queries for imagilan.imaginator.com to a nameserver at 127.0.0.1
+# forward all queries for 7.10.in-addr.arpa to a nameserver at 127.0.0.1
+# forward all other queries to cloudflare-dns.com
+# returns ipv4 and ipv6 addresses to requests on the LAN interface
+# returns only ipv6 addresses to requests on the WAN interface
+
+# private-address: define the private addresses used in private-domain
+# private-domain: Allow this domain, and all its subdomains to contain private addresses.
+# domain-insecure: disable dnssec for this domain
+
+server:
+    interface: 0.0.0.0
+    interface: ::0
+    access-control: ::0/0 allow
+    access-control: 0.0.0.0/0 allow
+    do-not-query-localhost: no
+    use-syslog: yes
+    verbosity: 3
+    private-domain: "imagilan.imaginator.com."
+    private-address: "10.0.0.0/8"
+    domain-insecure: "imagilan.imaginator.com."
+    domain-insecure: "7.10.in-addr.arpa."
+    local-zone: "imagilan.imaginator.com." transparent
+    local-data: "imagilan.imaginator.com. 3600 SOA f17gw.dyndns.imaginator.com. nobody.invalid. 1 3600 600 36000 60"
+    local-data: "imagilan.imaginator.com. 3600 IN NS f17gw.dyndns.imaginator.com."
+
+    forward-zone:
+        name: "imagilan.imaginator.com."
+        forward-addr: 127.0.0.1@5355
+
+    forward-zone:
+        name: "7.10.in-addr.arpa."
+        forward-addr: 127.0.0.1@5355
+
+    forward-zone:
+        name: "olsr."
+        forward-addr: 10.36.189.1
+
+    forward-zone:
+        name: "31.10.in-addr.arpa."
+        forward-addr: 10.36.189.1
+
+    forward-zone:
+        name: "."
+        forward-tls-upstream: no
+        forward-addr: 1.1.1.1@53 #cloudflare-dns.com
+        forward-addr: 1.0.0.1@53 #cloudflare-dns.com
+        forward-addr: 2606:4700:4700::1111@53 #cloudflare-dns.com
+        forward-addr: 2606:4700:4700::1001@53 #cloudflare-dns.com
+EOF
+
+service unbound restart
+
 uci import dhcp <<EOF
 EOF
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
-uci set      dhcp.@dnsmasq[-1].domain='imagilan.imaginator.com' # DNS domain handed out to DHCP clients
-uci add_list dhcp.@dnsmasq[-1].local='/imagilan.imaginator.com/' # Look up DNS entries for this domain from /etc/hosts
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='imagilan.imaginator.com'
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='k8s.imaginator.com'
-uci add_list dhcp.@dnsmasq[-1].rebind_domain='plex.direct'
-uci add_list dhcp.@dnsmasq[-1].server='/31.10.in-addr.arpa/10.36.189.1'
-uci add_list dhcp.@dnsmasq[-1].server='/olsr/10.36.189.1'
-uci add_list dhcp.@dnsmasq[-1].server='1.0.0.1'
-uci add_list dhcp.@dnsmasq[-1].server='1.1.1.1'
-uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1001'
-uci add_list dhcp.@dnsmasq[-1].server='2606:4700:4700::1111'
 uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
 uci set      dhcp.@dnsmasq[-1].add_local_fqdn='1'
 uci set      dhcp.@dnsmasq[-1].add_local_hostname='1'
 uci set      dhcp.@dnsmasq[-1].authoritative='1'
-uci set      dhcp.@dnsmasq[-1].cachesize='4096'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
-uci set      dhcp.@dnsmasq[-1].domainneeded='1'
+uci set      dhcp.@dnsmasq[-1].domain='imagilan.imaginator.com' # DNS domain handed out to DHCP clients
 uci set      dhcp.@dnsmasq[-1].expandhosts='1'
-uci set      dhcp.@dnsmasq[-1].filterwin2k='1'
-uci set      dhcp.@dnsmasq[-1].localise_queries='1'
 uci set      dhcp.@dnsmasq[-1].localservice='0' # anyone can query us
 uci set      dhcp.@dnsmasq[-1].localuse='1'
 uci set      dhcp.@dnsmasq[-1].logqueries='1'
+uci set      dhcp.@dnsmasq[-1].port='5355'
 uci set      dhcp.@dnsmasq[-1].rapid_commit='1'
-uci set      dhcp.@dnsmasq[-1].rebind_localhost='1'
-uci set      dhcp.@dnsmasq[-1].rebind_protection='1'
+uci set      dhcp.@dnsmasq[-1].rebind_protection='0'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.lan=dhcp
