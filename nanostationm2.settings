@@ -129,40 +129,60 @@ chmod 0600 /etc/dropbear/authorized_keys
 uci import   network <<EOF
 EOF
 
+uci add      network device
+uci set      network.@device[-1].name='br-lan'
+uci set      network.@device[-1].type='bridge'
+uci add_list network.@device[-1].ports='eth0.2'
+uci add_list network.@device[-1].ports='eth1.2'
+uci add_list network.@device[-1].igmp_snooping='1'
+uci commit   network.@device[-1]
+
+uci add      network device
+uci set      network.@device[-1].name='br-freifunk'
+uci set      network.@device[-1].type='bridge'
+uci add_list network.@device[-1].ports='eth0.40'
+uci add_list network.@device[-1].ports='eth1.40'
+uci commit   network.@device[-1]
+
+uci add      network device
+uci set      network.@device[-1].name='br-iot'
+uci set      network.@device[-1].type='bridge'
+uci add_list network.@device[-1].ports='eth0.5'
+uci add_list network.@device[-1].ports='eth1.5'
+uci commit   network.@device[-1]
+
+uci add      network device
+uci set      network.@device[-1].name='br-splash'
+uci set      network.@device[-1].type='bridge'
+uci add_list network.@device[-1].ports='eth0.6'
+uci add_list network.@device[-1].ports='eth1.6'
+uci commit   network.@device[-1]
+
 uci set      network.loopback=interface
-uci set      network.loopback.ifname='lo'
+uci set      network.loopback.device='lo'
 uci set      network.loopback.proto='static'
 uci set      network.loopback.ipaddr='127.0.0.1'
 uci set      network.loopback.netmask='255.0.0.0'
 
 uci set      network.lan=interface
-uci set      network.lan.type='bridge'
-uci set      network.lan.igmp_snooping=1
-uci add_list network.lan.ifname='eth0.2'   # unifi-ac-lite
-uci add_list network.lan.ifname='eth1.2'   # unifi-m2-loco
+uci set      network.lan.device='br-lan'
 uci set      network.lan.proto='dhcp'
 
 uci set      network.lan6=interface
-uci set      network.lan6.ifname='@lan'
+uci set      network.lan6.device='@lan'
 uci set      network.lan6.proto='dhcpv6'
 uci set      network.lan6.reqprefix='no'
 
 uci set      network.freifunk=interface
-uci set      network.freifunk.type='bridge'
-uci add_list network.freifunk.ifname='eth0.40'   # unifi-ac-lite
-uci add_list network.freifunk.ifname='eth1.40'   # unifi-m2-loco
+uci set      network.freifunk.device='br-freifunk'
 uci set      network.freifunk.proto='none'
 
 uci set      network.iot=interface
-uci set      network.iot.type='bridge'
-uci add_list network.iot.ifname='eth0.5'       # unifi-ac-lite
-uci add_list network.iot.ifname='eth1.5'       # unifi-m2-loco
+uci set      network.iot.device='br-iot'
 uci set      network.iot.proto='none'
 
 uci set      network.splash=interface
-uci set      network.splash.type='bridge'
-uci add_list network.splash.ifname='eth0.6'       # unifi-ac-lite
-uci add_list network.splash.ifname='eth1.6'       # unifi-m2-loco
+uci set      network.splash.device='br-spash'
 uci set      network.splash.proto='none'
 
 uci commit   network
@@ -170,9 +190,13 @@ uci commit   network
 uci import wireless <<EOF
 EOF
 
+uci set     luci.sauth.sessiontime="36000000"
+uci commit  luci
+
 # 5 Ghz
 uci set      wireless.radio0=wifi-device
 uci set      wireless.radio0.band='5g'
+uci set      wireless.radio0.cell_density='1'
 uci set      wireless.radio0.channel='auto'
 uci set      wireless.radio0.country='DE'
 uci set      wireless.radio0.distance='30'
@@ -181,22 +205,25 @@ uci set      wireless.radio0.path='pci0000:00/0000:00:00.0' # same for both wifi
 uci set      wireless.radio0.type='mac80211'
 case "$system_hostname" in
     repeater-lounge|repeater-bedroom1)
-       uci set wireless.radio0.htmode='VHT80'
-       uci set wireless.radio0.hwmode='11a' # needed for VHT80
+        uci set wireless.radio0.htmode='VHT40' # AC: the tablets only support VHT40 (imagiFi IoT 5)
+        uci set wireless.radio0.hwmode='11a'   # still needed :(
+
     ;;
 esac
 uci commit   wireless.radio0
 
 # 2.4 GHz
 uci set      wireless.radio1=wifi-device
-uci set      wireless.radio1.channel='auto'
 uci add_list wireless.radio1.channels="1"
-uci add_list wireless.radio1.channels="6"
 uci add_list wireless.radio1.channels="11"
+uci add_list wireless.radio1.channels="6"
 uci set      wireless.radio1.band='2g'
+uci set      wireless.radio1.cell_density='1'
+uci set      wireless.radio1.channel='auto'
 uci set      wireless.radio1.country='DE'
-uci set      wireless.radio1.distance=30
-uci set      wireless.radio1.log_level=0
+uci set      wireless.radio1.distance='30'
+uci set      wireless.radio1.htmode='HT20' # 802.11n (not legacy)
+uci set      wireless.radio1.log_level='0'
 uci set      wireless.radio1.type='mac80211'
 case "$system_hostname" in
     repeater-lounge|repeater-bedroom1)
@@ -257,7 +284,7 @@ uci set      wireless.imagifi5.ifname='imagifi5'
 uci set      wireless.imagifi5.key='${lan_wifikey}'
 uci set      wireless.imagifi5.mode='ap'
 uci set      wireless.imagifi5.network='lan'
-uci set      wireless.imagifi5.skip_inactivity_poll=1
+uci set      wireless.imagifi5.skip_inactivity_poll='1'
 uci set      wireless.imagifi5.time_advertisement='2'
 uci set      wireless.imagifi5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
 uci commit   wireless.imagifi5
@@ -276,24 +303,38 @@ uci set      wireless.iot2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:
 uci commit   wireless.iot2
 
 uci set      wireless.iot5=wifi-iface
-uci set      wireless.iot5.ssid='imagiFi IoT'
 uci set      wireless.iot5.device='radio0'
+uci set      wireless.iot5.disabled='0'
+uci set      wireless.iot5.disassoc_low_ack='0'
 uci set      wireless.iot5.encryption='psk2'
 uci set      wireless.iot5.ifname='iot5'
 uci set      wireless.iot5.isolate='1'
 uci set      wireless.iot5.key='${iot_wifikey}'
 uci set      wireless.iot5.mode='ap'
 uci set      wireless.iot5.network='iot'
-uci set      wireless.iot5.time_advertisement='2'
-uci set      wireless.iot5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.iot5.disabled='1' # testing tablet reliability 
+uci set      wireless.iot5.skip_inactivity_poll='1'
+uci set      wireless.iot5.ssid='imagiFi IoT 5'
+uci set      wireless.iot5.wpa_group_rekey='86400'
 uci commit   wireless.iot5
+
+uci set      wireless.iotdual=wifi-iface
+uci set      wireless.iotdual.ssid='imagiFi IoT'
+uci set      wireless.iotdual.device='radio0'
+uci set      wireless.iotdual.encryption='psk2'
+uci set      wireless.iotdual.ifname='iotdual'
+uci set      wireless.iotdual.isolate='1'
+uci set      wireless.iotdual.key='${iot_wifikey}'
+uci set      wireless.iotdual.mode='ap'
+uci set      wireless.iotdual.network='iot'
+uci set      wireless.iotdual.time_advertisement='2'
+uci set      wireless.iotdual.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
+uci set      wireless.iotdual.disabled='0'
+uci commit   wireless.iotdual
 
 # open APs below (no roaming possible)
 uci set      wireless.f17free2=wifi-iface
 uci set      wireless.f17free2.ssid='Falckensteinstr 17 Free WiFi'
 uci set      wireless.f17free2.device='radio1'
-uci set      wireless.f17free2.bss_transition='1'
 uci set      wireless.f17free2.encryption='none'
 uci set      wireless.f17free2.ieee80211k='1'
 uci set      wireless.f17free2.ieee80211r='1'
@@ -301,11 +342,11 @@ uci set      wireless.f17free2.ieee80211w='0'
 uci set      wireless.f17free2.ifname='f17free2'
 uci set      wireless.f17free2.isolate='1'
 uci set      wireless.f17free2.mode='ap'
-uci set      wireless.f17free2.network='splash'
+uci set      wireless.f17free2.network='freifunk'
 uci set      wireless.f17free2.skip_inactivity_poll=1
 uci set      wireless.f17free2.time_advertisement='2'
 uci set      wireless.f17free2.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.f17free2.disabled='1' # until opennds works
+uci set      wireless.f17free2.disabled='0' # until opennds works
 uci commit   wireless.f17free2
 
 uci set      wireless.f17free5=wifi-iface
@@ -318,11 +359,11 @@ uci set      wireless.f17free5.ieee80211w='0'
 uci set      wireless.f17free5.ifname='f17free5'
 uci set      wireless.f17free5.isolate='1'
 uci set      wireless.f17free5.mode='ap'
-uci set      wireless.f17free5.network='splash'
+uci set      wireless.f17free5.network='freifunk'
 uci set      wireless.f17free5.skip_inactivity_poll=1
 uci set      wireless.f17free5.time_advertisement='2'
 uci set      wireless.f17free5.time_zone='CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00'
-uci set      wireless.f17free5.disabled='1' # until opennds works
+uci set      wireless.f17free5.disabled='0' # until opennds works
 uci commit   wireless.f17free5
 
 uci set      wireless.ffunk2=wifi-iface

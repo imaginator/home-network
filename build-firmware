@@ -2,7 +2,7 @@
 set -xe
 
 MODEL=$1
-VERSION=23.05.0-rc4
+VERSION=23.05.2
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -122,6 +122,10 @@ case $MODEL in
     odhcp6c \
     odhcpd \
     qrencode \
+    unbound-anchor \
+    unbound-control \
+    unbound-control-setup \
+    unbound-host \
     softflowd \
     sqm-scripts \
     sqm-scripts-extra \
@@ -165,19 +169,19 @@ case $MODEL in
   TARGET_DEVICE=ath79-generic
   PROFILE=ubnt_unifiac-lite
   EXTRA_PACKAGES="\
-    dawn \
-    luci-app-dawn \
     luci \
-    wpad \
+    wpad-basic-mbedtls \
     "
   REMOVED_PACKAGES="\
     -dnsmasq \
     -hostapd-openssl \
     -luci-proto-ppp \
+    -odhcpd-ipv6only \
     -ppp \
     -ppp-mod-pppoe \
     -wpa-supplicant \
     -wpa-supplicant-mini \
+    -wpad \
     -wpad-basic \
     -wpad-basic-wolfssl \
     -wpad-mini \
@@ -197,7 +201,9 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     "
-  REMOVED_PACKAGES="-wpad-mini"
+  REMOVED_PACKAGES="\
+  -wpad-mini \
+  "
 ;;
 
 "mr33")
@@ -214,7 +220,13 @@ case $MODEL in
     luci-theme-bootstrap \
     odhcp6c \
     "
-  REMOVED_PACKAGES="-dnsmasq -wpad-mini -wpad-basic -wpa-supplicant -wpa-supplicant-mini"
+  REMOVED_PACKAGES=" \
+    -dnsmasq \
+    -wpa-supplicant \
+    -wpa-supplicant-mini \
+    -wpad-basic \
+    -wpad-mini \
+    "
 ;;
 
 *)
