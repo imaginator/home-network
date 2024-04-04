@@ -100,16 +100,17 @@ uci set      network.freifunk6.metric='21'
 uci set      network.freifunk6.peerdns='0'
 
 uci set      network.pyur4=interface
-uci set      network.pyur4.device='eth0.4'
+uci set      network.pyur4.device='eth4'
 uci set      network.pyur4.proto='dhcp'
 uci set      network.pyur4.broadcast='1'
 uci set      network.pyur4.peerdns='0'
 uci set      network.pyur4.metric='10'
 
 uci set      network.pyur6=interface
-uci set      network.pyur6.device='eth0.4'
+uci set      network.pyur6.device='@pyur4'
 uci set      network.pyur6.proto='dhcpv6'
 uci set      network.pyur6.reqaddress='try'
+uci set      network.pyur6.hostname='f17gw6'
 uci set      network.pyur6.reqprefix='auto'
 uci set      network.pyur6.peerdns='0'
 uci set      network.pyur6.metric='11'
@@ -226,7 +227,7 @@ uci set    ddns.@service[-1].enabled='0'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='pyur4'   # hotplug events only on network (not interfaces)
-uci set    ddns.@service[-1].ip_interface='eth0.4'
+uci set    ddns.@service[-1].ip_interface='eth4'
 uci set    ddns.@service[-1].ip_source='interface' # using ip_source=interface due to bind_ip issues in curl
 uci set    ddns.@service[-1].lookup_host='${f17gw_ddns4_domain}'
 uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
@@ -251,7 +252,7 @@ uci set    ddns.@service[-1].enabled='1'
 uci set    ddns.@service[-1].force_interval='5'
 uci set    ddns.@service[-1].force_unit='minutes'
 uci set    ddns.@service[-1].interface='pyur6'   # hotplug events only on network (not interfaces)
-uci set    ddns.@service[-1].ip_interface='eth0.4'
+uci set    ddns.@service[-1].ip_interface='eth4'
 uci set    ddns.@service[-1].ip_source='interface'
 uci set    ddns.@service[-1].lookup_host='${f17gw_ddns6_domain}'
 uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
@@ -297,20 +298,6 @@ uci set    prometheus-node-exporter-lua.main.listen_port='9100'
 uci commit prometheus-node-exporter-lua
 
 service prometheus-node-exporter-lua enable || true
-
-
-uci import https_dns_proxy <<EOF
-EOF
-
-uci set      https_dns_proxy.dns="https_dns_proxy"
-uci set      https_dns_proxy.dns.listen_addr="127.0.0.1"
-uci set      https_dns_proxy.dns.listen_port="5053"
-uci set      https_dns_proxy.dns.user="nobody"
-uci set      https_dns_proxy.dns.group="nogroup"
-uci set      https_dns_proxy.dns.url_prefix="https://cloudflare-dns.com/dns-query?ct=application/dns-json&"
-uci commit   https_dns_proxy
-
-service https_dns_proxy enable || true
 
 uci import firewall <<EOF
 EOF
@@ -717,7 +704,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='anywhere to 80'
+uci set      firewall.@rule[-1].name='anywhere to hosts:80'
 uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='80'
@@ -730,7 +717,7 @@ uci commit   firewall.@rule[-1]
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
-uci set      firewall.@rule[-1].name='anywhere to bunker:443'
+uci set      firewall.@rule[-1].name='anywhere to hosts:443'
 uci set      firewall.@rule[-1].src='*'
 uci set      firewall.@rule[-1].dest='lan'
 uci set      firewall.@rule[-1].dest_port='443'
@@ -740,6 +727,7 @@ uci add_list firewall.@rule[-1].dest_ip='::ef43/::ffff:ffff:ffff:ffff'  # bunker
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
+
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
@@ -752,8 +740,6 @@ uci add_list firewall.@rule[-1].dest_ip='::ef43/::ffff:ffff:ffff:ffff'  # http:/
 uci set      firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
-
-
 
 uci add      firewall rule
 uci set      firewall.@rule[-1]=rule
@@ -874,8 +860,17 @@ uci add_list firewall.@rule[-1].proto='tcp'
 uci set      firewall.@rule[-1].src='iot'
 uci set      firewall.@rule[-1].dest='lan'
 uci add_list firewall.@rule[-1].dest_ip='10.7.11.10'
-uci add_list firewall.@rule[-1].dest_ip='::ef43/::ffff:ffff:ffff:ffff'  # bunker
 uci set      firewall.@rule[-1].dest_port='1883'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall rule
+uci set      firewall.@rule[-1].name='tablets to homeassistant web'
+uci add_list firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].src='iot'
+uci set      firewall.@rule[-1].dest='lan'
+uci add_list firewall.@rule[-1].dest_ip='10.7.11.142'
+uci set      firewall.@rule[-1].dest_port='8123'
 uci set      firewall.@rule[-1].target='ACCEPT'
 uci commit   firewall.@rule[-1]
 
@@ -896,6 +891,8 @@ EOF
 uci add      unbound unbound
 uci set      unbound.@unbound[-1]=unbound
 uci set      unbound.@unbound[-1].manual_conf='1'
+uci set      unbound.@unbound[-1].enabled='1'
+uci set      unbound.@unbound[-1].trigger_interface='pyur4'
 uci commit   unbound
 
 service unbound enable || true
@@ -918,14 +915,26 @@ server:
     access-control: 0.0.0.0/0 allow
     do-not-query-localhost: no
     use-syslog: yes
+    interface-automatic: yes
+    edns-buffer-size: 1472
     verbosity: 3
-    private-domain: "imagilan.imaginator.com."
-    private-address: "10.0.0.0/8"
-    domain-insecure: "imagilan.imaginator.com."
-    domain-insecure: "7.10.in-addr.arpa."
+    log-queries: yes
+    log-replies: yes
+    edns-buffer-size: 1200
+
+    # Allow plex.direct to return local addresses, otherwise Plex will fail
+    private-domain: "plex.direct"
+
+    # private-domain: "imagilan.imaginator.com."
+    # private-address: "10.0.0.0/8"
+    # domain-insecure: "imagilan.imaginator.com."
+    # domain-insecure: "7.10.in-addr.arpa."
     local-zone: "imagilan.imaginator.com." transparent
-    local-data: "imagilan.imaginator.com. 3600 SOA f17gw.dyndns.imaginator.com. nobody.invalid. 1 3600 600 36000 60"
     local-data: "imagilan.imaginator.com. 3600 IN NS f17gw.dyndns.imaginator.com."
+    local-data: "imagilan.imaginator.com. 3600 SOA f17gw.dyndns.imaginator.com. nobody.invalid. 1 3600 600 36000 60"
+
+remote-control:
+    control-enable: no
 
     forward-zone:
         name: "imagilan.imaginator.com."
@@ -950,27 +959,27 @@ server:
         forward-addr: 1.0.0.1@53 #cloudflare-dns.com
         forward-addr: 2606:4700:4700::1111@53 #cloudflare-dns.com
         forward-addr: 2606:4700:4700::1001@53 #cloudflare-dns.com
+
+
 EOF
 
-service unbound restart
+service unbound disable
 
 uci import dhcp <<EOF
 EOF
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
-uci set      dhcp.@dnsmasq[-1].add_local_domain='1'
-uci set      dhcp.@dnsmasq[-1].add_local_fqdn='1'
-uci set      dhcp.@dnsmasq[-1].add_local_hostname='1'
-uci set      dhcp.@dnsmasq[-1].authoritative='1'
+uci set      dhcp.@dnsmasq[-1].add_local_fqdn='0'
+uci set      dhcp.@dnsmasq[-1].add_local_hostname='0'
+uci set      dhcp.@dnsmasq[-1].add_wan_fqdn='4' # creates hostnames like eth0-4.f17gw.imagilan.imaginator.com
+uci set      dhcp.@dnsmasq[-1].authoritative='1'  # speed up DHCP lease queries
 uci set      dhcp.@dnsmasq[-1].domain='imagilan.imaginator.com' # DNS domain handed out to DHCP clients
-uci set      dhcp.@dnsmasq[-1].expandhosts='1'
-uci set      dhcp.@dnsmasq[-1].localservice='0' # anyone can query us
-uci set      dhcp.@dnsmasq[-1].localuse='1'
-uci set      dhcp.@dnsmasq[-1].logqueries='1'
-uci set      dhcp.@dnsmasq[-1].port='5355'
+uci set      dhcp.@dnsmasq[-1].expandhosts='1'  # Add the local domain part to names found in /etc/hosts
+uci set      dhcp.@dnsmasq[-1].localuse='1'  #
+uci set      dhcp.@dnsmasq[-1].logqueries='0'
+uci set      dhcp.@dnsmasq[-1].port='53'
 uci set      dhcp.@dnsmasq[-1].rapid_commit='1'
-uci set      dhcp.@dnsmasq[-1].rebind_protection='0'
 uci commit   dhcp.@dnsmasq[-1]
 
 uci set      dhcp.lan=dhcp
@@ -979,9 +988,7 @@ uci add_list dhcp.lan.dhcp_option='114,urn:ietf:params:capport:unrestricted'
 uci add_list dhcp.lan.dhcp_option='option:dns-server,10.7.11.1'
 uci add_list dhcp.lan.dhcp_option='option:log-server,10.7.11.10'
 uci add_list dhcp.lan.domain='imagilan.imaginator.com'
-uci set      dhcp.lan.dhcpv4='server'
-uci set      dhcp.lan.dhcpv6='server'
-uci set      dhcp.lan.force='1'
+uci set      dhcp.lan.master='1'
 uci set      dhcp.lan.leasetime='1h'
 uci set      dhcp.lan.ra='server'
 uci set      dhcp.lan.start='100'
@@ -993,9 +1000,7 @@ uci add_list dhcp.iot.dhcp_option='114,urn:ietf:params:capport:unrestricted'
 uci add_list dhcp.iot.dhcp_option='option:dns-server,10.7.9.1'
 uci add_list dhcp.iot.dhcp_option='option:log-server,10.7.11.10'
 uci add_list dhcp.iot.domain='imagilan.imaginator.com'
-uci set      dhcp.iot.dhcpv4='server'
-uci set      dhcp.iot.dhcpv6='server'
-uci set      dhcp.iot.force='1'
+uci set      dhcp.iot.master='1'
 uci set      dhcp.iot.leasetime='1h'
 uci set      dhcp.iot.ra='server'
 uci set      dhcp.iot.start='100'
@@ -1433,32 +1438,8 @@ uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  cname
 uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='jellyfin.imagilan.imaginator.com'
-uci set      dhcp.@cname[-1].target='bunker.imagilan.imaginator.com'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='plex.imagilan.imaginator.com'
-uci set      dhcp.@cname[-1].target='bunker.imagilan.imaginator.com'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
 uci set      dhcp.@cname[-1].cname='transmission.imagilan.imaginator.com'
 uci set      dhcp.@cname[-1].target='bunker.imagilan.imaginator.com'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='grafana.ln.imagilan.imaginator.com'
-uci set      dhcp.@cname[-1].target='ln.imagilan.imaginator.com'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='prometheus.ln.imagilan.imaginator.com'
-uci set      dhcp.@cname[-1].target='ln.imagilan.imaginator.com'
 uci commit   dhcp.@cname[-1]
 
 uci add      dhcp  host
@@ -1512,7 +1493,6 @@ uci set      dhcp.@host[-1].name='bunker'
 uci set      dhcp.@host[-1].mac='ae:b7:d2:1d:eb:27'
 uci set      dhcp.@host[-1].dns='1'
 
-
 #mr33
 uci add      dhcp host
 uci set      dhcp.@host[-1]=host
@@ -1542,7 +1522,15 @@ uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.21'
 uci set      dhcp.@host[-1].mac='dc:e5:5b:01:50:a9'
-uci set      dhcp.@host[-1].name='simon-phone'
+uci set      dhcp.@host[-1].name='phone-simon'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.22'
+uci set      dhcp.@host[-1].mac='fc:66:cf:8e:ef:4d'
+uci set      dhcp.@host[-1].name='phone-frieda'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1687,6 +1675,12 @@ uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.31.167.197'
 uci set      dhcp.@domain[-1].name='rhnk-bridge'
 uci commit   dhcp.@domain[-1]
+
+service dnsmasq enable
+
+###############################################################################
+# MWAN3
+###############################################################################
 
 uci import mwan3 <<EOF
 EOF
@@ -1862,6 +1856,19 @@ uci set      mwan3.default_rule_v6.use_policy='pyur_freifunk'
 uci set      mwan3.default_rule_v6.family='ipv6'
 
 uci commit   mwan3
+
+uci set      cloudflared.config=cloudflared
+uci set      cloudflared.config.enabled='1'
+uci set      cloudflared.config.token='${cloudflared_token}'
+uci set      cloudflared.config.config='/etc/cloudflared/config.yml'
+uci set      cloudflared.config.origincert='/etc/cloudflared/cert.pem'
+uci set      cloudflared.config.loglevel='info'
+uci set      cloudflared.config.logfile='/var/log/cloudflared.log'
+uci set      cloudflared.config.region=''
+
+uci commit   cloudflared
+
+service cloudflared enable
 
 echo -e "All done with writing.\nRebooting..."
 reboot

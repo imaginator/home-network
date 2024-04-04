@@ -38,6 +38,7 @@ case $1 in
     $henet_f17_tunnelid \
     $henet_f17_username \
     $lan_wifikey \
+    $cloudflared_token \
     $wg_f17gw_private_key \
     $wg_f17gw_private_key \
     $wg_f17gw_public_key \
