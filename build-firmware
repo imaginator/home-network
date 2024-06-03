@@ -58,6 +58,24 @@ case $MODEL in
     " # dhcpv6 stuff provided by dnsmasq-full
 ;;
 
+"switch03")
+  PLATFORM=realtek
+  TYPE=rtl838x
+  TARGET_DEVICE=realtek-rtl838x
+  PROFILE=zyxel_gs1900-24hp-v2
+  EXTRA_PACKAGES="\
+    realtek-poe \
+    watchcat \
+    luci-app-watchcat \
+    luci-theme-bootstrap \
+    luci-mod-admin-full \
+  "
+  REMOVED_PACKAGES="\
+    -dnsmasq \
+    -odhcpd \
+    -odhcpd-ipv6only \
+    " # dhcpv6 stuff provided by dnsmasq-full
+;;
 
 "travelrouter")
   PLATFORM=ramips
