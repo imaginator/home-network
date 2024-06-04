@@ -1,8 +1,8 @@
 #!/bin/bash
-set -xe
+set -e
 
 MODEL=$1
-VERSION=23.05.2
+VERSION=23.05.3
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -10,8 +10,6 @@ BASE_PACKAGES=" \
   prometheus-node-exporter-lua-nat_traffic \
   prometheus-node-exporter-lua-netstat \
   prometheus-node-exporter-lua-openwrt \
-  prometheus-node-exporter-lua-wifi \
-  prometheus-node-exporter-lua-wifi_stations \
   prometheus-node-exporter-lua-textfile \
   tcpdump-mini \
   "
@@ -65,10 +63,12 @@ case $MODEL in
   PROFILE=zyxel_gs1900-24hp-v2
   EXTRA_PACKAGES="\
     realtek-poe \
+    lldpd \
     watchcat \
     luci-app-watchcat \
     luci-theme-bootstrap \
     luci-mod-admin-full \
+    luci-proto-ipv6 \
   "
   REMOVED_PACKAGES="\
     -dnsmasq \
@@ -188,6 +188,8 @@ case $MODEL in
   PROFILE=ubnt_unifiac-lite
   EXTRA_PACKAGES="\
     luci \
+    prometheus-node-exporter-lua-wifi \
+    prometheus-node-exporter-lua-wifi_stations \
     wpad-basic-mbedtls \
     "
   REMOVED_PACKAGES="\
@@ -248,7 +250,7 @@ case $MODEL in
 ;;
 
 *)
-  echo "specify build target (f17gw ; ubnt-uap-ac-lite ; nanostationm2 ; nanobridge-m5 ; w16gw ; ubnt-uap-pro; mr33)"
+  echo "specify build target (f17gw ; switch02 ; switch03 ;ubnt-uap-ac-lite ; nanostationm2 ; nanobridge-m5 ; w16gw ; ubnt-uap-pro; mr33)"
   exit 1
 ;;
 esac
