@@ -1461,6 +1461,14 @@ uci commit   dhcp.@host[-1]
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.4'
+uci set      dhcp.@host[-1].name='switch03'
+uci set      dhcp.@host[-1].mac='d8:ec:e5:6e:07:25'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].ip='10.7.11.5'
 uci set      dhcp.@host[-1].name='win10'
 uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
 uci set      dhcp.@host[-1].dns='1'
