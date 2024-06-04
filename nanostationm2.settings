@@ -196,10 +196,8 @@ uci commit  luci
 # 5 Ghz
 uci set      wireless.radio0=wifi-device
 uci set      wireless.radio0.band='5g'
-uci set      wireless.radio0.cell_density='1'
 uci set      wireless.radio0.channel='auto'
 uci set      wireless.radio0.country='DE'
-uci set      wireless.radio0.distance='30'
 uci set      wireless.radio0.log_level='0'
 uci set      wireless.radio0.path='pci0000:00/0000:00:00.0' # same for both wifi-devices
 uci set      wireless.radio0.type='mac80211'
@@ -218,10 +216,8 @@ uci add_list wireless.radio1.channels="1"
 uci add_list wireless.radio1.channels="11"
 uci add_list wireless.radio1.channels="6"
 uci set      wireless.radio1.band='2g'
-uci set      wireless.radio1.cell_density='1'
 uci set      wireless.radio1.channel='auto'
 uci set      wireless.radio1.country='DE'
-uci set      wireless.radio1.distance='30'
 uci set      wireless.radio1.htmode='HT20' # 802.11n (not legacy)
 uci set      wireless.radio1.log_level='0'
 uci set      wireless.radio1.type='mac80211'
