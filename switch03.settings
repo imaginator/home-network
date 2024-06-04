@@ -1,0 +1,276 @@
+#!/bin/sh
+
+# zyxel_gs1900-24hp-v2
+
+# stop after any errors
+set -xe
+
+uci import system <<EOF
+EOF
+
+uci add      system  system
+uci set      system.@system[-1]=system
+uci set      system.@system[-1].hostname='switch03'
+uci set      system.@system[-1].description='Zyxel GS1900-24HPv2'
+uci set      system.@system[-1].notes='POE switch in rack'
+uci set      system.@system[-1].zonename='UTC'
+uci set      system.@system[-1].conloglevel='8'
+uci set      system.@system[-1].klogconloglevel='8'
+uci set      system.@system[-1].cronloglevel='0'
+uci set      system.@system[-1].log_ip='10.7.11.10'
+uci set      system.@system[-1].log_proto='udp'
+uci set      system.@system[-1].log_port='514'
+uci set      system.@system[-1].log_size='128'
+uci set      system.@system[-1].log_buffer_size='64'
+uci set      system.@system[-1].log_remote='1'
+uci set      system.@system[-1].location='Falckensteinstrasse 17'
+uci set      system.@system[-1].latitude='52.497618743398135'
+uci set      system.@system[-1].longitude='13.441156148912176'
+uci set      system.ntp=timeserver
+uci set      system.ntp.enabled=1
+uci add_list system.ntp.server='0.de.pool.ntp.org'
+uci add_list system.ntp.server='1.de.pool.ntp.org'
+uci add_list system.ntp.server='2.de.pool.ntp.org'
+uci commit   system
+
+uci import   watchcat <<EOF
+EOF
+
+uci add      watchcat  watchcat
+uci set      watchcat.@watchcat[-1]=watchcat
+uci set      watchcat.@watchcat[-1].mode='ping'
+uci set      watchcat.@watchcat[-1].forcedelay='300'
+uci set      watchcat.@watchcat[-1].period='30m'
+uci set      watchcat.@watchcat[-1].pingperiod='5m'
+uci set      watchcat.@watchcat[-1].pinghosts='10.7.11.1'
+uci commit   watchcat
+
+uci import dropbear <<EOF
+EOF
+
+uci add    dropbear  dropbear
+uci set    dropbear.@dropbear[-1]=dropbear
+uci set    dropbear.@dropbear[-1].Port='22'
+uci set    dropbear.@dropbear[-1].PasswordAuth='0'
+uci set    dropbear.@dropbear[-1].RootPasswordAuth='0'
+uci commit dropbear
+
+cat <<'EOF' > /etc/sysctl.d/20-arpcache.conf
+net.ipv4.neigh.default.gc_thresh1=8192
+net.ipv4.neigh.default.gc_thresh2=32768
+net.ipv4.neigh.default.gc_thresh3=65536
+net.ipv6.neigh.default.gc_thresh1=8192
+net.ipv6.neigh.default.gc_thresh2=32768
+net.ipv6.neigh.default.gc_thresh3=65536
+EOF
+
+cat <<'EOF' > /etc/dropbear/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHwK3f7YB4qmDKgnZ6yKaQlLEdDAFaVbNREiE2gyHwSN simon@imaginator.com
+EOF
+chmod 0600 /etc/dropbear/authorized_keys
+
+uci import network <<EOF
+EOF
+
+uci set         network.loopback=interface
+uci set         network.loopback.device='lo'
+uci set         network.loopback.proto='static'
+uci set         network.loopback.ipaddr='127.0.0.1'
+uci set         network.loopback.netmask='255.0.0.0'
+
+uci set         network.lan=interface
+uci set         network.lan.proto='static'
+uci set         network.lan.device='switch.2'
+uci add_list    network.lan.ipaddr='10.7.11.4/24'
+uci set         network.lan.gateway='10.7.11.1'
+uci add_list    network.lan.dns='10.7.11.1'
+uci set         network.lan.delegate='0'
+
+uci set         network.lan6=interface
+uci set         network.lan6.proto='dhcpv6'
+uci set         network.lan6.device='switch.2'
+uci set         network.lan6.reqaddress='try'
+uci set         network.lan6.reqprefix='auto'
+
+uci add         network device
+uci set         network.@device[-1].name='switch'
+uci set         network.@device[-1].type='bridge'
+uci set         network.@device[-1].macaddr='0a:82:55:10:68:7e'
+
+uci add_list    network.@device[-1].ports='lan1'   #
+uci add_list    network.@device[-1].ports='lan2'   # printer
+uci add_list    network.@device[-1].ports='lan3'
+uci add_list    network.@device[-1].ports='lan4'   # Onkyo
+uci add_list    network.@device[-1].ports='lan5'
+uci add_list    network.@device[-1].ports='lan6'   # Google-TV
+uci add_list    network.@device[-1].ports='lan7'   # bunker
+uci add_list    network.@device[-1].ports='lan8'   # bunker ILO
+
+uci add_list    network.@device[-1].ports='lan9'   # vallox
+uci add_list    network.@device[-1].ports='lan10'  # gruenbeck
+uci add_list    network.@device[-1].ports='lan11'  # velux
+uci add_list    network.@device[-1].ports='lan12'  # home assistant box
+uci add_list    network.@device[-1].ports='lan13'  # doorbird
+uci add_list    network.@device[-1].ports='lan14'  # knxgw
+uci add_list    network.@device[-1].ports='lan15'
+uci add_list    network.@device[-1].ports='lan16'
+
+uci add_list    network.@device[-1].ports='lan17'
+uci add_list    network.@device[-1].ports='lan18'
+uci add_list    network.@device[-1].ports='lan19' # switch02
+uci add_list    network.@device[-1].ports='lan20' # f17-core
+uci add_list    network.@device[-1].ports='lan21' # repeater-lounge
+uci add_list    network.@device[-1].ports='lan22' # repeater-bedroom1
+uci add_list    network.@device[-1].ports='lan23' # switch01
+uci add_list    network.@device[-1].ports='lan24' # f17gw
+
+uci add_list    network.@device[-1].ports='lan25' # SFP module
+uci add_list    network.@device[-1].ports='lan26' # SFP module
+
+# vlan: lan
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='2'
+uci add_list    network.@bridge-vlan[-1].ports='lan1'
+uci add_list    network.@bridge-vlan[-1].ports='lan2'
+uci add_list    network.@bridge-vlan[-1].ports='lan3'
+uci add_list    network.@bridge-vlan[-1].ports='lan4'
+uci add_list    network.@bridge-vlan[-1].ports='lan5'
+uci add_list    network.@bridge-vlan[-1].ports='lan6'
+uci add_list    network.@bridge-vlan[-1].ports='lan7:t'  # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan12'   # home assistant box
+uci add_list    network.@bridge-vlan[-1].ports='lan13'   # doorbird
+uci add_list    network.@bridge-vlan[-1].ports='lan14'   # knxgw
+uci add_list    network.@bridge-vlan[-1].ports='lan19'   # switch02
+uci add_list    network.@bridge-vlan[-1].ports='lan21:t' # repeater-lounge
+uci add_list    network.@bridge-vlan[-1].ports='lan22:t' # repeater-bedroom1
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: wan
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='4'
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: iot
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='5'
+uci add_list    network.@bridge-vlan[-1].ports='lan7:t'  # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan9'    # vallox
+uci add_list    network.@bridge-vlan[-1].ports='lan10'   # gruenbeck
+uci add_list    network.@bridge-vlan[-1].ports='lan11'   # velux
+uci add_list    network.@bridge-vlan[-1].ports='lan19'   # switch02
+uci add_list    network.@bridge-vlan[-1].ports='lan21:t' # repeater-lounge
+uci add_list    network.@bridge-vlan[-1].ports='lan22:t' # repeater-bedroom1
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: emma-mesh
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='10'
+uci add_list    network.@bridge-vlan[-1].ports='lan19'   # switch02
+uci add_list    network.@bridge-vlan[-1].ports='lan20:t' # f17-core
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: zwingli-mesh
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='11'
+uci add_list    network.@bridge-vlan[-1].ports='lan19'   # switch02
+uci add_list    network.@bridge-vlan[-1].ports='lan20:t' # f17-core
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: rhnk-mesh
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='12'
+uci add_list    network.@bridge-vlan[-1].ports='lan19'   # switch02
+uci add_list    network.@bridge-vlan[-1].ports='lan20:t' # f17-core
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: freifunk-dhcp
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='40'
+uci add_list    network.@bridge-vlan[-1].ports='lan7:t'  # bunker
+uci add_list    network.@bridge-vlan[-1].ports='lan19'   # switch02
+uci add_list    network.@bridge-vlan[-1].ports='lan20:t' # f17-core
+uci add_list    network.@bridge-vlan[-1].ports='lan21:t' # repeater-lounge
+uci add_list    network.@bridge-vlan[-1].ports='lan22:t' # repeater-bedroom1
+uci add_list    network.@bridge-vlan[-1].ports='lan23:t' # switch01
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+# vlan: freifunk-mgmt
+uci add         network bridge-vlan
+uci set         network.@bridge-vlan[-1].device='switch'
+uci set         network.@bridge-vlan[-1].vlan='42'
+uci add_list    network.@bridge-vlan[-1].ports='lan20:t' # f17-core
+uci add_list    network.@bridge-vlan[-1].ports='lan24:t' # f17gw
+
+
+
+
+
+uci commit   network
+
+uci set     luci.sauth.sessiontime="36000000"
+uci commit  luci
+
+uci import prometheus-node-exporter-lua<<EOF
+EOF
+
+uci set    prometheus-node-exporter-lua.main=prometheus-node-exporter-lua
+uci set    prometheus-node-exporter-lua.main.listen_interface='lan'
+uci set    prometheus-node-exporter-lua.main.listen_port='9100'
+uci commit prometheus-node-exporter-lua
+
+service prometheus-node-exporter-lua enable || true
+
+
+uci import firewall <<EOF
+EOF
+
+uci add    firewall defaults
+uci set    firewall.@defaults[-1]=defaults
+uci set    firewall.@defaults[-1].input='ACCEPT'
+uci set    firewall.@defaults[-1].output='ACCEPT'
+uci set    firewall.@defaults[-1].forward='ACCEPT'
+uci set    firewall.@defaults[-1].flow_offloading='1'
+uci set    firewall.@defaults[-1].flow_offloading_hw='1'
+uci commit firewall.@defaults[-1]
+
+###############################################################################
+# never lock ourselves out
+###############################################################################
+
+uci add      firewall rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='ssh to router'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].dest_port='22'
+uci set      firewall.@rule[-1].proto='tcp'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+uci add      firewall  rule
+uci set      firewall.@rule[-1]=rule
+uci set      firewall.@rule[-1].name='Allow-Ping'
+uci set      firewall.@rule[-1].src='*'
+uci set      firewall.@rule[-1].family='any'
+uci set      firewall.@rule[-1].proto='icmp'
+uci set      firewall.@rule[-1].icmp_type='echo-request'
+uci set      firewall.@rule[-1].target='ACCEPT'
+uci commit   firewall.@rule[-1]
+
+service firewall enable || true
+
+echo -e "All done with writing.\n..."
+reboot
