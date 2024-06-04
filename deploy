@@ -63,40 +63,12 @@ case $1 in
 
   switch02)
     envsubst \ '
-    $dh2048_pem \
-    $f17gw_ddns4_domain \
-    $f17gw_ddns4_password \
-    $f17gw_ddns4_username \
-    $f17gw_ddns6_domain \
-    $f17gw_ddns6_password \
-    $f17gw_ddns6_username \
-    $freifunk_ca_crt \
-    $freifunk_client_crt \
-    $freifunk_client_key \
-    $henet_f17_password \
-    $henet_f17_tunnelid \
-    $henet_f17_username \
-    $lan_wifikey \
-    $wg_f17gw_private_key \
-    $wg_f17gw_private_key \
-    $wg_f17gw_public_key \
-    $wg_f17gw_public_key \
-    $wg_furrow_private_key \
-    $wg_furrow_private_key \
-    $wg_furrow_public_key \
-    $wg_furrow_public_key \
-    $wg_simonphone_private_key \
-    $wg_simonphone_private_key \
-    $wg_simonphone_public_key \
-    $wg_simonphone_public_key \
-    $wg_tablet_private_key \
-    $wg_tablet_public_key \
-    $wg_vpn_private_key \
-    $wg_vpn_public_key \
-    $wg_windows_private_key \
-    $wg_windows_public_key \
-    $wg_w16gw_public_key \
     ' < switch02.settings | ssh root@switch02
+    ;;
+
+  switch03)
+    envsubst \ '
+    ' < switch03.settings | ssh root@switch03
     ;;
 
   repeater-lounge|repeater-bedroom1)
