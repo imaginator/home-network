@@ -4,25 +4,8 @@ set -e # fail if we can't source the file
 set -x
 
 case $1 in
-  w16gw)
-    envsubst \ '
-    $dh2048_pem \
-    $henet_w16_password \
-    $henet_w16_tunnelid \
-    $henet_w16_username \
-    $w16gw_ddns4_domain \
-    $w16gw_ddns4_password \
-    $w16gw_ddns4_username \
-    $w16gw_ddns6_domain \
-    $w16gw_ddns6_password \
-    $w16gw_ddns6_username \
-    $wg_f17gw_public_key \
-    $wg_w16gw_private_key \
-    $wg_w16gw_public_key \
-    ' < w16gw.settings  | ssh root@10.7.10.1
-    ;;
 
-  f17gw)
+  711)
     envsubst \ '
     $dh2048_pem \
     $f17gw_ddns4_domain \
@@ -58,7 +41,7 @@ case $1 in
     $wg_windows_private_key \
     $wg_windows_public_key \
     $wg_w16gw_public_key \
-    ' < f17gw.settings | ssh root@10.7.11.1
+    ' < 711.settings | ssh root@10.7.11.1
     ;;
 
   switch02)
@@ -77,7 +60,7 @@ case $1 in
     $iot_wifikey \
     $dual2_roaming_key \
     $freifunk_roaming_key \
-    ' < nanostationm2.settings  | ssh root@$1
+    ' < unifi-ap-ac-lite.settings  | ssh root@10.7.11.20
     ;;
 
   travelrouter)

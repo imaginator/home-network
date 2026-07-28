@@ -1,8 +1,8 @@
 #!/bin/bash
-set -e
+set -xe
 
 MODEL=$1
-VERSION=23.05.3
+VERSION=25.12.5
 BUILDDIR=/tmp/openwrt-build
 BASE_PACKAGES=" \
   dropbear \
@@ -101,7 +101,6 @@ case $MODEL in
   PLATFORM=ramips
   TYPE=mt7621
   TARGET_DEVICE=ramips-mt7621
-  # PROFILE=mikrotik_routerboard-760igs
   PROFILE=ubnt_edgerouter-x
   EXTRA_PACKAGES="\
     6in4 \
@@ -147,6 +146,57 @@ case $MODEL in
     softflowd \
     sqm-scripts \
     sqm-scripts-extra \
+    uboot-envtools \
+    watchcat \
+    wireguard-tools \
+  "
+  REMOVED_PACKAGES="\
+    -dnsmasq \
+    -odhcpd-ipv6only \
+    "
+;;
+
+"711gw")
+  PLATFORM=ramips
+  TYPE=mt7621
+  TARGET_DEVICE=ramips-mt7621
+  PROFILE=mikrotik_routerboard-760igs
+  EXTRA_PACKAGES="\
+    6in4 \
+    bind-host \
+    ca-bundle \
+    ca-certificates \
+    curl \
+    ddns-scripts \
+    dnsmasq-full \
+    dnstop \
+    ip-bridge \
+    ip-full \
+    iptables-mod-tee \
+    kmod-ipip \
+    kmod-tun \
+    kmod-wireguard \
+    libatomic \
+    libnl \
+    libnl-core \
+    libnl-genl \
+    libnl-nf \
+    libnl-route \
+    libstdcpp \
+    lldpd \
+    luci \
+    luci-app-ddns \
+    luci-app-firewall \
+    luci-app-watchcat \
+    luci-base \
+    luci-mod-admin-full \
+    luci-proto-ipv6 \
+    luci-proto-wireguard \
+    odhcp6c \
+    odhcpd \
+    qrencode \
+    softflowd \
+    sqm-scripts \
     uboot-envtools \
     watchcat \
     wireguard-tools \
@@ -265,9 +315,9 @@ fi
 
 if [ ! -d ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 ] ; then
   if [ ! -f ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz ]; then
-   (cd ${BUILDDIR} && curl -C - -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz )
+   (cd ${BUILDDIR} && curl -C - -O https://downloads.openwrt.org/releases/${VERSION}/targets/${PLATFORM}/${TYPE}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.zst )
   fi
-  tar xfJ ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.xz -C ${BUILDDIR}/
+  tar --use-compress-program=unzstd -xvf ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64.tar.zst -C ${BUILDDIR}/
 fi
 
 COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${BASE_PACKAGES}` `echo ${EXTRA_PACKAGES}`"
