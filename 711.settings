@@ -185,55 +185,56 @@ uci set    ddns.global.allow_local_ip='0'
 uci set    ddns.global.use_curl='1'
 uci commit ddns.global
 
-uci add    ddns  service
-uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].cacert='/etc/ssl/certs/ca-certificates.crt'
-uci set    ddns.@service[-1].check_interval='5'
-uci set    ddns.@service[-1].check_unit='minutes'
-uci set    ddns.@service[-1].domain='${f17gw_ddns4_domain}'
-uci set    ddns.@service[-1].enabled='0'
-uci set    ddns.@service[-1].force_interval='5'
-uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='wan4'   # hotplug events only on network (not interfaces)
-uci set    ddns.@service[-1].ip_interface='wan'
-uci set    ddns.@service[-1].ip_source='interface' # using ip_source=interface due to bind_ip issues in curl
-uci set    ddns.@service[-1].lookup_host='${f17gw_ddns4_domain}'
-uci set    ddns.@service[-1].password='${f17gw_ddns4_password}'
-uci set    ddns.@service[-1].retry_count='0'
-uci set    ddns.@service[-1].retry_interval='5'
-uci set    ddns.@service[-1].retry_unit='minutes'
-uci set    ddns.@service[-1].service_name='he.net'
-uci set    ddns.@service[-1].use_https='1'
-uci set    ddns.@service[-1].use_ipv6='0'
-uci set    ddns.@service[-1].use_logfile='0'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].username='${f17gw_ddns4_username}'
-uci commit ddns.@service[-1]
+uci add    ddns service
+uci rename ddns.@service[-1]=ddns4
+uci set    ddns.ddns4=service
+uci set    ddns.ddns4.cacert='/etc/ssl/certs/ca-certificates.crt'
+uci set    ddns.ddns4.check_interval='5'
+uci set    ddns.ddns4.check_unit='minutes'
+uci set    ddns.ddns4.domain='${ddns_711gw_ddns4_domain}'
+uci set    ddns.ddns4.enabled='1'
+uci set    ddns.ddns4.force_interval='5'
+uci set    ddns.ddns4.force_unit='minutes'
+uci set    ddns.ddns4.interface='wan4'   # hotplug events only on network (not interfaces)
+uci set    ddns.ddns4.ip_interface='wan'
+uci set    ddns.ddns4.ip_source='interface' # using ip_source=interface due to bind_ip issues in curl
+uci set    ddns.ddns4.lookup_host='${ddns_711gw_ddns4_domain}'
+uci set    ddns.ddns4.password='${ddns_711gw_ddns4_password}'
+uci set    ddns.ddns4.retry_count='0'
+uci set    ddns.ddns4.retry_interval='5'
+uci set    ddns.ddns4.retry_unit='minutes'
+uci set    ddns.ddns4.service_name='he.net'
+uci set    ddns.ddns4.use_https='1'
+uci set    ddns.ddns4.use_ipv6='0'
+uci set    ddns.ddns4.use_logfile='0'
+uci set    ddns.ddns4.use_syslog='1'
+uci set    ddns.ddns4.username='${ddns_711gw_ddns4_username}'
+uci commit ddns.ddns4
 
-uci add    ddns  service
-uci set    ddns.@service[-1]=service
-uci set    ddns.@service[-1].cacert='/etc/ssl/certs/ca-certificates.crt'
-uci set    ddns.@service[-1].check_interval='5'
-uci set    ddns.@service[-1].check_unit='minutes'
-uci set    ddns.@service[-1].domain='${f17gw_ddns6_domain}'
-uci set    ddns.@service[-1].enabled='1'
-uci set    ddns.@service[-1].force_interval='5'
-uci set    ddns.@service[-1].force_unit='minutes'
-uci set    ddns.@service[-1].interface='wan6'   # hotplug events only on network (not interfaces)
-uci set    ddns.@service[-1].ip_interface='wan'
-uci set    ddns.@service[-1].ip_source='interface'
-uci set    ddns.@service[-1].lookup_host='${f17gw_ddns6_domain}'
-uci set    ddns.@service[-1].password='${f17gw_ddns6_password}'
-uci set    ddns.@service[-1].retry_count='0'
-uci set    ddns.@service[-1].retry_interval='5'
-uci set    ddns.@service[-1].retry_unit='minutes'
-uci set    ddns.@service[-1].service_name='he.net'
-uci set    ddns.@service[-1].use_https='1'
-uci set    ddns.@service[-1].use_ipv6='1'
-uci set    ddns.@service[-1].use_logfile='0'
-uci set    ddns.@service[-1].use_syslog='1'
-uci set    ddns.@service[-1].username='${f17gw_ddns6_username}'
-uci commit ddns.@service[-1]
+uci add    ddns service
+uci rename ddns.@service[-1]=ddns6
+uci set    ddns.ddns6.cacert='/etc/ssl/certs/ca-certificates.crt'
+uci set    ddns.ddns6.check_interval='5'
+uci set    ddns.ddns6.check_unit='minutes'
+uci set    ddns.ddns6.domain='${ddns_711gw_ddns6_domain}'
+uci set    ddns.ddns6.enabled='1'
+uci set    ddns.ddns6.force_interval='5'
+uci set    ddns.ddns6.force_unit='minutes'
+uci set    ddns.ddns6.interface='wan6'   # hotplug events only on network (not interfaces)
+uci set    ddns.ddns6.ip_interface='wan'
+uci set    ddns.ddns6.ip_source='interface'
+uci set    ddns.ddns6.lookup_host='${ddns_711gw_ddns6_domain}'
+uci set    ddns.ddns6.password='${ddns_711gw_ddns6_password}'
+uci set    ddns.ddns6.retry_count='0'
+uci set    ddns.ddns6.retry_interval='5'
+uci set    ddns.ddns6.retry_unit='minutes'
+uci set    ddns.ddns6.service_name='he.net'
+uci set    ddns.ddns6.use_https='1'
+uci set    ddns.ddns6.use_ipv6='1'
+uci set    ddns.ddns6.use_logfile='0'
+uci set    ddns.ddns6.use_syslog='1'
+uci set    ddns.ddns6.username='${ddns_711gw_ddns6_username}'
+uci commit ddns.ddns6
 
 service ddns enable || true
 
