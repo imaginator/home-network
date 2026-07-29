@@ -111,13 +111,14 @@ EOF
 # 5 Ghz
 uci set      wireless.radio0=wifi-device
 uci set      wireless.radio0.band='5g'
-uci set      wireless.radio0.channel='auto'
+uci set      wireless.radio0.channel='52'
 uci set      wireless.radio0.country='AU'
-uci set      wireless.radio0.log_level='0'
-uci set      wireless.radio0.path='pci0000:00/0000:00:00.0' # same for both wifi-devices
-uci set      wireless.radio0.type='mac80211'
 uci set      wireless.radio0.htmode='VHT40' # AC: the tablets only support VHT40 (imagiFi IoT 5)
 uci set      wireless.radio0.hwmode='11a'   # still needed :(
+uci set      wireless.radio0.log_level='0'
+uci set      wireless.radio0.path='pci0000:00/0000:00:00.0' # same for both wifi-devices
+uci set      wireless.radio0.txpower='18'
+uci set      wireless.radio0.type='mac80211'
 uci commit   wireless.radio0
 
 # 2.4 GHz
@@ -126,12 +127,13 @@ uci add_list wireless.radio1.channels="1"
 uci add_list wireless.radio1.channels="11"
 uci add_list wireless.radio1.channels="6"
 uci set      wireless.radio1.band='2g'
-uci set      wireless.radio1.channel='auto'
+uci set      wireless.radio1.channel='11'
 uci set      wireless.radio1.country='AU'
 uci set      wireless.radio1.htmode='HT20' # 802.11n (not legacy)
 uci set      wireless.radio1.log_level='0'
-uci set      wireless.radio1.type='mac80211'
 uci set      wireless.radio1.path='platform/ahb/18100000.wmac'
+uci set      wireless.radio1.txpower='15'
+uci set      wireless.radio1.type='mac80211'
 uci commit   wireless.radio1
 
 uci set      wireless.imagifi2=wifi-iface
@@ -142,6 +144,7 @@ uci set      wireless.imagifi2.ft_over_ds='1'
 uci set      wireless.imagifi2.ft_psk_generate_local='1'
 uci set      wireless.imagifi2.ieee80211k='1'
 uci set      wireless.imagifi2.ieee80211r='1'
+uci set      wireless.imagifi2.ieee80211v='1'
 uci set      wireless.imagifi2.ieee80211w='0'
 uci set      wireless.imagifi2.ifname='imagifi2'
 uci set      wireless.imagifi2.key='${lan_wifikey}'
@@ -160,6 +163,7 @@ uci set      wireless.imagifi25.ft_over_ds='1'
 uci set      wireless.imagifi25.ft_psk_generate_local='1'
 uci set      wireless.imagifi25.ieee80211k='1'
 uci set      wireless.imagifi25.ieee80211r='1'
+uci set      wireless.imagifi25.ieee80211v='1'
 uci set      wireless.imagifi25.ieee80211w='0'
 uci set      wireless.imagifi25.ifname='imagifi25'
 uci set      wireless.imagifi25.key='${lan_wifikey}'
@@ -202,6 +206,7 @@ uci set      wireless.iot2.time_zone='AEST-10AEDT-11,M10.5.0/02:00:00,M4.5.0/03:
 uci commit   wireless.iot2
 
 uci set      wireless.iot5=wifi-iface
+uci set      wireless.iot5.ssid='imagiFi IoT 5'
 uci set      wireless.iot5.device='radio0'
 uci set      wireless.iot5.disabled='0'
 uci set      wireless.iot5.disassoc_low_ack='0'
@@ -212,7 +217,6 @@ uci set      wireless.iot5.key='${iot_wifikey}'
 uci set      wireless.iot5.mode='ap'
 uci set      wireless.iot5.network='iot'
 uci set      wireless.iot5.skip_inactivity_poll='1'
-uci set      wireless.iot5.ssid='imagiFi IoT 5'
 uci set      wireless.iot5.wpa_group_rekey='86400'
 uci commit   wireless.iot5
 
