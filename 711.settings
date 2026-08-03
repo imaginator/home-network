@@ -173,6 +173,23 @@ uci commit network
 uci set     luci.sauth.sessiontime="36000000"
 uci commit  luci.sauth
 
+uci import https-dns-proxy <<EOF
+EOF
+
+uci set https-dns-proxy.config=main
+uci set https-dns-proxy.config.force_dns='0'          # 1 = block DoT/DoH bypass
+
+uci set https-dns-proxy.dns=https-dns-proxy
+uci set https-dns-proxy.dns.bootstrap_dns='45.90.28.0,45.90.30.0'
+uci set https-dns-proxy.dns.resolver_url='https://dns.nextdns.io/7c49c8/711gw'
+uci set https-dns-proxy.dns.listen_addr='127.0.0.1'
+uci set https-dns-proxy.dns.listen_port='5053'
+uci set https-dns-proxy.dns.user='nobody'
+uci set https-dns-proxy.dns.group='nogroup'
+uci set https-dns-proxy.dns.verbosity='info'
+
+uci commit https-dns-proxy
+service https-dns-proxy enable
 
 uci import ddns <<EOF
 EOF
@@ -804,14 +821,17 @@ EOF
 
 uci add      dhcp  dnsmasq
 uci set      dhcp.@dnsmasq[-1]=dnsmasq
+uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#5053'
 uci set      dhcp.@dnsmasq[-1].add_local_fqdn='0'
 uci set      dhcp.@dnsmasq[-1].add_local_hostname='0'
 uci set      dhcp.@dnsmasq[-1].add_wan_fqdn='4' # creates hostnames like eth0-4.f17gw.imagilan.imaginator.com
-uci set      dhcp.@dnsmasq[-1].authoritative='1'  # speed up DHCP lease queries
+uci set      dhcp.@dnsmasq[-1].authoritative='1'
 uci set      dhcp.@dnsmasq[-1].domain='imagilan.imaginator.com' # DNS domain handed out to DHCP clients
 uci set      dhcp.@dnsmasq[-1].expandhosts='1'  # Add the local domain part to names found in /etc/hosts
+uci set      dhcp.@dnsmasq[-1].local='/imailan.imaginator.com/'              # your local domain  # speed up DHCP lease queries
 uci set      dhcp.@dnsmasq[-1].localuse='1'  #
-uci set      dhcp.@dnsmasq[-1].logqueries='0'
+uci set      dhcp.@dnsmasq[-1].logqueries='1'
+uci set      dhcp.@dnsmasq[-1].noresolv='1'
 uci set      dhcp.@dnsmasq[-1].port='53'
 uci set      dhcp.@dnsmasq[-1].rapid_commit='1'
 uci commit   dhcp.@dnsmasq[-1]
