@@ -10,20 +10,22 @@ EOF
 
 uci add      system  system
 uci set      system.@system[-1]=system
-uci set      system.@system[-1].compat_version=1.1
+uci set      system.@system[-1].clock_hourcycle='h23'
+uci set      system.@system[-1].conloglevel='7'
+uci set      system.@system[-1].cronloglevel='7'
+uci set      system.@system[-1].description='Microtik Hex S'
 uci set      system.@system[-1].hostname='711gw'
-uci set      system.@system[-1].zonename='UTC'
-uci set      system.@system[-1].timezone='UTC'
-uci set      system.@system[-1].conloglevel='8'
-uci set      system.@system[-1].klogconloglevel='8'
-uci set      system.@system[-1].cronloglevel='0'
-uci set      system.@system[-1].log_ip='10.7.11.10'
-uci set      system.@system[-1].log_proto='tcp'
-uci set      system.@system[-1].log_port='514'
-uci set      system.@system[-1].log_size='128'
-uci set      system.@system[-1].log_buffer_size='64'
-uci set      system.@system[-1].log_remote='1'
+uci set      system.@system[-1].klogconloglevel='7'
 uci set      system.@system[-1].location='Addison Road'
+uci set      system.@system[-1].log_buffer_size='64'
+uci set      system.@system[-1].log_ip='10.7.11.10'
+uci set      system.@system[-1].log_port='514'
+uci set      system.@system[-1].log_proto='udp'
+uci set      system.@system[-1].log_remote='1'
+uci set      system.@system[-1].log_size='128'
+uci set      system.@system[-1].notes='the little router that could'
+uci set      system.@system[-1].timezone='UTC'
+uci set      system.@system[-1].zonename='UTC'
 uci commit   system.@system[-1]
 
 uci set      system.poe_passthrough=gpio_switch
