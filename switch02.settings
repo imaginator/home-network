@@ -142,6 +142,7 @@ uci add_list    network.@bridge-vlan[-1].ports='lan7:t'     # bunker
 uci add_list    network.@bridge-vlan[-1].ports='lan9'
 uci add_list    network.@bridge-vlan[-1].ports='lan10'
 uci add_list    network.@bridge-vlan[-1].ports='lan11'
+uci add_list    network.@bridge-vlan[-1].ports='lan12'      # home assistant box
 uci add_list    network.@bridge-vlan[-1].ports='lan28:t'
 
 # vlan: rhnk-mesh
@@ -234,4 +235,4 @@ uci commit   firewall.@rule[-1]
 service firewall enable || true
 
 echo -e "All done with writing.\n..."
-#reboot
+reboot

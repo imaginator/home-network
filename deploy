@@ -5,15 +5,15 @@ set -x
 
 case $1 in
 
-  711)
+  711gw)
     envsubst \ '
     $dh2048_pem \
-    $f17gw_ddns4_domain \
-    $f17gw_ddns4_password \
-    $f17gw_ddns4_username \
-    $f17gw_ddns6_domain \
-    $f17gw_ddns6_password \
-    $f17gw_ddns6_username \
+    $ddns_711gw_ddns4_domain \
+    $ddns_711gw_ddns4_password \
+    $ddns_711gw_ddns4_username \
+    $ddns_711gw_ddns6_domain \
+    $ddns_711gw_ddns6_password \
+    $ddns_711gw_ddns6_username \
     $freifunk_ca_crt \
     $freifunk_client_crt \
     $freifunk_client_key \
@@ -41,7 +41,7 @@ case $1 in
     $wg_windows_private_key \
     $wg_windows_public_key \
     $wg_w16gw_public_key \
-    ' < 711.settings | ssh root@10.7.11.1
+    ' < 711gw.settings | ssh root@10.7.11.1
     ;;
 
   switch02)

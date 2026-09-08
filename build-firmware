@@ -170,6 +170,7 @@ case $MODEL in
     ddns-scripts \
     dnsmasq-full \
     dnstop \
+    https-dns-proxy \
     ip-bridge \
     ip-full \
     iptables-mod-tee \
@@ -187,9 +188,12 @@ case $MODEL in
     luci \
     luci-app-ddns \
     luci-app-firewall \
+    luci-app-https-dns-proxy \
+    luci-app-sqm \
     luci-app-watchcat \
     luci-base \
     luci-mod-admin-full \
+    luci-mod-rpc \
     luci-proto-ipv6 \
     luci-proto-wireguard \
     odhcp6c \
