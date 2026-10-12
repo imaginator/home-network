@@ -1177,6 +1177,20 @@ uci set      dhcp.@host[-1].mac='00:1d:63:2e:99:e2'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].name='ferryview'
+uci set      dhcp.@host[-1].mac='00:1d:63:2e:99:e2'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
+uci add      dhcp  host
+uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].name='imagiroam'
+uci set      dhcp.@host[-1].mac='0c:29:8f:cb:12:ea'
+uci set      dhcp.@host[-1].dns='1'
+uci commit   dhcp.@host[-1]
+
 service dnsmasq enable
 
 echo -e "All done with writing.\nRebooting..."
