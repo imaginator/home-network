@@ -3,3 +3,4 @@ network-secrets.env
 build/*
 freifunk-etc/
 notes.sh
+build-firmware-files/

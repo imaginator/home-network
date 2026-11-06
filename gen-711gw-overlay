@@ -1,0 +1,81 @@
+#!/bin/bash
+# Generate a build-firmware FILES overlay for the 711gw target.
+#
+# Bakes 711gw.settings (with secrets substituted from network-secrets.env) into
+# the image as an /etc/uci-defaults script, so the DSA configuration is applied
+# automatically on the first boot of the upgraded firmware. This is needed
+# because a swconfig -> DSA upgrade cannot migrate config via sysupgrade, so the
+# device must be flashed with `sysupgrade -n`.
+#
+# Usage:
+#   cp network-secrets.env.example network-secrets.env  # and edit
+#   ./gen-711gw-overlay
+#   ./build-firmware 711gw
+#
+# The generated overlay lives in build-firmware-files/ (git-ignored; it embeds
+# secrets such as WireGuard keys and DDNS passwords).
+
+set -e # fail if we can't source the secrets
+cd "$(dirname "$0")"
+. ./network-secrets.env
+
+OVERLAY="build-firmware-files"
+DEFAULTS="99-711gw-config"
+
+# Same variable list (and order) as the `deploy` 711gw case.
+SECRET_VARS='
+    $dh2048_pem \
+    $ddns_711gw_ddns4_domain \
+    $ddns_711gw_ddns4_password \
+    $ddns_711gw_ddns4_username \
+    $ddns_711gw_ddns6_domain \
+    $ddns_711gw_ddns6_password \
+    $ddns_711gw_ddns6_username \
+    $freifunk_ca_crt \
+    $freifunk_client_crt \
+    $freifunk_client_key \
+    $henet_f17_password \
+    $henet_f17_tunnelid \
+    $henet_f17_username \
+    $lan_wifikey \
+    $cloudflared_token \
+    $wg_f17gw_private_key \
+    $wg_f17gw_private_key \
+    $wg_f17gw_public_key \
+    $wg_f17gw_public_key \
+    $wg_furrow_private_key \
+    $wg_furrow_private_key \
+    $wg_furrow_public_key \
+    $wg_furrow_public_key \
+    $wg_simonphone_private_key \
+    $wg_simonphone_private_key \
+    $wg_simonphone_public_key \
+    $wg_simonphone_public_key \
+    $wg_tablet_private_key \
+    $wg_tablet_public_key \
+    $wg_vpn_private_key \
+    $wg_vpn_public_key \
+    $wg_windows_private_key \
+    $wg_windows_public_key \
+    $wg_w16gw_public_key \
+    '
+
+mkdir -p "${OVERLAY}/etc/uci-defaults"
+
+{
+  echo '#!/bin/sh'
+  echo '# Generated from 711gw.settings by gen-711gw-overlay. Do not edit by hand.'
+  echo '# Applies the DSA network configuration on first boot, then self-removes.'
+  echo 'set -e'
+  echo
+  envsubst "${SECRET_VARS}" < 711gw.settings
+  echo
+  echo '# Apply the configuration now rather than waiting for a reboot.'
+  echo '/etc/init.d/network reload || /etc/init.d/network restart || true'
+  echo 'exit 0'
+} > "${OVERLAY}/etc/uci-defaults/${DEFAULTS}"
+
+chmod 0755 "${OVERLAY}/etc/uci-defaults/${DEFAULTS}"
+
+echo "Wrote ${OVERLAY}/etc/uci-defaults/${DEFAULTS}"
+echo "Now run: ./build-firmware 711gw"

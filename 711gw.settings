@@ -120,12 +120,6 @@ uci set      network.vlan12.device='br-lan'
 uci set      network.vlan12.vlan='12'
 uci add_list network.vlan12.ports='lan5:t'
 
-# --- br-iot device (uses VLAN 12) ---
-uci set      network.br_iot=device
-uci set      network.br_iot.name='br-iot'
-uci set      network.br_iot.type='bridge'
-uci add_list network.br_iot.ports='br-lan.12'
-
 # --- LAN interface (10.7.11.0/24) ---
 uci set      network.lan=interface
 uci set      network.lan.device='br-lan.11'
@@ -141,7 +135,7 @@ uci set      network.lan.ra='server'
 
 # --- IoT interface (10.7.12.0/24) ---
 uci set      network.iot=interface
-uci set      network.iot.device='br-iot'
+uci set      network.iot.device='br-lan.12'
 uci set      network.iot.proto='static'
 uci set      network.iot.ipaddr='10.7.12.1'
 uci set      network.iot.netmask='255.255.255.0'
@@ -305,7 +299,7 @@ EOF
 uci add    softflowd  softflowd
 uci set    softflowd.@softflowd[-1]=softflowd
 uci set    softflowd.@softflowd[-1].enabled='1'
-uci set    softflowd.@softflowd[-1].interface='eth0.4'
+uci set    softflowd.@softflowd[-1].interface='wan'
 uci set    softflowd.@softflowd[-1].timeout='maxlife=60'
 uci set    softflowd.@softflowd[-1].max_flows='8192'
 uci set    softflowd.@softflowd[-1].host_port='10.7.11.1:2055'
@@ -841,13 +835,13 @@ uci add_list dhcp.lan.dhcp_option='114,urn:ietf:params:capport:unrestricted'
 uci add_list dhcp.lan.dhcp_option='option:dns-server,10.7.11.1'
 uci add_list dhcp.lan.dhcp_option='option:log-server,10.7.11.10'
 uci add_list dhcp.lan.dnr='100 home-network.7c49c8.dns.nextdns.io 45.90.28.0,45.90.30.0,2a07:a8c0::,2a07:a8c1:: alpn=dot,h2,h3'
-uci add_list dhcp.lan.domain='imagilan'
 uci add_list dhcp.lan.ntp='0.au.pool.ntp.org'
 uci add_list dhcp.lan.ntp='1.au.pool.ntp.org'
 uci add_list dhcp.lan.ntp='2.au.pool.ntp.org'
 uci set      dhcp.lan.dhcpv4='server'
 uci set      dhcp.lan.dhcpv6_pd='1'
 uci set      dhcp.lan.dhcpv6='server'
+uci set      dhcp.lan.domain='imagilan'
 uci set      dhcp.lan.interface='lan'
 uci set      dhcp.lan.ip6assign='60'
 uci set      dhcp.lan.leasetime='1h'
@@ -861,13 +855,13 @@ uci add_list dhcp.iot.dhcp_option='114,urn:ietf:params:capport:unrestricted'
 uci add_list dhcp.iot.dhcp_option='option:dns-server,10.7.12.1'
 uci add_list dhcp.iot.dhcp_option='option:log-server,10.7.11.10'
 uci add_list dhcp.iot.dnr='100 home-network.7c49c8.dns.nextdns.io 45.90.28.0,45.90.30.0,2a07:a8c0::,2a07:a8c1:: alpn=dot,h2,h3'
-uci add_list dhcp.iot.domain='imagilan.imaginator.com'
 uci add_list dhcp.iot.ntp='0.au.pool.ntp.org'
 uci add_list dhcp.iot.ntp='1.au.pool.ntp.org'
 uci add_list dhcp.iot.ntp='2.au.pool.ntp.org'
 uci set      dhcp.iot.dhcpv4='server'
 uci set      dhcp.iot.dhcpv6_pd='1'
 uci set      dhcp.iot.dhcpv6='server'
+uci set      dhcp.iot.domain='imagilan'
 uci set      dhcp.iot.interface='iot'
 uci set      dhcp.iot.leasetime='1h'
 uci set      dhcp.iot.limit='150'
@@ -972,67 +966,11 @@ uci commit   dhcp.@host[-1]
 # imagilan
 ###############################################################################
 
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='prowlarr.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='radarr.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='sonarr.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
-uci add      dhcp  cname
-uci set      dhcp.@cname[-1]=cname
-uci set      dhcp.@cname[-1].cname='qbittorrent.imagilan'
-uci set      dhcp.@cname[-1].target='bunker.imagilan'
-uci commit   dhcp.@cname[-1]
-
 uci add      dhcp  domain
 uci set      dhcp.@domain[-1]=domain
 uci set      dhcp.@domain[-1].ip='10.7.11.1'
 uci set      dhcp.@domain[-1].name='711gw'
 uci commit   dhcp.@domain[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.2'
-uci set      dhcp.@host[-1].name='switch01'
-uci set      dhcp.@host[-1].mac='f0:9f:c2:0e:d2:15'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.3'
-uci set      dhcp.@host[-1].name='switch02'
-uci set      dhcp.@host[-1].mac='b8:a3:86:78:43:6e'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.4'
-uci set      dhcp.@host[-1].name='switch03'
-uci set      dhcp.@host[-1].mac='0a:82:55:10:68:7e'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.5'
-uci set      dhcp.@host[-1].name='win10'
-uci set      dhcp.@host[-1].mac='52:54:00:6e:6c:42'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
@@ -1044,26 +982,11 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.9'
-uci set      dhcp.@host[-1].name='ilo'
-uci set      dhcp.@host[-1].mac='b0:5a:da:87:ff:3e'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
+uci set      dhcp.@host[-1].hostid='10'
 uci set      dhcp.@host[-1].ip='10.7.11.10'
 uci set      dhcp.@host[-1].name='bunker'
 uci add_list dhcp.@host[-1].mac='6c:1f:f7:ac:63:a1'
 uci add_list dhcp.@host[-1].mac='6c:1f:f7:ac:63:a2'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.11'
-uci set      dhcp.@host[-1].name='ha' #home assistant
-uci set      dhcp.@host[-1].mac='20:f8:3b:01:29:a8'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
@@ -1077,14 +1000,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.19'
-uci set      dhcp.@host[-1].name='repeater-bedroom1'
-uci set      dhcp.@host[-1].mac='e0:63:da:b6:a9:c4'
-uci set      dhcp.@host[-1].dns='1'
-uci commit   dhcp.@host[-1]
-
-uci add      dhcp  host
-uci set      dhcp.@host[-1]=host
 uci set      dhcp.@host[-1].ip='10.7.11.20'
 uci set      dhcp.@host[-1].name='repeater-lounge'
 uci set      dhcp.@host[-1].mac='e0:63:da:b6:a9:6b'
@@ -1093,7 +1008,7 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.21'
+uci set      dhcp.@host[-1].hostid='21'
 uci set      dhcp.@host[-1].mac='c0:1c:6a:7d:15:e2'
 uci set      dhcp.@host[-1].name='phone-simon'
 uci set      dhcp.@host[-1].dns='1'
@@ -1101,7 +1016,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.25'
 uci set      dhcp.@host[-1].hostid='25'
 uci set      dhcp.@host[-1].name='furrow'
 uci add_list dhcp.@host[-1].mac='34:e1:2d:78:f5:d7' # WiFi
@@ -1112,7 +1026,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.26'
 uci set      dhcp.@host[-1].hostid='26'
 uci set      dhcp.@host[-1].name='moulin'
 uci add_list dhcp.@host[-1].mac='48:45:e6:b2:5d:8d' # WiFi
@@ -1122,7 +1035,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.40'
 uci set      dhcp.@host[-1].name='wiim-amp-ultra'
 uci set      dhcp.@host[-1].mac='40:d9:5a:ec:82:4c'
 uci set      dhcp.@host[-1].dns='1'
@@ -1130,7 +1042,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.50'
 uci set      dhcp.@host[-1].name='chromecast-tv'
 uci set      dhcp.@host[-1].mac='14:ae:85:70:55:f1'
 uci set      dhcp.@host[-1].dns='1'
@@ -1138,15 +1049,13 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.51'
-uci set      dhcp.@host[-1].name='lounge-tv'
+uci set      dhcp.@host[-1].name='imagivision'
 uci set      dhcp.@host[-1].mac='08:9b:27:62:3d:35'
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.52'
 uci set      dhcp.@host[-1].name='ccmini-kitchen'
 uci set      dhcp.@host[-1].mac='14:c1:4e:72:67:41'
 uci set      dhcp.@host[-1].dns='1'
@@ -1163,7 +1072,6 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.54'
 uci set      dhcp.@host[-1].name='washing-machine'
 uci set      dhcp.@host[-1].mac='00:1d:63:27:bc:da'
 uci set      dhcp.@host[-1].dns='1'
@@ -1171,9 +1079,8 @@ uci commit   dhcp.@host[-1]
 
 uci add      dhcp  host
 uci set      dhcp.@host[-1]=host
-uci set      dhcp.@host[-1].ip='10.7.11.55'
 uci set      dhcp.@host[-1].name='coffeemachine'
-uci set      dhcp.@host[-1].mac='00:1d:63:2e:99:e2'
+uci set      dhcp.@host[-1].mac='00:1d:63:2e:99:00'  # unknown
 uci set      dhcp.@host[-1].dns='1'
 uci commit   dhcp.@host[-1]
 

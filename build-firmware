@@ -2,8 +2,9 @@
 set -xe
 
 MODEL=$1
-VERSION=25.12.5
+VERSION=25.12.6
 BUILDDIR=/tmp/openwrt-build
+FILES_OVERLAY=""
 BASE_PACKAGES=" \
   dropbear \
   prometheus-node-exporter-lua \
@@ -209,6 +210,10 @@ case $MODEL in
     -dnsmasq \
     -odhcpd-ipv6only \
     "
+  # Bake the DSA config into the image so it is applied on first boot of the
+  # upgraded firmware (swconfig -> DSA cannot migrate via sysupgrade).
+  # The overlay is generated from 711gw.settings by gen-711gw-overlay.
+  FILES_OVERLAY="${PWD}/build-firmware-files"
 ;;
 
 "nanostationm2")
@@ -327,7 +332,19 @@ fi
 COMBINED_PACKAGE_LIST="`echo ${REMOVED_PACKAGES}` `echo ${BASE_PACKAGES}` `echo ${EXTRA_PACKAGES}`"
 echo "Combined package list ${COMBINED_PACKAGE_LIST}"
 
+if [ -n "${FILES_OVERLAY}" ] ; then
+  if [ ! -d "${FILES_OVERLAY}" ] ; then
+    echo "FILES_OVERLAY ${FILES_OVERLAY} does not exist." >&2
+    echo "For 711gw run ./gen-711gw-overlay first (needs network-secrets.env)." >&2
+    exit 1
+  fi
+  echo "Using files overlay ${FILES_OVERLAY}"
+  FILES_ARG="FILES=${FILES_OVERLAY}"
+else
+  FILES_ARG=""
+fi
+
 echo "Building ${VERSION}..."
-( cd ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 && sudo make image PROFILE="$PROFILE" PACKAGES="$COMBINED_PACKAGE_LIST" )
+( cd ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64 && sudo make image PROFILE="$PROFILE" PACKAGES="$COMBINED_PACKAGE_LIST" ${FILES_ARG} )
 
 echo "scp -O ${BUILDDIR}/openwrt-imagebuilder-${VERSION}-${TARGET_DEVICE}.Linux-x86_64/bin/targets/${PLATFORM}/${TYPE}/openwrt-${VERSION}-${TARGET_DEVICE}-${PROFILE}-squashfs-sysupgrade.bin root@<dest>:/tmp"
